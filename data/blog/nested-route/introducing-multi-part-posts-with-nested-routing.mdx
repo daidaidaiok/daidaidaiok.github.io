@@ -1,30 +1,30 @@
 ---
-title: Introducing Multi-part Posts with Nested Routing
+title: 使用嵌套路由介绍多部分文章
 date: '2021-05-02'
 tags: ['multi-author', 'next-js', 'feature']
 draft: false
-summary: 'The blog template supports posts in nested sub-folders. This can be used to group posts of similar content e.g. a multi-part course. This post is itself an example of a nested route!'
+summary: '博客模板支持嵌套子文件夹中的文章。这可以用来对类似内容的文章进行分组，例如多部分课程。这篇文章本身就是嵌套路由的一个例子！'
 ---
 
-# Nested Routes
+# 嵌套路由
 
-The blog template supports posts in nested sub-folders. This helps in organisation and can be used to group posts of similar content e.g. a multi-part series. This post is itself an example of a nested route! It's located in the `/data/blog/nested-route` folder.
+博客模板支持嵌套子文件夹中的文章。这有助于组织，并可用于对类似内容的文章进行分组，例如多部分系列。这篇文章本身就是嵌套路由的一个例子！它位于 `/data/blog/nested-route` 文件夹中。
 
-## How
+## 如何实现
 
-Simplify create multiple folders inside the main `/data/blog` folder and add your `.md`/`.mdx` files to them. You can even create something like `/data/blog/nested-route/deeply-nested-route/my-post.md`
+只需在主 `/data/blog` 文件夹中创建多个文件夹，然后将你的 `.md`/`.mdx` 文件添加到其中。你甚至可以创建类似 `/data/blog/nested-route/deeply-nested-route/my-post.md` 的结构。
 
-We use Next.js catch all routes to handle the routing and path creations.
+我们使用 Next.js 的捕获所有路由（catch all routes）来处理路由和路径创建。
 
-## Use Cases
+## 使用场景
 
-Here are some reasons to use nested routes
+以下是使用嵌套路由的一些理由：
 
-- More logical content organisation (blogs will still be displayed based on the created date)
-- Multi-part posts
-- Different sub-routes for each author
-- Internationalization (though it would be recommended to use [Next.js built-in i8n routing](https://nextjs.org/docs/advanced-features/i18n-routing))
+- 更合理的内容组织（博客仍将按照创建日期显示）
+- 多部分文章
+- 为每位作者设置不同的子路由
+- 国际化（不过建议使用 [Next.js 内置的 i8n 路由](https://nextjs.org/docs/advanced-features/i18n-routing)）
 
-## Note
+## 注意事项
 
-- The previous/next post links at bottom of the template are currently sorted by date. One could explore modifying the template to refer the reader to the previous/next post in the series, rather than by date.
+- 模板底部的上一篇/下一篇文章链接目前是按日期排序的。可以探索修改模板，让读者在系列中跳转到上一篇/下一篇文章，而不是按日期排序。

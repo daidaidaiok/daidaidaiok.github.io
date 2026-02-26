@@ -1,8 +1,8 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: '我的博客',
+  title: 'HPB300',
   author: '咖喱gaygay',
-  headerTitle: '我的博客',
+  headerTitle: 'HPB300',
   description: '我的个人博客，记录学习与生活',
   language: 'zh-cn',
   theme: 'system', // system, dark or light

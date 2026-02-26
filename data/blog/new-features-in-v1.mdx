@@ -1,29 +1,29 @@
 ---
-title: 'New features in v1'
+title: 'v1 新特性'
 date: 2021-08-07T15:32:14Z
 lastmod: '2021-02-01'
 tags: ['next-js', 'tailwind', 'guide']
 draft: false
-summary: 'An overview of the new features released in v1 - code block copy, multiple authors, frontmatter layout and more'
+summary: 'v1 发布的新特性概述 - 代码块复制、多作者、frontmatter 布局等等'
 layout: PostSimple
 bibliography: references-data.bib
 ---
 
-## Overview
+## 概述
 
-A post on the new features introduced in v1.0. New features:
+一篇关于 v1.0 中引入的新特性的文章。新特性：
 
 <TOCInline toc={props.toc} exclude="Overview" toHeading={2} />
 
-First load JS decreased from 43kB to 39kB despite all the new features added! [^1]
+尽管添加了许多新特性，首次加载的 JS 从 43kB 减少到 39kB！[^1]
 
-[^1]: With the new changes in Nextjs 12, first load JS increase to 45kB.
+[^1]: 随着 Nextjs 12 的新变化，首次加载的 JS 增加到 45kB。
 
-See [upgrade guide](#upgrade-guide) below if you are migrating from v0 version of the template.
+如果你正在从模板的 v0 版本迁移，请参阅下方的[升级指南](#upgrade-guide)。
 
-## Theme colors
+## 主题颜色
 
-You can easily modify the theme color by changing the primary attribute in the tailwind config file:
+你可以通过修改 tailwind 配置文件中的 primary 属性来轻松调整主题颜色：
 
 ```js:tailwind.config.js
 theme: {
@@ -36,59 +36,57 @@ theme: {
 }
 ```
 
-The primary color attribute should be assigned an object with keys from 50, 100, 200 ... 900 and the corresponding color code values.
+primary 颜色属性应该是一个对象，包含从 50、100、200 ... 到 900 的键和相应的颜色代码值。
 
-Tailwind includes great default color palettes that can be used for theming your own website. Check out [customizing colors documentation page](https://tailwindcss.com/docs/customizing-colors) for the full range of options.
+Tailwind 包含了出色的默认调色板，可用于自定义网站主题。查看[自定义颜色文档页面](https://tailwindcss.com/docs/customizing-colors)了解所有可用选项。
 
-Migrating from v1? You can revert to the previous theme by setting `primary` to `colors.sky` (Tailwind 2.2.2 and above, otherwise `colors.lightBlue`) and changing gray to `colors.gray`.
+从 v1 迁移？你可以通过将 `primary` 设置为 `colors.sky`（Tailwind 2.2.2 及以上版本，否则使用 `colors.lightBlue`）并将 gray 改为 `colors.gray` 来恢复之前的主题。
 
-From v1.1.2+, you can also customize the style of your code blocks easily by modifying the `css/prism.css` stylesheet. Token classnames are compatible with prismjs
-so you can copy and adapt token styles from a prismjs stylesheet e.g. [prism themes](https://github.com/PrismJS/prism-themes).
+从 v1.1.2+ 开始，你还可以通过修改 `css/prism.css` 样式表来轻松自定义代码块的样式。Token 类名与 prismjs 兼容，因此你可以从 prismjs 样式表中复制和调整 token 样式，例如 [prism 主题](https://github.com/PrismJS/prism-themes)。
 
-## Xdm MDX compiler
+## Xdm MDX 编译器
 
-We switched the MDX bundler from [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) to [mdx-bundler](https://github.com/kentcdodds/mdx-bundler).
-This uses [xdm](https://github.com/wooorm/xdm) under the hood, the latest micromark 3 and remark, rehype libraries.
+我们将 MDX 打包器从 [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) 切换到了 [mdx-bundler](https://github.com/kentcdodds/mdx-bundler)。
+它在底层使用了 [xdm](https://github.com/wooorm/xdm)，即最新的 micromark 3 和 remark、rehype 库。
 
-**Warning:** If you were using custom remark or rehype libraries, please upgrade to micromark 3 compatible ones. If you are upgrading, please delete `node_modules` and `package-lock.json` to avoid having past dependencies related issues.
+**警告：** 如果你之前使用了自定义的 remark 或 rehype 库，请升级到兼容 micromark 3 的版本。如果你正在升级，请删除 `node_modules` 和 `package-lock.json` 以避免与过去依赖项相关的问题。
 
-[xdm](https://github.com/wooorm/xdm) contains multiple improvements over [@mdx-js/mdx](https://github.com/mdx-js/mdx), the compiler used internally by next-mdx-remote, but there might be some breaking behaviour changes.
-Please check your markdown output to verify.
+[xdm](https://github.com/wooorm/xdm) 相比 [@mdx-js/mdx](https://github.com/mdx-js/mdx)（next-mdx-remote 内部使用的编译器）有多个改进，但可能存在一些破坏性的行为变更。
+请检查你的 markdown 输出以进行验证。
 
-Some new possibilities include loading components directly in the mdx file using the import syntax and including js code which could be compiled and bundled at the build step.
+一些新的可能性包括使用 import 语法直接在 mdx 文件中加载组件，以及包含可以在构建步骤中编译和打包的 js 代码。
 
-For example, the following jsx snippet can be used directly in an MDX file to render the page title component:
+例如，以下 jsx 代码片段可以直接在 MDX 文件中用于渲染页面标题组件：
 
 ```jsx
-// Or import PageTitle from './components/PageTitle.js' if you are using js
+// 如果你使用 js，可以使用 import PageTitle from './components/PageTitle.js'
 import PageTitle from './components/PageTitle.tsx'
-;<PageTitle> Using JSX components in MDX </PageTitle>
+;<PageTitle> 在 MDX 中使用 JSX 组件 </PageTitle>
 ```
 
-The default configuration resolves all components relative to the `components` directory.
+默认配置会相对于 `components` 目录解析所有组件。
 
-**Note**:
-Components which require external image loaders also require additional esbuild configuration.
-Components which are dependent on global application state on lifecycle like the Nextjs `Link` component would also not work with this setup as each mdx file is built independently.
-For such cases, it is better to use component substitution.
+**注意**：
+需要外部图像加载器的组件还需要额外的 esbuild 配置。
+依赖于全局应用状态或生命周期的组件（如 Nextjs `Link` 组件）也无法在此设置下工作，因为每个 mdx 文件都是独立构建的。
+对于这种情况，最好使用组件替换。
 
-## Table of contents component
+## 目录组件
 
-Inspired by [Docusaurus](https://docusaurus.io/docs/next/markdown-features/inline-toc) and Gatsby's [gatsby-remark-table-of-contents](https://www.gatsbyjs.com/plugins/gatsby-remark-table-of-contents/),
-the `toc` variable containing all the top level headings of the document is passed to the MDX file and can be styled accordingly.
-To make generating a table of contents (TOC) simple, you can use the existing `TOCInline` component.
+受 [Docusaurus](https://docusaurus.io/docs/next/markdown-features/inline-toc) 和 Gatsby 的 [gatsby-remark-table-of-contents](https://www.gatsbyjs.com/plugins/gatsby-remark-table-of-contents/) 启发，
+包含文档所有顶级标题的 `toc` 变量会传递给 MDX 文件，并可以相应地进行样式设置。
+为了简化生成目录（TOC）的过程，你可以使用现有的 `TOCInline` 组件。
 
-For example, the TOC in this post was generated with the following code:
+例如，这篇文章中的目录是通过以下代码生成的：
 
 ```jsx
 <TOCInline toc={props.toc} exclude="Overview" toHeading={2} />
 ```
 
-You can customise the headings that are displayed by configuring the `fromHeading` and `toHeading` props, or exclude particular headings
-by passing a string or a string array to the `exclude` prop. By default, all headings that are of depth 3 or smaller are indented. This can be configured by changing the `indentDepth` property.
-A `asDisclosure` prop can be used to render the TOC within an expandable disclosure element.
+你可以通过配置 `fromHeading` 和 `toHeading` 属性来自定义显示的标题，或者通过向 `exclude` 属性传递字符串或字符串数组来排除特定标题。默认情况下，所有深度为 3 或更小的标题都会缩进。这可以通过更改 `indentDepth` 属性来配置。
+可以使用 `asDisclosure` 属性将目录渲染在可展开的元素中。
 
-Here's the full TOC rendered in a disclosure element.
+以下是在可展开元素中渲染的完整目录。
 
 ```jsx
 <TOCInline toc={props.toc} asDisclosure />
@@ -96,20 +94,20 @@ Here's the full TOC rendered in a disclosure element.
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## Layouts
+## 布局
 
-You can map mdx blog content to layout components by configuring the frontmatter field. For example, this post is written with the new `PostSimple` layout!
+你可以通过配置 frontmatter 字段将 mdx 博客内容映射到布局组件。例如，这篇文章就是使用新的 `PostSimple` 布局编写的！
 
-### Adding new templates
+### 添加新模板
 
-layout templates are stored in the `./layouts` folder. You can add your React components that you want to map to markdown content in this folder.
-The component file name must match that specified in the markdown frontmatter `layout` field.
+布局模板存储在 `./layouts` 文件夹中。你可以在此文件夹中添加要映射到 markdown 内容的 React 组件。
+组件文件名必须与 markdown frontmatter 中 `layout` 字段指定的名称匹配。
 
-The only required field is `children` which contains the rendered MDX content, though you would probably want to pass in the frontMatter contents and render it in the template.
+唯一必需的字段是 `children`，它包含渲染后的 MDX 内容，但你可能希望传入 frontMatter 内容并在模板中渲染它。
 
-You can configure the template to take in other fields - see `PostLayout` component for an example.
+你可以配置模板接受其他字段 - 参见 `PostLayout` 组件作为示例。
 
-Here's an example layout which you can further customise:
+以下是一个可以进一步自定义的布局示例：
 
 ```jsx
 export default function ExampleLayout({ frontMatter, children }) {
@@ -125,9 +123,9 @@ export default function ExampleLayout({ frontMatter, children }) {
 }
 ```
 
-### Configuring a blog post frontmatter
+### 配置博客文章 frontmatter
 
-Use the `layout` frontmatter field to specify the template you want to map the markdown post to. Here's how the frontmatter of this post looks like:
+使用 frontmatter 中的 `layout` 字段来指定要将 markdown 文章映射到的模板。这篇文章的 frontmatter 如下所示：
 
 ```
 ---
@@ -140,12 +138,12 @@ layout: PostSimple
 ---
 ```
 
-You can configure the default layout in the respective page section by modifying the `DEFAULT_LAYOUT` variable.
-The `DEFAULT_LAYOUT` for blog posts page is set to `PostLayout`.
+你可以通过修改 `DEFAULT_LAYOUT` 变量在相应的页面部分配置默认布局。
+博客文章页面的 `DEFAULT_LAYOUT` 设置为 `PostLayout`。
 
-### Extend
+### 扩展
 
-`layout` is mapped to wrapper which wraps the entire MDX content.
+`layout` 被映射为包装器，包装整个 MDX 内容。
 
 ```jsx
 export const MDXComponents = {
@@ -165,13 +163,13 @@ export const MDXLayoutRenderer = ({ layout, mdxSource, ...rest }) => {
 }
 ```
 
-Use the `MDXLayoutRenderer` component on a page where you want to accept a layout name to map to the desired layout.
-You need to pass the layout name from the layout folder (it has to be an exact match).
+在希望接受布局名称以映射到所需布局的页面上使用 `MDXLayoutRenderer` 组件。
+你需要从布局文件夹传递布局名称（必须是完全匹配）。
 
-## Analytics
+## 分析
 
-The template now supports [plausible](https://plausible.io/), [simple analytics](https://simpleanalytics.com/) and google analytics.
-Configure `siteMetadata.js` with the settings that correspond with the desired analytics provider.
+该模板现在支持 [plausible](https://plausible.io/)、[simple analytics](https://simpleanalytics.com/) 和 google analytics。
+使用与所需分析提供商对应的设置配置 `siteMetadata.js`。
 
 ```js
 analytics: {
@@ -182,14 +180,13 @@ analytics: {
   },
 ```
 
-Custom events are also supported. You can import the `logEvent` function from `@components/analytics/[ANALYTICS-PROVIDER]` file and call it when
-triggering certain events of interest. _Note_: Additional configuration might be required depending on the analytics provider, please check their official
-documentation for more information.
+还支持自定义事件。你可以从 `@components/analytics/[ANALYTICS-PROVIDER]` 文件导入 `logEvent` 函数，并在触发感兴趣的事件时调用它。
+_注意_：根据分析提供商的不同，可能需要额外的配置，请查看它们的官方文档获取更多信息。
 
-## Blog comments system
+## 博客评论系统
 
-We have also added support for [giscus](https://github.com/laymonage/giscus), [utterances](https://github.com/utterance/utterances) or disqus.
-To enable, simply configure `siteMetadata.js` comments property with the desired provider and settings as specified in the config file.
+我们还添加了对 [giscus](https://github.com/laymonage/giscus)、[utterances](https://github.com/utterance/utterances) 或 disqus 的支持。
+要启用，只需使用所需的提供商和配置文件中指定的设置配置 `siteMetadata.js` 的 comments 属性。
 
 ```js
 comment: {
@@ -236,11 +233,11 @@ comment: {
   },
 ```
 
-## Multiple authors
+## 多作者
 
-Information on authors is now split from `siteMetadata.js` and stored in its own `data/authors` folder as a markdown file. Minimally, you will need to have a `default.md` file with authorship information. You can create additional files as required and the file name will be used as the reference to the author.
+作者信息现在从 `siteMetadata.js` 中分离出来，存储在单独的 `data/authors` 文件夹中作为 markdown 文件。至少，你需要有一个包含作者信息的 `default.md` 文件。你可以根据需要创建其他文件，文件名将用作作者的引用。
 
-Here's how an author markdown file might look like:
+作者 markdown 文件可能如下所示：
 
 ```md:default.md
 ---
@@ -254,22 +251,22 @@ linkedin: https://www.linkedin.com
 github: https://github.com
 ---
 
-A long description of yourself...
+关于你自己的详细描述...
 ```
 
-You can use this information in multiple places across the template. For example in the about section of the page, we grab the default author information with this line of code:
+你可以在模板的多个地方使用这些信息。例如，在页面的关于部分，我们用这行代码获取默认作者信息：
 
 ```js
 const authorDetails = await getFileBySlug('authors', ['default'])
 ```
 
-This is rendered in the `AuthorLayout` template.
+这在 `AuthorLayout` 模板中渲染。
 
-### Multiple authors in blog post
+### 博客文章中的多作者
 
-The frontmatter of a blog post accepts an optional `authors` array field. If no field is specified, it is assumed that the default author is used. Simply pass in an array of authors to render multiple authors associated with a post.
+博客文章的 frontmatter 接受一个可选的 `authors` 数组字段。如果未指定该字段，则假定使用默认作者。只需传入一个作者数组即可渲染与文章关联的多个作者。
 
-For example, the following frontmatter will display the authors given by `data/authors/default.md` and `data/authors/sparrowhawk.md`
+例如，以下 frontmatter 将显示由 `data/authors/default.md` 和 `data/authors/sparrowhawk.md` 给出的作者
 
 ```yaml
 title: 'My first post'
@@ -279,18 +276,18 @@ summary: 'My first post'
 authors: ['default', 'sparrowhawk']
 ```
 
-A demo of a multiple authors post is shown in [Introducing Tailwind Nextjs Starter Blog post](/blog/introducing-tailwind-nextjs-starter-blog).
+多作者文章的演示显示在[介绍 Tailwind Nextjs 入门博客文章](/blog/introducing-tailwind-nextjs-starter-blog)中。
 
-## Copy button for code blocks
+## 代码块复制按钮
 
-Hover over a code block and you will notice a GitHub-inspired copy button! You can modify `./components/Pre.js` to further customise it.
-The component is passed to `MDXComponents` and modifies all `<pre>` blocks.
+将鼠标悬停在代码块上，你会注意到一个受 GitHub 启发的复制按钮！你可以修改 `./components/Pre.js` 以进一步自定义它。
+该组件被传递给 `MDXComponents` 并修改所有 `<pre>` 块。
 
-## Line highlighting and line numbers
+## 行高亮和行号
 
-Line highlighting and line numbers are now supported out of the box thanks to the new [rehype-prism-plus plugin](https://github.com/timlrx/rehype-prism-plus)
+感谢新的 [rehype-prism-plus 插件](https://github.com/timlrx/rehype-prism-plus)，现在开箱即用地支持行高亮和行号
 
-The following javascript code block:
+以下 javascript 代码块：
 
 ````
 ```js {1, 3-4} showLineNumbers
@@ -302,7 +299,7 @@ alert('Sum = ' + sum) // "+" means combine into a string
 ```
 ````
 
-will appear as:
+将显示为：
 
 ```js {1,3-4} showLineNumbers
 var num1, num2, sum
@@ -312,7 +309,7 @@ sum = parseInt(num1) + parseInt(num2) // "+" means "add"
 alert('Sum = ' + sum) // "+" means combine into a string
 ```
 
-To modify the styles, change the following class selectors in the `prism.css` file:
+要修改样式，请更改 `prism.css` 文件中的以下类选择器：
 
 ```css
 .code-highlight {
@@ -341,36 +338,36 @@ To modify the styles, change the following class selectors in the `prism.css` fi
 }
 ```
 
-## Newletter component (v1.1.3)
+## 新闻通讯组件 (v1.1.3)
 
-Introduced in v1.1.3, the newsletter component gives you an easy way to build an audience. It integrates with the following providers:
+在 v1.1.3 中引入的新闻通讯组件为你提供了一种轻松建立受众的方式。它与以下提供商集成：
 
 - [Mailchimp](https://mailchimp.com/)
 - [Buttondown](https://buttondown.email/)
 - [Convertkit](https://convertkit.com/)
 
-To use it, specify the provider which you are using in the config file and add the necessary environment variables to the `.env` file.
-For more information on the required variables, check out `.env.sample.`
+要使用它，请在配置文件中指定你正在使用的提供商，并将必要的环境变量添加到 `.env` 文件中。
+有关所需变量的更多信息，请查看 `.env.sample.`
 
-Two components are exported, a default `NewsletterForm` and a `BlogNewsletterForm` component, which is also passed in as an MDX component
-and can be used in a blog post:
+导出了两个组件，一个是默认的 `NewsletterForm`，另一个是 `BlogNewsletterForm` 组件，它也作为 MDX 组件传入，
+可以在博客文章中使用：
 
 ```jsx
-<BlogNewsletterForm title="Like what you are reading?" />
+<BlogNewsletterForm title="喜欢正在阅读的内容？" />
 ```
 
-<BlogNewsletterForm title="Like what you are reading?" />
+<BlogNewsletterForm title="喜欢正在阅读的内容？" />
 
-The component relies on nextjs's [API routes](https://nextjs.org/docs/api-routes/introduction) which requires a server-side instance of nextjs to be setup
-and is not compatible with a 100% static site export. Users should either self-host or use a compatible platform like Vercel or Netlify which supports this functionality.
+该组件依赖 nextjs 的 [API 路由](https://nextjs.org/docs/api-routes/introduction)，这需要设置 nextjs 的服务器端实例，
+并且与 100% 静态站点导出不兼容。用户应该自行托管或使用支持此功能的兼容平台，如 Vercel 或 Netlify。
 
-A static site compatible alternative is to substitute the route in the newsletter component with a form API endpoint provider.
+静态站点兼容的替代方案是将新闻通讯组件中的路由替换为表单 API 端点提供商。
 
-## Bibliography and Citations (v1.2.1)
+## 参考文献和引用 (v1.2.1)
 
-`rehype-citation` plugin is added to the xdm processing pipeline in v1.2.1. This allows you to easily format citations and insert bibliography from an existing bibtex or CSL-json file.
+`rehype-citation` 插件已添加到 v1.2.1 的 xdm 处理管道中。这允许你轻松格式化引用并从现有的 bibtex 或 CSL-json 文件中插入参考文献。
 
-For example, the following markdown code sample:
+例如，以下 markdown 代码示例：
 
 ```md
 Standard citation [@Nash1950]
@@ -382,7 +379,7 @@ Multiple citations [see @Nash1950; @Nash1951, page 50]
 [^ref]
 ```
 
-is rendered to the following:
+渲染为以下内容：
 
 Standard citation [@Nash1950]  
 In-text citations e.g. @Nash1951  
@@ -392,39 +389,38 @@ Multiple citations [see @Nash1950; @Nash1951, page 50]
 
 [^ref]
 
-A bibliography will be inserted at the end of the document, but this can be overwritten by specifying a `[^Ref]` tag at the intended location.
-The plugin uses APA citation formation, but also supports the following CSLs, 'apa', 'vancouver', 'harvard1', 'chicago', 'mla', or a path to a user-specified CSL file.
+参考文献将插入在文档末尾，但这可以通过在预期位置指定 `[^Ref]` 标签来覆盖。
+该插件使用 APA 引用格式，但也支持以下 CSL：'apa'、'vancouver'、'harvard1'、'chicago'、'mla'，或用户指定的 CSL 文件路径。
 
-See [rehype-citation readme](https://github.com/timlrx/rehype-citation) for more information on the configuration options.
+有关配置选项的更多信息，请参见 [rehype-citation 自述文件](https://github.com/timlrx/rehype-citation)。
 
-## Self-hosted font (v1.5.0)
+## 自托管字体 (v1.5.0)
 
-Google font has been replaced with self-hosted font from [Fontsource](https://fontsource.org/). This gives the following [advantages](https://fontsource.org/docs/introduction):
+Google 字体已被 [Fontsource](https://fontsource.org/) 的自托管字体替换。这带来了以下[优势](https://fontsource.org/docs/introduction)：
 
-> Self-hosting brings significant performance gains as loading fonts from hosted services, such as Google Fonts, lead to an extra (render blocking) network request. To provide perspective, for simple websites it has been seen to double visual load times.
+> 自托管带来了显著的性能提升，因为从托管服务（如 Google Fonts）加载字体会导致额外的（渲染阻塞）网络请求。为了提供参考，对于简单的网站，视觉加载时间已看到翻倍。
 >
-> Fonts remain version locked. Google often pushes updates to their fonts without notice, which may interfere with your live production projects. Manage your fonts like any other NPM dependency.
+> 字体保持版本锁定。Google 经常在没有通知的情况下推送字体更新，这可能会干扰你的在线生产项目。像管理任何其他 NPM 依赖项一样管理你的字体。
 >
-> Commit to privacy. Google does track the usage of their fonts and for those who are extremely privacy concerned, self-hosting is an alternative.
+> 致力于隐私。Google 确实会跟踪其字体的使用情况，对于极度关注隐私的人来说，自托管是一种替代方案。
 
-This leads to a smaller font bundle and a 0.1s faster load time ([webpagetest comparison](https://www.webpagetest.org/video/compare.php?tests=220201_AiDcFH_f68a69b758454dd52d8e67493fdef7da,220201_BiDcMC_bf2d53f14483814ba61e794311dfa771)).
+这导致字体包更小，加载时间快 0.1s（[webpagetest 对比](https://www.webpagetest.org/video/compare.php?tests=220201_AiDcFH_f68a69b758454dd52d8e67493fdef7da,220201_BiDcMC_bf2d53f14483814ba61e794311dfa771)）。
 
-To change the default Inter font:
+要更改默认的 Inter 字体：
 
-1. Install the preferred [font](https://fontsource.org/fonts) - `npm install -save @fontsource/<font-name>`
-2. Update the import at `pages/_app.js`- `import '@fontsource/<font-name>.css'`
-3. Update the `fontfamily` property in the tailwind css config file
+1. 安装首选的[字体](https://fontsource.org/fonts) - `npm install -save @fontsource/<font-name>`
+2. 更新 `pages/_app.js` 中的导入 - `import '@fontsource/<font-name>.css'`
+3. 更新 tailwind css 配置文件中的 `fontfamily` 属性
 
-## Upgrade guide
+## 升级指南
 
-There are significant portions of the code that has been changed from v0 to v1 including support for layouts and a new mdx engine.
+从 v0 到 v1，代码中有大量部分已更改，包括对布局的支持和新的 mdx 引擎。
 
-There's also no real reason to change if the previous one serves your needs and it might be easier to copy
-the component changes you are interested in to your existing blog rather than migrating everything over.
+如果之前的版本满足你的需求，也没有真正的理由去更改，将你感兴趣的组件更改复制到你现有的博客可能比迁移所有内容更容易。
 
-Nonetheless, if you want to do so and have not changed much of the template, you could clone the new version and copy over the blog post over to the new template.
+尽管如此，如果你想这样做且没有更改太多模板，你可以克隆新版本并将博客文章复制到新模板中。
 
-Another alternative would be to pull the latest template version with the following code:
+另一种选择是使用以下代码拉取最新的模板版本：
 
 ```bash
 git remote add template git@github.com:timlrx/tailwind-nextjs-starter-blog.git
@@ -432,9 +428,9 @@ git pull template v1 --allow-unrelated-histories
 rm -rf node_modules
 ```
 
-You can see an example of such a migration in this [commit](https://github.com/timlrx/timlrx.com/commit/bba1c185384fd6d5cdaac15abf802fdcff027286) for my personal blog.
+你可以在我的个人博客的这个[提交](https://github.com/timlrx/timlrx.com/commit/bba1c185384fd6d5cdaac15abf802fdcff027286)中看到这样的迁移示例。
 
-v1 also uses `feed.xml` rather than `index.xml`, to avoid some build issues with Vercel. If you are migrating you should add a redirect to `next.config.js` like so:
+v1 还使用 `feed.xml` 而不是 `index.xml`，以避免与 Vercel 的一些构建问题。如果你正在迁移，你应该像这样向 `next.config.js` 添加重定向：
 
 ```js
 async redirects() {

@@ -1,19 +1,19 @@
 ---
-title: Images in Next.js
+title: Next.js 中的图片
 date: '2020-11-11'
 tags: ['next js', 'guide']
 draft: false
-summary: 'In this article we introduce adding images in the tailwind starter blog and the benefits and limitations of the next/image component.'
+summary: '在本文中，我们介绍如何在 Tailwind 入门博客中添加图片，以及 next/image 组件的优点和局限性。'
 authors: ['sparrowhawk']
 ---
 
-# Introduction
+# 简介
 
-The tailwind starter blog has out of the box support for [Next.js's built-in image component](https://nextjs.org/docs/api-reference/next/image) and automatically swaps out default image tags in markdown or mdx documents to use the Image component provided.
+Tailwind 入门博客开箱即支持 [Next.js 内置的图片组件](https://nextjs.org/docs/api-reference/next/image)，并自动将 markdown 或 mdx 文档中的默认图片标签替换为提供的 Image 组件。
 
-# Usage
+# 使用方法
 
-To use in a new page route / javascript file, simply import the image component and call it e.g.
+要在新的页面路由 / JavaScript 文件中使用，只需导入图片组件并调用它，例如
 
 ```js
 import Image from 'next/image'
@@ -31,42 +31,42 @@ function Home() {
 export default Home
 ```
 
-For a markdown file, the default image tag can be used and the default `img` tag gets replaced by the `Image` component in the build process.
+对于 markdown 文件，可以使用默认的图片标签，默认的 `img` 标签会在构建过程中被替换为 `Image` 组件。
 
-Assuming we have a file called `ocean.jpg` in `static/images/ocean.jpg`, the following line of code would generate the optimized image.
+假设我们在 `static/images/ocean.jpg` 有一个名为 `ocean.jpg` 的文件，以下代码行将生成优化后的图片。
 
 ```
 ![ocean](/static/images/ocean.jpg)
 ```
 
-Alternatively, since we are using mdx, we can just use the image component directly! Note, that you would have to provide a fixed width and height. The `img` tag method parses the dimension automatically.
+另外，由于我们使用的是 mdx，我们可以直接使用图片组件！注意，你需要提供固定的宽度和高度。`img` 标签方法会自动解析尺寸。
 
 ```js
 <Image alt="ocean" src="/static/images/ocean.jpg" width={256} height={128} />
 ```
 
-_Note_: If you try to save the image, it is in webp format, if your browser supports it!
+_注意_：如果你尝试保存图片，如果浏览器支持的话，它会是 webp 格式！
 
 ![ocean](/static/images/ocean.jpeg)
 
-Photo by [YUCAR FotoGrafik](https://unsplash.com/@yucar?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
-on [Unsplash](https://unsplash.com/s/photos/sea?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+图片作者 [YUCAR FotoGrafik](https://unsplash.com/@yucar?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+，来自 [Unsplash](https://unsplash.com/s/photos/sea?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
 
-# Benefits
+# 优点
 
-- Smaller image size with Webp (~30% smaller than jpeg)
-- Responsive images - the correct image size is served based on the user's viewport
-- Lazy loading - images load as they are scrolled to the viewport
-- Avoids [Cumulative Layout Shift](https://web.dev/cls/)
-- Optimization on demand instead of build-time - no increase in build time!
+- Webp 格式图片更小（比 jpeg 小约 30%）
+- 响应式图片 - 根据用户的视口提供正确的图片尺寸
+- 懒加载 - 图片在滚动到视口时加载
+- 避免 [累积布局偏移](https://web.dev/cls/)
+- 按需优化而不是构建时优化 - 不会增加构建时间！
 
-# Limitations
+# 局限性
 
-- Due to the reliance on `next/image`, unless you are using an external image CDN like Cloudinary or Imgix, it is practically required to use Vercel for hosting. This is because the component acts like a serverless function that calls a highly optimized image CDN.
+- 由于依赖 `next/image`，除非你使用像 Cloudinary 或 Imgix 这样的外部图片 CDN，否则实际上需要使用 Vercel 进行托管。这是因为该组件就像一个调用高度优化图片 CDN 的无服务器函数。
 
-  If you do not want to be tied to Vercel, you can remove `imgToJsx` in `remarkPlugins` in `lib/mdx.js`. This would avoid substituting the default `img` tag.
+  如果你不想被绑定到 Vercel，可以在 `lib/mdx.js` 的 `remarkPlugins` 中移除 `imgToJsx`。这将避免替换默认的 `img` 标签。
 
-  Alternatively, one could wait for image optimization at build time to be supported. A different library, [next-optimized-images](https://github.com/cyrilwanner/next-optimized-images) does that, although it requires transforming the images through webpack which is not done here.
+  另外，可以等待支持构建时的图片优化。另一个库 [next-optimized-images](https://github.com/cyrilwanner/next-optimized-images) 可以做到这一点，尽管它需要通过 webpack 转换图片，而这里没有这样做。
 
-- Images from external links are not passed through `next/image`
-- All images have to be stored in the `public` folder e.g `/static/images/ocean.jpeg`
+- 来自外部链接的图片不会通过 `next/image` 处理
+- 所有图片必须存储在 `public` 文件夹中，例如 `/static/images/ocean.jpeg`

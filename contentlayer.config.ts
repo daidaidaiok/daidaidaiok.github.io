@@ -42,6 +42,9 @@ const icon = fromHtmlIsomorphic(
   { fragment: true }
 )
 
+let postIdCounter = 0
+const postIdMap = new Map()
+
 const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
@@ -57,6 +60,17 @@ const computedFields: ComputedFields = {
     resolve: (doc) => doc._raw.sourceFilePath,
   },
   toc: { type: 'json', resolve: (doc) => extractTocHeadings(doc.body.raw) },
+  id: {
+    type: 'number',
+    resolve: (doc) => {
+      const path = doc._raw.flattenedPath
+      if (!postIdMap.has(path)) {
+        postIdCounter += 1
+        postIdMap.set(path, postIdCounter)
+      }
+      return postIdMap.get(path)
+    },
+  },
 }
 
 /**

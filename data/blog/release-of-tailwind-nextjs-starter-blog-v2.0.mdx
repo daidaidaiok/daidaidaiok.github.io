@@ -1,26 +1,26 @@
 ---
-title: 'Release of Tailwind Nextjs Starter Blog v2.0'
+title: 'Tailwind Nextjs 入门博客 v2.0 发布'
 date: '2023-08-05'
 lastmod: '2023-08-05'
 tags: ['next-js', 'tailwind', 'guide', 'feature']
 draft: false
-summary: 'Release of Tailwind Nextjs Starter Blog template v2.0, refactored with Nextjs App directory and React Server Components setup.Discover the new features and how to migrate from V1.'
+summary: 'Tailwind Nextjs 入门博客模板 v2.0 发布，使用 Nextjs App 目录和 React Server Components 设置重构。发现新特性以及如何从 V1 迁移。'
 images: ['/static/images/twitter-card.png']
 ---
 
-## Introduction
+## 介绍
 
-Welcome to the release of Tailwind Nextjs Starter Blog template v2.0. This release is a major refactor of the codebase to support Nextjs App directory and React Server Components. Read on to discover the new features and how to migrate from V1.
+欢迎使用 Tailwind Nextjs 入门博客模板 v2.0。此版本是对代码库的重大重构，以支持 Nextjs App 目录和 React Server Components。继续阅读以发现新特性以及如何从 V1 迁移。
 
 <TOCInline toc={props.toc} exclude="Introduction" />
 
-## V1 to V2
+## 从 V1 到 V2
 
 ![Github Traffic](/static/images/github-traffic.png)
 
-The template was first released in January 2021 and has since been used by thousands of users. It is featured on [Next.js Templates](https://vercel.com/templates/next.js/tailwind-css-starter-blog), [Tailwind Awesome](https://www.tailwindawesome.com/resources/tailwind-nextjs-starter-blog) among other listing sites. It attracts 200+ unique visitors daily notching 1500-2000 page views, with 1.3k forks and many other clones.
+该模板于 2021 年 1 月首次发布，此后已被数千名用户使用。它在 [Next.js Templates](https://vercel.com/templates/next.js/tailwind-css-starter-blog)、[Tailwind Awesome](https://www.tailwindawesome.com/resources/tailwind-nextjs-starter-blog) 等列表网站中都有展示。它每天吸引 200+ 独立访客，获得 1500-2000 次页面浏览，有 1.3k 个 fork 和许多其他克隆。
 
-Many thanks to the community of users and contributors for making this template a success! I created a small video montage of the blogs (while cleaning up the list in the readme) to showcase the diversity of the blogs created using the template and to celebrate the milestone:
+非常感谢用户和贡献者社区使这个模板取得成功！我制作了一个博客的小视频蒙太奇（同时在整理 readme 中的列表），以展示使用该模板创建的博客的多样性，并庆祝这一里程碑：
 
 <video controls>
   <source
@@ -29,29 +29,29 @@ Many thanks to the community of users and contributors for making this template 
   />
 </video>
 
-Version 2 builds on the success of the previous version and introduces many new features and improvements. The codebase has been refactored to support Next.js App directory and React Server Components. Markdown / MDX is now processed using Contentlayer, a type-safe content SDK that validates and transforms your content into type-safe JSON data. It integrates with Pliny, a new library that provides out of the box Next.js components to enhance your static site with analytics, comments and newsletter subscription. A new command palette (⌘-k) search component is also added to the template.
+第 2 版建立在前一版本的成功基础上，并引入了许多新功能和改进。代码库已重构以支持 Next.js App 目录和 React Server Components。Markdown / MDX 现在使用 Contentlayer 处理，这是一个类型安全的内容 SDK，可将您的内容验证并转换为类型安全的 JSON 数据。它与 Pliny 集成，这是一个新库，提供开箱即用的 Next.js 组件，通过分析、评论和新闻订阅来增强您的静态网站。模板中还添加了一个新的命令面板（⌘-k）搜索组件。
 
-Let's dive into the new features and improvements in V2.
+让我们深入了解 V2 中的新功能和改进。
 
-## Next.js App Directory and React Server Components
+## Next.js App 目录和 React Server Components
 
-Now that [Next.js App router](https://nextjs.org/docs/app) is finally stable and is mostly feature compatible with Page Router, the codebase has been migrated to new setup. This allows for a hybrid rendering approach, with the use of React Server Components generated on the server side for faster page loads and smaller bundle sizes, while retaining the ability to sprinkle in client side React components for interactivity.[^1]
+现在 [Next.js App 路由器](https://nextjs.org/docs/app) 终于稳定了，并且与页面路由器在功能上基本兼容，代码库已迁移到新的设置。这允许混合渲染方法，使用在服务器端生成的 React Server Components 以实现更快的页面加载和更小的包大小，同时保留添加客户端 React 组件以实现交互性的能力。[^1]
 
-With addition powers comes a [new paradigm](https://nextjs.org/docs/getting-started/react-essentials) to learn. I have migrated the codebase to make use of the new features as much as possible. This includes changes in the folder structure, splitting components into server vs client components, leveraging server side data fetching and using the recommended [Metadata](https://nextjs.org/docs/app/building-your-application/optimizing/metadata) API for SEO discoverability.
+有了额外的能力，就需要学习[新的范式](https://nextjs.org/docs/getting-started/react-essentials)。我已迁移代码库以尽可能利用新功能。这包括文件夹结构的更改、将组件拆分为服务器与客户端组件、利用服务器端数据获取以及使用推荐的 [Metadata](https://nextjs.org/docs/app/building-your-application/optimizing/metadata) API 以实现 SEO 可发现性。
 
-While this simplifies the codebase to some extent, it makes migration from the old codebase more difficult. If you are looking to migrate, I recommend starting from a fresh template and copying over your customizations and existing content. See the [migration recommendations](#migration-recommendations) section for more details.
+虽然这在某种程度上简化了代码库，但它使得从旧代码库迁移变得更加困难。如果您希望迁移，我建议从全新的模板开始，复制您的自定义设置和现有内容。有关更多详细信息，请参阅[迁移建议](#迁移建议)部分。
 
-## Typescript First
+## 以 TypeScript 优先
 
-The codebase has been migrated to Typescript. While the previous version of the template was available in both Javascript and Typescript, I decided to reduce the maintenance burden and focus on Typescript. This also allows for better type checking and code completion in IDEs.
+代码库已迁移到 TypeScript。虽然以前版本的模板同时提供 JavaScript 和 TypeScript，但我决定减少维护负担并专注于 TypeScript。这也允许在 IDE 中进行更好的类型检查和代码补全。
 
-Typescript is also a perfect match with our new type-safe markdown processor - Contentlayer.
+TypeScript 也与我们新的类型安全 Markdown 处理器 - Contentlayer 完美匹配。
 
 ## Contentlayer
 
-[Contentlayer](https://www.contentlayer.dev/) is a content SDK that validates and transforms your content into type-safe JSON data that you can easily import into your application. It makes working with local markdown or MDX files a breeze. This replaces `MDX-bundler` and our own markdown processing workflow.
+[Contentlayer](https://www.contentlayer.dev/) 是一个内容 SDK，可将您的内容验证并转换为类型安全的 JSON 数据，您可以轻松将其导入到您的应用程序中。它使处理本地 Markdown 或 MDX 文件变得轻而易举。这取代了 `MDX-bundler` 和我们自己的 Markdown 处理工作流程。
 
-First, a content source is defined, specifying the name of the document type, the source where it is located along with the frontmatter fields and any additional computed fields that should be generated as part of the process.
+首先，定义一个内容源，指定文档类型的名称、所在位置以及前置元数据字段和任何应作为过程一部分生成的附加计算字段。
 
 ```ts:contentlayer.config.ts
 export const Blog = defineDocumentType(() => ({
@@ -75,41 +75,41 @@ export const Blog = defineDocumentType(() => ({
 }))
 ```
 
-Contentlayer then processes the MDX files with our desired markdown remark or rehype plugins, validates the schema, generate type definitions and output json files that can be easily imported in our pages. Hot reloading comes out of the box, so edits to the markdown files will be reflected in the browser immediately!
+然后，Contentlayer 使用我们所需的 Markdown remark 或 rehype 插件处理 MDX 文件，验证模式，生成类型定义并输出可以轻松导入我们页面的 JSON 文件。热重载开箱即用，因此对 Markdown 文件的编辑将立即反映在浏览器中！
 
 ## Pliny
 
-A large reason for the popularity of the template was its customizability and integration with other services from analytics providers to commenting solutions. However, this means that a lot of boilerplate code has to be co-located within the template even if the user does not use the feature. Updates and bug fixes had to be copied manually to the user's codebase.
+该模板受欢迎的一个重要原因是其可定制性以及与从分析提供商到评论解决方案等其他服务的集成。然而，这意味着即使用户不使用该功能，也必须将大量样板代码与模板放在同一位置。更新和错误修复必须手动复制到用户的代码库中。
 
-To solve this, I have abstracted the logic to a separate repository - [Pliny](https://github.com/timlrx/pliny). Pliny provides out of the box Next.js components to enhance static sites:
+为了解决这个问题，我将逻辑抽象到一个单独的仓库 - [Pliny](https://github.com/timlrx/pliny)。Pliny 提供开箱即用的 Next.js 组件来增强静态网站：
 
-- Analytics
+- 分析
   - Google Analytics
   - Plausible Analytics
   - Simple Analytics
   - Umami Analytics
   - Posthog
-- Comments
+- 评论
   - Disqus
   - Giscus
   - Utterances
-- Newsletter (uses Next 13 API Routes)
+- 新闻订阅（使用 Next 13 API 路由）
   - Buttondown
   - Convertkit
   - Email Octopus
   - Klaviyo
   - Mailchimp
   - Revue
-- Command palette search with tailwind style sheet
+- 带有 Tailwind 样式表的命令面板搜索
   - Algolia
-  - Kbar (local search)
-- UI utility components
+  - Kbar（本地搜索）
+- UI 实用组件
   - Bleed
   - Newsletter / Blog Newsletter
   - Pre / Code block
   - Table of Contents
 
-Choose your preferred service by modifying `siteMetadata.js` and changing the appropriate fields. For example to change from Umami Analytics to Plausible, we can change the following fields:
+通过修改 `siteMetadata.js` 并更改适当的字段来选择您的首选服务。例如，要从 Umami Analytics 更改为 Plausible，我们可以更改以下字段：
 
 ```diff-js:siteMetadata.js
 analytics: {
@@ -123,70 +123,70 @@ analytics: {
 },
 ```
 
-Changes in the configuration file gets propagated to the components automatically. No modification to the template is required.
+配置文件的更改会自动传播到组件。无需修改模板。
 
-Under the hood, Pliny exports high level components such as `<Analytics analyticsConfig={analyticsConfig}/>` and `<Comments commentsConfig={commentsConfig}/>` which takes in a configuration object and renders the appropriate component. Since the layouts are defined on the server side, Next.js is able to use the configuration object to determine which component to render and send only the required component bundle to the client.
+在底层，Pliny 导出高级组件，例如 `<Analytics analyticsConfig={analyticsConfig}/>` 和 `<Comments commentsConfig={commentsConfig}/>`，它们接收一个配置对象并渲染适当的组件。由于布局是在服务器端定义的，Next.js 能够使用配置对象来确定要渲染哪个组件，并仅将所需的组件包发送到客户端。
 
-## New Search Component
+## 新搜索组件
 
-What's a blog in 2023 without a command palette search bar?
+2023 年的博客怎么能没有命令面板搜索栏？
 
-One of the most highly requested features have been added 🎉! The search component supports 2 search providers - Algolia and Kbar local search.
+最受期待的功能之一已经添加 🎉！搜索组件支持 2 个搜索提供商 - Algolia 和 Kbar 本地搜索。
 
 ### Algolia
 
-[Algolia Docsearch](https://docsearch.algolia.com/) is popular free service used across many documentation websites. It automatically scrapes the website that has is submitted for indexing and makes the search result available via a beautiful dialog modal. The pliny component is greatly inspired by the Docusaurus implementation and comes with a stylesheet that is compatible with the Tailwind CSS theme.
+[Algolia Docsearch](https://docsearch.algolia.com/) 是许多文档网站使用的流行免费服务。它会自动抓取提交进行索引的网站，并通过美观的对话框模态提供搜索结果。pliny 组件深受 Docusaurus 实现的启发，并附带与 Tailwind CSS 主题兼容的样式表。
 
 ### Kbar
 
-[Kbar](https://github.com/timc1/kbar) is a fast, portable, and extensible cmd+k interface. The pliny implementation uses kbar to create a local search dialog box. The component loads a JSON file, default `search.json`, that was created in the contentlayer build process. Try pressing ⌘-k or ctrl-k to see the search bar in action!
+[Kbar](https://github.com/timc1/kbar) 是一个快速、可移植且可扩展的 cmd+k 界面。pliny 实现使用 kbar 创建本地搜索对话框。组件加载一个在 Contentlayer 构建过程中创建的 JSON 文件，默认 `search.json`。尝试按 ⌘-k 或 ctrl-k 查看搜索栏的实际效果！
 
-## Styling and Layout Updates
+## 样式和布局更新
 
-### Theming
+### 主题
 
-`tailwind.config.js` has been updated to use tailwind typography defaults where possible and to use the built-in support for dark mode via the `prose-invert` class. This replaces the previous `prose-dark` class and configuration.
+`tailwind.config.js` 已更新为尽可能使用 Tailwind 排版默认值，并通过 `prose-invert` 类使用内置的深色模式支持。这取代了之前的 `prose-dark` 类和配置。
 
-The primary theme color is updated from `teal` to `pink` and the primary gray theme from `neutral` to `gray`.
+主主题颜色从 `teal` 更新为 `pink`，主灰色主题从 `neutral` 更新为 `gray`。
 
-Inter is now replaced with Space Grotesk as the default font.
+Inter 现在被 Space Grotesk 替换为默认字体。
 
-### New Layouts
+### 新布局
 
-Layout components available in the `layouts` directory, provide a simple way to customize the look and feel of the blog.[^2]
+`layouts` 目录中可用的布局组件提供了一种自定义博客外观的简单方式。[^2]
 
-The downside of building a popular template is that you start seeing multiple similar sites everywhere 😆. While users are encouraged to customized the layouts to their liking, having more layout options that are easily switchable promotes diversity and perhaps can be a good starting point for further customizations.
+构建流行模板的缺点是，你开始到处看到多个相似的网站 😆。虽然鼓励用户根据自己的喜好自定义布局，但拥有更多易于切换的布局选项可以促进多样性，也许可以成为进一步定制的好起点。
 
-In v2, I added a new post layout - `PostBanner`. It features a large banner image and a centered content container. Check out "[Pictures of Canada](/blog/pictures-of-canada)" blog post which has been updated to use the new layout.
+在 v2 中，我添加了一个新的文章布局 - `PostBanner`。它具有大横幅图片和居中的内容容器。查看已更新使用新布局的 "[加拿大图片](/blog/pictures-of-canada)" 博客文章。
 
-The default blog listing layout has also been updated to include a side bar with blog tags. The search bar in the previous layout has been replace with the new command palette search. To switch back to the old layout, simply change the pages that use the `ListLayoutWithTags` component back to the original `ListLayout`.
+默认博客列表布局也已更新为包含带有博客标签的侧边栏。之前布局中的搜索栏已被新的命令面板搜索取代。要切换回旧布局，只需将使用 `ListLayoutWithTags` 组件的页面改回原始的 `ListLayout`。
 
-## Migration Recommendations
+## 迁移建议
 
-Due to the large changes in directory structure, setup and tooling, I recommend starting from a fresh template and copying existing content, followed by incrementally migrating changes over to the new template.
+由于目录结构、设置和工具的重大变化，我建议从全新的模板开始，复制现有内容，然后逐步将更改迁移到新模板。
 
-Styling changes should be relatively minor and can be copied over from the old `tailwind.config.js` to the new one. If copying over, you might need to add back the `prose-dark` class to components that opt into tailwind typography styling. Do modify the font import in the root layout component to use the desired font of choice.
+样式更改应该相对较小，可以从旧的 `tailwind.config.js` 复制到新的。如果复制，您可能需要将 `prose-dark` 类添加回选择使用 Tailwind 排版样式的组件。记得在根布局组件中修改字体导入以使用您想要的字体。
 
-Changes to the MDX processing pipeline and schema can be easily ported to the new Contentlayer setup. If there are changes to the frontmatter fields, you can modify the document type in `contentlayer.config.ts` to include the new fields. Custom plugins can be added to the `remarkPlugins` and `rehypePlugins` properties in the `makeSource` export of `contentlayer.config.ts`.
+对 MDX 处理管道和模式的更改可以轻松移植到新的 Contentlayer 设置。如果有对前置元数据字段的更改，您可以修改 `contentlayer.config.ts` 中的文档类型以包含新字段。自定义插件可以添加到 `contentlayer.config.ts` 的 `makeSource` 导出的 `remarkPlugins` 和 `rehypePlugins` 属性中。
 
-Markdown layouts are no longer sourced automatically from the `layouts` directory. Instead, they have to be specified in the `layouts` object defined in `blog/[...slug]/page.tsx`.[^3]
+Markdown 布局不再自动从 `layouts` 目录获取。相反，它们必须在 `blog/[...slug]/page.tsx` 中定义的 `layouts` 对象中指定。[^3]
 
-To port over larger components or pages, I recommend first specificing it as a client component by using the `"use client"` directive. Once it renders correctly, you can split the interactive components (parts that rely on `use` hooks) as a client component and keep the remaining code as a server component. Consult the comprehensive Next.js [migration guide](https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#migrating-from-pages-to-app) for more details.
+要移植较大的组件或页面，我建议首先通过使用 `"use client"` 指令将其指定为客户端组件。一旦它正确渲染，您可以将交互式组件（依赖 `use` 钩子的部分）拆分为客户端组件，并将剩余的代码保留为服务器组件。查阅全面的 Next.js [迁移指南](https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#migrating-from-pages-to-app) 以获取更多详细信息。
 
-## Conclusion
+## 结论
 
-I hope you enjoy the new features and improvements in V2. If you have any feedback or suggestions, feel free to open an issue or reach out to me on [Twitter](https://twitter.com/timlrx).
+希望你喜欢 V2 中的新功能和改进。如果您有任何反馈或建议，请随时在 GitHub 上提出问题或在 [Twitter](https://twitter.com/timlrx) 上与我联系。
 
-## Support
+## 支持
 
-Using the template? Support this effort by giving a star on GitHub, sharing your own blog and giving a shoutout on Twitter or be a project [sponsor](https://github.com/sponsors/timlrx).
+正在使用这个模板？通过在 GitHub 上给星标、分享您自己的博客并在 Twitter 上大声疾呼，或成为项目[赞助者](https://github.com/sponsors/timlrx)来支持这项工作。
 
-## Licence
+## 许可证
 
 [MIT](https://github.com/timlrx/tailwind-nextjs-starter-blog/blob/main/LICENSE) © [Timothy Lin](https://www.timrlx.com)
 
-[^1]: The previous version injects Preact into the production build. However, this is no longer possible as it does not support React Server Components. While overall bundle size has increased to about 85kB, most of the content can be pre-rendered on the server side, resulting in a low first contentful paint and time to interactive. Using React throughtout also leads to more consistent behavior with external libraries and components.
+[^1]: 以前的版本将 Preact 注入到生产构建中。然而，这不再可能，因为它不支持 React Server Components。虽然整体包大小已增加到约 85kB，但大部分内容可以在服务器端预渲染，从而实现较低的首屏内容绘制时间和交互时间。在整个过程中使用 React 还可以使外部库和组件的行为更加一致。
 
-[^2]: This is different from Next.js App Directory layouts and are best thought of as reusable React containers.
+[^2]: 这与 Next.js App 目录布局不同，最好将其视为可重用的 React 容器。
 
-[^3]: This takes advantage of Server Components by making it simple to specify the layout of choice in the markdown file and match against the `layouts` object which is then used to render the appropriate layout component.
+[^3]: 这通过简化在 Markdown 文件中指定所选布局并与 `layouts` 对象匹配来利用服务器组件，然后用于渲染适当的布局组件。

@@ -1,22 +1,22 @@
 ---
-title: O Canada
+title: 加拿大风光
 date: '2017-07-15'
 tags: ['holiday', 'canada', 'images']
 draft: false
 layout: PostBanner
 images: ['/static/images/canada/mountains.jpg']
-summary: The scenic lands of Canada featuring maple leaves, snow-capped mountains, turquoise lakes and Toronto. Take in the sights in this photo gallery exhibition and see how easy it is to replicate with some MDX magic and tailwind classes.
+summary: 加拿大的风景，包括枫叶、雪山、碧绿湖泊和多伦多。在这个照片画廊展览中欣赏风景，看看用 MDX 魔法和 Tailwind 类复制它有多容易。
 ---
 
-The scenic lands of Canada featuring maple leaves, snow-capped mountains, turquoise lakes and Toronto. Take in the sights in this photo gallery exhibition and see how easy it is to replicate with some MDX magic and tailwind classes.
+加拿大的风景，包括枫叶、雪山、碧绿湖泊和多伦多。在这个照片画廊展览中欣赏风景，看看用 MDX 魔法和 Tailwind 类复制它有多容易。
 
-Features images served using `next/image` component. The locally stored images are located in a folder with the following path: `/static/images/canada/[filename].jpg`
+使用 `next/image` 组件提供图片功能。本地存储的图片位于以下路径的文件夹中：`/static/images/canada/[filename].jpg`
 
-Since we are using mdx, we can create a simple responsive flexbox grid to display our images with a few tailwind css classes.
+由于我们使用 MDX，我们可以用几个 Tailwind CSS 类创建一个简单的响应式 flexbox 网格来展示我们的图片。
 
 ---
 
-# Gallery
+# 画廊
 
 <div className="-mx-2 flex flex-wrap overflow-hidden xl:-mx-2">
   <div className="my-1 w-full overflow-hidden px-2 xl:my-1 xl:w-1/2 xl:px-2">
@@ -33,7 +33,7 @@ Since we are using mdx, we can create a simple responsive flexbox grid to displa
   </div>
 </div>
 
-# Implementation
+# 实现方式
 
 ```js
 <div className="-mx-2 flex flex-wrap overflow-hidden xl:-mx-2">
@@ -52,31 +52,31 @@ Since we are using mdx, we can create a simple responsive flexbox grid to displa
 </div>
 ```
 
-With MDX v2, one can interleave markdown in jsx as shown in the example code.
+在 MDX v2 中，可以像示例代码那样在 JSX 中嵌入 Markdown。
 
-### Photo Credits
+### 照片来源
 
 <div>
-  Maple photo by [Guillaume
+  枫叶照片由 [Guillaume
   Jaillet](https://unsplash.com/@i_am_g?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
-  on
+  拍摄于
   [Unsplash](https://unsplash.com/s/photos/canada?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
 </div>
 <div>
-  Mountains photo by [John
+  山脉照片由 [John
   Lee](https://unsplash.com/@john_artifexfilms?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
-  on
+  拍摄于
   [Unsplash](https://unsplash.com/s/photos/canada?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
 </div>
 <div>
-  Lake photo by [Tj
+  湖泊照片由 [Tj
   Holowaychuk](https://unsplash.com/@tjholowaychuk?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
-  on
+  拍摄于
   [Unsplash](https://unsplash.com/s/photos/canada?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
 </div>
 <div>
-  Toronto photo by [Matthew
+  多伦多照片由 [Matthew
   Henry](https://unsplash.com/@matthewhenry?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
-  on
+  拍摄于
   [Unsplash](https://unsplash.com/s/photos/canada?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText)
 </div>

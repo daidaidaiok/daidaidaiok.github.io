@@ -13,8 +13,8 @@ import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 interface LayoutProps {
   content: CoreContent<Blog>
   children: ReactNode
-  next?: { path: string; title: string }
-  prev?: { path: string; title: string }
+  next?: { id: number; title: string }
+  prev?: { id: number; title: string }
 }
 
 export default function PostMinimal({ content, next, prev, children }: LayoutProps) {
@@ -47,23 +47,23 @@ export default function PostMinimal({ content, next, prev, children }: LayoutPro
           )}
           <footer>
             <div className="flex flex-col text-sm font-medium sm:flex-row sm:justify-between sm:text-base">
-              {prev && prev.path && (
+              {prev && prev.id && (
                 <div className="pt-4 xl:pt-8">
                   <Link
-                    href={`/${prev.path}`}
+                    href={`/blog/${prev.id}`}
                     className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                    aria-label={`Previous post: ${prev.title}`}
+                    aria-label={`上一篇: ${prev.title}`}
                   >
                     &larr; {prev.title}
                   </Link>
                 </div>
               )}
-              {next && next.path && (
+              {next && next.id && (
                 <div className="pt-4 xl:pt-8">
                   <Link
-                    href={`/${next.path}`}
+                    href={`/blog/${next.id}`}
                     className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                    aria-label={`Next post: ${next.title}`}
+                    aria-label={`下一篇: ${next.title}`}
                   >
                     {next.title} &rarr;
                   </Link>
