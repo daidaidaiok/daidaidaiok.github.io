@@ -36,10 +36,7 @@ export default function Home({ posts }) {
                       <div className="space-y-6">
                         <div>
                           <h2 className="text-2xl leading-8 font-bold tracking-tight">
-                            <Link
-                              href={`/blog/${id}`}
-                              className="text-gray-900 dark:text-gray-100"
-                            >
+                            <Link href={`/blog/${id}`} className="text-gray-900 dark:text-gray-100">
                               {title}
                             </Link>
                           </h2>
