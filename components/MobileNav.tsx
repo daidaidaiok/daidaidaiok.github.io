@@ -29,7 +29,7 @@ const MobileNav = () => {
 
   useEffect(() => {
     return clearAllBodyScrollLocks
-  })
+  }, [])
 
   return (
     <>
