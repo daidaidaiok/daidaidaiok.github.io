@@ -18,10 +18,17 @@ const MobileNav = () => {
   const onToggleNav = () => {
     setNavShow((status) => {
       if (status) {
-        enableBodyScroll(navRef.current)
+        try {
+          enableBodyScroll(navRef.current)
+        } catch (error) {
+          console.error('Failed to enable body scroll:', error)
+        }
       } else {
-        // Prevent scrolling
-        disableBodyScroll(navRef.current)
+        try {
+          disableBodyScroll(navRef.current)
+        } catch (error) {
+          console.error('Failed to disable body scroll:', error)
+        }
       }
       return !status
     })
