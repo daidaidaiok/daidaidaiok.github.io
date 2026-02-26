@@ -61,6 +61,7 @@ const unoptimized = process.env.UNOPTIMIZED ? true : undefined
  * @type {import('next/dist/next-server/server/config').NextConfig}
  **/
 const nextConfig = {
+  output: 'export',
   basePath,
   reactStrictMode: true,
   trailingSlash: true,
