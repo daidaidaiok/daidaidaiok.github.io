@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where npm node npx)",
+      "Bash(npm --version)"
     ]
   }
 }

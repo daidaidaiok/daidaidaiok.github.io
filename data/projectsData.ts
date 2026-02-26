@@ -7,20 +7,16 @@ interface Project {
 
 const projectsData: Project[] = [
   {
-    title: 'A Search Engine',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
+    title: '题库智能管理系统',
+    description: '一款智能化的题库管理平台，支持多种题型管理、试卷生成、在线考试等功能，帮助教育机构高效管理教学资源。',
     imgSrc: '/static/images/google.png',
-    href: 'https://www.google.com',
+    href: 'https://exam.hpb300.com/',
   },
   {
-    title: 'The Time Machine',
-    description: `Imagine being able to travel back in time or to the future. Simple turn the knob
-    to the desired date and press "Go". No more worrying about lost keys or
-    forgotten headphones with this simple yet affordable solution.`,
+    title: '土木工程计算工具',
+    description: '专业的土木工程在线计算工具，提供结构力学、材料计算、施工参数等多种工程计算功能，助力工程师提高工作效率。',
     imgSrc: '/static/images/time-machine.jpg',
-    href: '/blog/the-time-machine',
+    href: 'https://cal.hpb300.com/',
   },
 ]
 
