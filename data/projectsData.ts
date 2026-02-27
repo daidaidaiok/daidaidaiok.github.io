@@ -18,6 +18,12 @@ const projectsData: Project[] = [
     imgSrc: '/static/images/time-machine.jpg',
     href: 'https://cal.hpb300.com/',
   },
+  {
+    title: '我的网盘',
+    description: '个人网盘服务，提供文件存储、分享和管理功能，支持多种文件格式的在线预览，随时随地访问您的文件。',
+    imgSrc: '/static/images/google.png',
+    href: 'https://openlist.hpb300.com/',
+  },
 ]
 
 export default projectsData
