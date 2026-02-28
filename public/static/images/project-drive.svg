@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 544 306" fill="none">
+  <rect width="544" height="306" rx="8" fill="#EFF6FF"/>
+  <rect x="40" y="40" width="464" height="226" rx="12" fill="#DBEAFE" stroke="#60A5FA" stroke-width="2"/>
+  <!-- Cloud -->
+  <g transform="translate(140, 60)">
+    <ellipse cx="130" cy="80" rx="110" ry="55" fill="#93C5FD" opacity="0.4"/>
+    <ellipse cx="90" cy="75" rx="70" ry="50" fill="#60A5FA" opacity="0.5"/>
+    <ellipse cx="170" cy="75" rx="65" ry="45" fill="#60A5FA" opacity="0.45"/>
+    <ellipse cx="130" cy="60" rx="80" ry="50" fill="#3B82F6" opacity="0.6"/>
+  </g>
+  <!-- Upload arrow -->
+  <g transform="translate(247, 90)">
+    <line x1="25" y1="55" x2="25" y2="15" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    <polyline points="12,28 25,12 38,28" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Folders -->
+  <g transform="translate(100, 165)">
+    <path d="M0 8C0 3.582 3.582 0 8 0h20l8 8h44c4.418 0 8 3.582 8 8v34c0 4.418-3.582 8-8 8H8c-4.418 0-8-3.582-8-8V8z" fill="#2563EB" opacity="0.7"/>
+    <rect x="6" y="18" width="76" height="26" rx="4" fill="#BFDBFE" opacity="0.5"/>
+  </g>
+  <g transform="translate(220, 165)">
+    <path d="M0 8C0 3.582 3.582 0 8 0h20l8 8h44c4.418 0 8 3.582 8 8v34c0 4.418-3.582 8-8 8H8c-4.418 0-8-3.582-8-8V8z" fill="#2563EB" opacity="0.7"/>
+    <rect x="6" y="18" width="76" height="26" rx="4" fill="#BFDBFE" opacity="0.5"/>
+  </g>
+  <g transform="translate(340, 165)">
+    <path d="M0 8C0 3.582 3.582 0 8 0h20l8 8h44c4.418 0 8 3.582 8 8v34c0 4.418-3.582 8-8 8H8c-4.418 0-8-3.582-8-8V8z" fill="#2563EB" opacity="0.7"/>
+    <rect x="6" y="18" width="76" height="26" rx="4" fill="#BFDBFE" opacity="0.5"/>
+  </g>
+  <!-- Title -->
+  <text x="272" y="276" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#1D4ED8">我的网盘</text>
+</svg>
