@@ -46,6 +46,7 @@
   --z-60: 60;
   --z-70: 70;
   --z-80: 80;
+  --radius-ios: 34px;
 }
 
 /*
@@ -79,6 +80,44 @@
 }
 
 @layer utilities {
+  .ios-radius {
+    border-radius: var(--radius-ios);
+  }
+
+  .neo-surface {
+    border: 1px solid rgb(255 255 255 / 92%);
+    border-radius: var(--radius-ios);
+    background: linear-gradient(145deg, #fffdfd, #e3dcdc);
+    box-shadow:
+      14px 14px 28px rgb(169 160 160 / 44%),
+      -14px -14px 28px rgb(255 255 255 / 95%);
+  }
+
+  .dark .neo-surface {
+    border: 1px solid rgb(255 255 255 / 14%);
+    background: linear-gradient(145deg, #171e26, #090d12);
+    box-shadow:
+      14px 14px 28px rgb(0 0 0 / 62%),
+      -14px -14px 28px rgb(47 58 70 / 42%);
+  }
+
+  .neo-inset {
+    border: 1px solid rgb(255 255 255 / 90%);
+    border-radius: 9999px;
+    background: linear-gradient(145deg, #fbf7f7, #ddd6d6);
+    box-shadow:
+      inset 4px 4px 8px rgb(171 163 163 / 42%),
+      inset -4px -4px 8px rgb(255 255 255 / 94%);
+  }
+
+  .dark .neo-inset {
+    border: 1px solid rgb(255 255 255 / 12%);
+    background: linear-gradient(145deg, #222a33, #0f141a);
+    box-shadow:
+      inset 4px 4px 8px rgb(0 0 0 / 62%),
+      inset -4px -4px 8px rgb(47 58 70 / 40%);
+  }
+
   .prose {
     & a {
       color: var(--color-primary-500);
@@ -172,4 +211,16 @@ input:-webkit-autofill:focus {
 .linkicon {
   display: inline-block;
   vertical-align: middle;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 10% 20%, rgb(255 255 255 / 70%) 0%, transparent 35%),
+    radial-gradient(circle at 90% 10%, rgb(255 255 255 / 50%) 0%, transparent 30%);
+}
+
+.dark body {
+  background-image:
+    radial-gradient(circle at 10% 20%, rgb(39 49 58 / 35%) 0%, transparent 35%),
+    radial-gradient(circle at 90% 10%, rgb(18 26 35 / 45%) 0%, transparent 30%);
 }

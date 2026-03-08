@@ -2,87 +2,122 @@ import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from 'pliny/utils/formatDate'
-import NewsletterForm from 'pliny/ui/NewsletterForm'
 
-const MAX_DISPLAY = 5
+const FEATURED_DISPLAY = 4
+const RECENT_DISPLAY = 6
 
 export default function Home({ posts }) {
+  const featuredPosts = posts.slice(0, FEATURED_DISPLAY)
+  const recentPosts = posts.slice(0, RECENT_DISPLAY)
+  const allTags: string[] = posts.flatMap((post): string[] =>
+    (post.tags || []).filter((tag): tag is string => typeof tag === 'string')
+  )
+  const topTags: string[] = [...new Set<string>(allTags)].slice(0, 12)
+
   return (
-    <>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        <div className="space-y-2 pt-6 pb-8 md:space-y-5">
-          <h1 className="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14 dark:text-gray-100">
-            最新文章
+    <div className="pb-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-12">
+        <section className="neo-surface p-6 md:col-span-6 lg:col-span-5">
+          <div className="mb-4 text-sm tracking-[0.2em] text-gray-500 uppercase dark:text-gray-400">
+            About
+          </div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">
+            {siteMetadata.author}
           </h1>
-          <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
+          <p className="mt-3 text-base leading-7 text-gray-600 dark:text-gray-300">
             {siteMetadata.description}
           </p>
-        </div>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {!posts.length && '没有找到文章。'}
-          {posts.slice(0, MAX_DISPLAY).map((post) => {
-            const { id, slug, date, title, summary, tags } = post
-            return (
-              <li key={slug} className="py-12">
-                <article>
-                  <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-                    <dl>
-                      <dt className="sr-only">发布于</dt>
-                      <dd className="text-base leading-6 font-medium text-gray-500 dark:text-gray-400">
-                        <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
-                      </dd>
-                    </dl>
-                    <div className="space-y-5 xl:col-span-3">
-                      <div className="space-y-6">
-                        <div>
-                          <h2 className="text-2xl leading-8 font-bold tracking-tight">
-                            <Link href={`/blog/${id}`} className="text-gray-900 dark:text-gray-100">
-                              {title}
-                            </Link>
-                          </h2>
-                          <div className="flex flex-wrap">
-                            {tags.map((tag) => (
-                              <Tag key={tag} text={tag} />
-                            ))}
-                          </div>
-                        </div>
-                        <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                          {summary}
-                        </div>
-                      </div>
-                      <div className="text-base leading-6 font-medium">
-                        <Link
-                          href={`/blog/${id}`}
-                          className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                          aria-label={`阅读更多: "${title}"`}
-                        >
-                          阅读更多 &rarr;
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </article>
+          <div className="mt-5 text-sm font-medium">
+            <Link
+              href="/about"
+              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition"
+            >
+              查看关于页 &rarr;
+            </Link>
+          </div>
+        </section>
+
+        <section className="neo-surface p-6 md:col-span-6 lg:col-span-4">
+          <div className="mb-4 text-sm tracking-[0.2em] text-gray-500 uppercase dark:text-gray-400">
+            Latest
+          </div>
+          <ul className="space-y-3">
+            {!recentPosts.length && <li className="text-gray-500">没有找到文章。</li>}
+            {recentPosts.map((post) => (
+              <li key={post.slug} className="ios-radius bg-[#f7f4f4] px-4 py-3 dark:bg-[#181d22]">
+                <div className="mb-1 text-xs text-gray-500 dark:text-gray-400">
+                  {formatDate(post.date, siteMetadata.locale)}
+                </div>
+                <Link
+                  href={`/blog/${post.id}`}
+                  className="hover:text-primary-500 line-clamp-2 text-sm font-semibold text-gray-900 dark:text-gray-100"
+                >
+                  {post.title}
+                </Link>
               </li>
-            )
-          })}
-        </ul>
+            ))}
+          </ul>
+        </section>
+
+        <section className="neo-surface p-6 md:col-span-6 lg:col-span-3">
+          <div className="mb-4 text-sm tracking-[0.2em] text-gray-500 uppercase dark:text-gray-400">
+            Explore
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {topTags.map((tag) => (
+              <Tag key={tag} text={tag} />
+            ))}
+          </div>
+          <div className="mt-5 text-sm font-medium">
+            <Link
+              href="/tags"
+              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition"
+            >
+              浏览全部标签 &rarr;
+            </Link>
+          </div>
+        </section>
+
+        <section className="neo-surface p-6 md:col-span-6 lg:col-span-12">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+              精选文章
+            </h2>
+            <Link
+              href="/blog"
+              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 text-sm font-medium transition"
+              aria-label="全部文章"
+            >
+              全部文章 &rarr;
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {featuredPosts.map((post) => (
+              <article
+                key={post.slug}
+                className="ios-radius bg-[#f7f4f4] p-5 transition hover:-translate-y-0.5 hover:shadow-sm dark:bg-[#181d22]"
+              >
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {formatDate(post.date, siteMetadata.locale)}
+                </div>
+                <h3 className="mt-2 text-lg font-bold tracking-tight">
+                  <Link href={`/blog/${post.id}`} className="text-gray-900 dark:text-gray-100">
+                    {post.title}
+                  </Link>
+                </h3>
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                  {post.summary}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-x-2 gap-y-1">
+                  {(post.tags || []).slice(0, 3).map((tag) => (
+                    <Tag key={tag} text={tag} />
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
-      {posts.length > MAX_DISPLAY && (
-        <div className="flex justify-end text-base leading-6 font-medium">
-          <Link
-            href="/blog"
-            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-            aria-label="全部文章"
-          >
-            全部文章 &rarr;
-          </Link>
-        </div>
-      )}
-      {siteMetadata.newsletter?.provider && (
-        <div className="flex items-center justify-center pt-4">
-          <NewsletterForm />
-        </div>
-      )}
-    </>
+    </div>
   )
 }
