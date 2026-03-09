@@ -31,8 +31,8 @@
     "next-themes": "^0.4.6",
     "pliny": "0.4.1",
     "postcss": "^8.5.6",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "reading-time": "1.5.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-citation": "^2.3.2",
@@ -53,7 +53,8 @@
     "@eslint/js": "^9.18.0",
     "@svgr/webpack": "^8.1.0",
     "@types/mdx": "^2.0.13",
-    "@types/react": "^19.2.13",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
     "cross-env": "^10.1.0",
@@ -70,11 +71,10 @@
   },
   "lint-staged": {
     "*.+(js|jsx|ts|tsx)": [
-      "yarn eslint --fix"
+      "npx eslint --fix"
     ],
     "*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
-      "yarn prettier --write"
+      "npx prettier --write"
     ]
-  },
-  "packageManager": "yarn@3.6.1"
+  }
 }

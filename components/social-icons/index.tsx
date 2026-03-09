@@ -11,6 +11,9 @@ import {
   Instagram,
   Medium,
   Bluesky,
+  Bilibili,
+  Douyin,
+  QQ,
 } from './icons'
 
 const components = {
@@ -26,6 +29,9 @@ const components = {
   instagram: Instagram,
   medium: Medium,
   bluesky: Bluesky,
+  bilibili: Bilibili,
+  douyin: Douyin,
+  qq: QQ,
 }
 
 type SocialIconProps = {
