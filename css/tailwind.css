@@ -35,6 +35,11 @@
   --color-gray-800: oklch(0.278 0.033 256.848);
   --color-gray-900: oklch(0.21 0.034 264.665);
   --color-gray-950: oklch(0.13 0.028 261.692);
+  --color-body-light: #f6f2f2;
+  --color-body-dark: #0b0f11;
+  --color-neo-item-light: #f7f4f4;
+  --color-neo-item-dark: #181d22;
+  --color-neo-hover-dark: #2a2f35;
 
   /* Line heights */
   --line-height-11: 2.75rem;
@@ -47,6 +52,42 @@
   --z-70: 70;
   --z-80: 80;
   --radius-ios: 34px;
+  --neo-surface-border: rgb(255 255 255 / 92%);
+  --neo-surface-grad-1: #fffdfd;
+  --neo-surface-grad-2: #e3dcdc;
+  --neo-surface-shadow-1: rgb(169 160 160 / 44%);
+  --neo-surface-shadow-2: rgb(255 255 255 / 95%);
+  --neo-inset-border: rgb(255 255 255 / 90%);
+  --neo-inset-grad-1: #fbf7f7;
+  --neo-inset-grad-2: #ddd6d6;
+  --neo-inset-shadow-1: rgb(171 163 163 / 42%);
+  --neo-inset-shadow-2: rgb(255 255 255 / 94%);
+}
+
+:root {
+  --neo-surface-border: rgb(255 255 255 / 92%);
+  --neo-surface-grad-1: #fffdfd;
+  --neo-surface-grad-2: #e3dcdc;
+  --neo-surface-shadow-1: rgb(169 160 160 / 44%);
+  --neo-surface-shadow-2: rgb(255 255 255 / 95%);
+  --neo-inset-border: rgb(255 255 255 / 90%);
+  --neo-inset-grad-1: #fbf7f7;
+  --neo-inset-grad-2: #ddd6d6;
+  --neo-inset-shadow-1: rgb(171 163 163 / 42%);
+  --neo-inset-shadow-2: rgb(255 255 255 / 94%);
+}
+
+.dark {
+  --neo-surface-border: rgb(255 255 255 / 14%);
+  --neo-surface-grad-1: #171e26;
+  --neo-surface-grad-2: #090d12;
+  --neo-surface-shadow-1: rgb(0 0 0 / 62%);
+  --neo-surface-shadow-2: rgb(47 58 70 / 42%);
+  --neo-inset-border: rgb(255 255 255 / 12%);
+  --neo-inset-grad-1: #222a33;
+  --neo-inset-grad-2: #0f141a;
+  --neo-inset-shadow-1: rgb(0 0 0 / 62%);
+  --neo-inset-shadow-2: rgb(47 58 70 / 40%);
 }
 
 /*
@@ -85,37 +126,21 @@
   }
 
   .neo-surface {
-    border: 1px solid rgb(255 255 255 / 92%);
+    border: 1px solid var(--neo-surface-border);
     border-radius: var(--radius-ios);
-    background: linear-gradient(145deg, #fffdfd, #e3dcdc);
+    background: linear-gradient(145deg, var(--neo-surface-grad-1), var(--neo-surface-grad-2));
     box-shadow:
-      14px 14px 28px rgb(169 160 160 / 44%),
-      -14px -14px 28px rgb(255 255 255 / 95%);
-  }
-
-  .dark .neo-surface {
-    border: 1px solid rgb(255 255 255 / 14%);
-    background: linear-gradient(145deg, #171e26, #090d12);
-    box-shadow:
-      14px 14px 28px rgb(0 0 0 / 62%),
-      -14px -14px 28px rgb(47 58 70 / 42%);
+      14px 14px 28px var(--neo-surface-shadow-1),
+      -14px -14px 28px var(--neo-surface-shadow-2);
   }
 
   .neo-inset {
-    border: 1px solid rgb(255 255 255 / 90%);
+    border: 1px solid var(--neo-inset-border);
     border-radius: 9999px;
-    background: linear-gradient(145deg, #fbf7f7, #ddd6d6);
+    background: linear-gradient(145deg, var(--neo-inset-grad-1), var(--neo-inset-grad-2));
     box-shadow:
-      inset 4px 4px 8px rgb(171 163 163 / 42%),
-      inset -4px -4px 8px rgb(255 255 255 / 94%);
-  }
-
-  .dark .neo-inset {
-    border: 1px solid rgb(255 255 255 / 12%);
-    background: linear-gradient(145deg, #222a33, #0f141a);
-    box-shadow:
-      inset 4px 4px 8px rgb(0 0 0 / 62%),
-      inset -4px -4px 8px rgb(47 58 70 / 40%);
+      inset 4px 4px 8px var(--neo-inset-shadow-1),
+      inset -4px -4px 8px var(--neo-inset-shadow-2);
   }
 
   .prose {

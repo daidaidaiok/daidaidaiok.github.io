@@ -56,3 +56,6 @@ yarn-error.log*
 .worktrees/
 .security-key
 logs/security/
+
+# local temp worktrees
+.tmp-pr/

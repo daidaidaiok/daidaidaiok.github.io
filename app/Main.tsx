@@ -44,7 +44,10 @@ export default function Home({ posts }) {
           <ul className="space-y-3">
             {!recentPosts.length && <li className="text-gray-500">没有找到文章。</li>}
             {recentPosts.map((post) => (
-              <li key={post.slug} className="ios-radius bg-[#f7f4f4] px-4 py-3 dark:bg-[#181d22]">
+              <li
+                key={post.slug}
+                className="ios-radius bg-neo-item-light dark:bg-neo-item-dark px-4 py-3"
+              >
                 <div className="mb-1 text-xs text-gray-500 dark:text-gray-400">
                   {formatDate(post.date, siteMetadata.locale)}
                 </div>
@@ -95,7 +98,7 @@ export default function Home({ posts }) {
             {featuredPosts.map((post) => (
               <article
                 key={post.slug}
-                className="ios-radius bg-[#f7f4f4] p-5 transition hover:-translate-y-0.5 hover:shadow-sm dark:bg-[#181d22]"
+                className="ios-radius bg-neo-item-light dark:bg-neo-item-dark p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
               >
                 <div className="text-xs text-gray-500 dark:text-gray-400">
                   {formatDate(post.date, siteMetadata.locale)}
