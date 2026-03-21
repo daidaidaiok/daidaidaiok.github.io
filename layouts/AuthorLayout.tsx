@@ -23,6 +23,7 @@ export default function AuthorLayout({ children, content }: Props) {
               alt="avatar"
               width={160}
               height={160}
+              draggable={false}
               className="h-32 w-32 shrink-0 rounded-full border-4 border-white/30 shadow-lg sm:h-40 sm:w-40"
             />
           )}
