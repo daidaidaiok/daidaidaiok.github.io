@@ -1,0 +1,111 @@
+---
+title: '如何订购智谱 GLM、Kimi 和 MiniMax 的 Coding Plan'
+date: '2026-03-21T00:55:14+08:00'
+lastmod: '2026-03-21T00:55:14+08:00'
+tags: ['工具技巧', 'CodingPlan', 'GLM', 'Kimi', 'MiniMax']
+summary: '对比智谱 GLM、Kimi、MiniMax 的 Coding Plan 套餐价格、购买步骤与适用场景。'
+authors: ['default']
+---
+
+Coding Plan 是国内大模型厂商推出的编程订阅套餐，以固定月费提供 API 调用额度，可在 Claude Code、Cline、Cursor 等主流 AI 编程工具中使用，性价比远超按量付费。
+
+## 一、智谱 GLM Coding Plan
+
+### 套餐价格
+
+| 档位 | 月费 | 适合人群 |
+|------|------|----------|
+| Lite | ¥40/月 | 轻度使用，日常辅助编程 |
+| Pro | ¥200/月 | 中重度使用，专业开发者 |
+| Max | 更高价位 | 团队/高频使用 |
+
+> 按季、按年订阅有折扣。注意：GLM-5 等最新模型仅限 Pro 及以上档位使用。
+
+### 订购步骤
+
+1. 访问 [智谱 AI 官网](https://bigmodel.cn/glm-coding)
+2. 注册/登录智谱账号
+3. 进入 GLM Coding Plan 页面
+4. 选择合适的档位，完成支付
+5. 在"API 密钥"页面创建 API Key，保存好备用
+
+### 模型说明
+
+- **GLM-4.7**: 355B 参数 MoE 架构，200K 上下文，生成速度 55+ Tokens/秒
+- **GLM-5**: 最新旗舰模型，需 Pro/Max 档位
+
+## 二、Kimi Coding Plan
+
+### 套餐价格
+
+| 档位 | 月费 | 说明 |
+|------|------|------|
+| 初级 | ¥49/月 | 基础编程辅助 |
+| 中级 | ¥99/月 | 日常开发 |
+| 高级 | ¥199/月 | 高频专业开发 |
+
+> Kimi 采用 Token 计量模式，仅统计未命中缓存的 Token，实际可用量更多。
+
+### 订购步骤
+
+1. 访问 [Kimi Code 官网](https://www.kimi.com/code/docs/)
+2. 注册/登录 Moonshot 账号
+3. 进入会员订阅页面
+4. 选择档位并完成支付
+5. 在 [Kimi Code 控制台](https://www.kimi.com/code/) 生成 API Key
+
+### 模型说明
+
+- **Kimi K2.5**: 1 万亿参数 MoE 架构，编程能力强劲
+- 支持在 Claude Code、Cline（Claude Dev）、Roo Code 等工具中使用
+
+## 三、MiniMax Coding Plan
+
+### 套餐价格
+
+| 档位 | 月费 | 说明 |
+|------|------|------|
+| Starter | ¥29/月 | 入门体验（首月 ¥9.9） |
+| Plus | ¥49/月 | 日常使用 |
+| Max | ¥119/月 | 高频使用 |
+
+> MiniMax 无周限额，额度每 5 小时自动刷新，适合持续高强度使用。按年付享 17% 折扣。
+
+### 订购步骤
+
+1. 访问 [MiniMax 开放平台](https://platform.minimaxi.com/subscribe/coding-plan)
+2. 注册/登录 MiniMax 账号
+3. 进入 Coding Plan 订阅页面
+4. 选择档位并完成支付
+5. 在 API 管理页面创建 API Key
+
+### 模型说明
+
+- **MiniMax M2.7**: 最新旗舰模型
+- 统一多模态访问，覆盖文本、语音、视频、图像
+
+## 选购建议
+
+| 需求 | 推荐 | 理由 |
+|------|------|------|
+| 预算有限，想先体验 | MiniMax Starter | ¥9.9 首月最低入门价 |
+| 日常编程辅助 | Kimi 初级 或 GLM Lite | 性价比均衡 |
+| 高频专业开发 | GLM Pro 或 Kimi 高级 | 模型能力更强 |
+| 长时间连续编码 | MiniMax | 无周限额，5 小时刷新 |
+
+## 拿到 API Key 后
+
+订购完成并获取 API Key 后，可以在以下工具中使用：
+
+- **Claude Code**: 通过环境变量或 CC Switch 配置
+- **Cline（Claude Dev）**: 在 VS Code 中配置 OpenAI Compatible API
+- **Cursor**: 在设置中添加自定义模型
+
+具体配置方法请参阅 [如何用 CC Switch 把 Claude Code / Cline 的 API 替换成国产模型](/blog/switch-claude-code-and-cline-to-domestic-models)。
+
+## 参考链接
+
+- [智谱 GLM Coding Plan](https://bigmodel.cn/glm-coding)
+- [Kimi Code 会员权益](https://www.kimi.com/code/docs/)
+- [MiniMax Coding Plan](https://platform.minimaxi.com/subscribe/coding-plan)
+- [国内 Coding Plan 横评（知乎）](https://zhuanlan.zhihu.com/p/2006431542428315931)

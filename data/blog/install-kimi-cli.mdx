@@ -1,0 +1,82 @@
+---
+title: '如何安装 Kimi CLI'
+date: '2026-03-21T00:54:43+08:00'
+lastmod: '2026-03-21T00:54:43+08:00'
+tags: ['工具技巧', 'KimiCLI']
+summary: '整理 Kimi CLI 的安装前提、安装方法、首次使用与更新方式。'
+authors: ['default']
+---
+
+Kimi CLI（Kimi Code CLI）是月之暗面（Moonshot AI）推出的开源终端 AI 编程助手，类似于 Claude Code，能在终端中帮你读写代码、执行命令、搜索网页，并自主规划多步任务。
+
+## 前置条件
+
+- Python >= 3.12（推荐 3.13）
+- Node.js >= 18（部分功能需要）
+- 一个 Moonshot 账号
+
+## 安装方式
+
+### 方式一：官方安装脚本（推荐）
+
+**macOS / Linux：**
+
+```bash
+curl -LsSf https://cdn.kimi.com/binaries/kimi-cli/install.sh | bash
+```
+
+**Windows（PowerShell）：**
+
+```powershell
+Invoke-RestMethod https://cdn.kimi.com/binaries/kimi-cli/install.ps1 | Invoke-Expression
+```
+
+脚本会自动下载并配置好环境变量，装完直接用。
+
+### 方式二：pip 安装
+
+```bash
+pip install kimi-cli
+```
+
+### 方式三：从源码安装
+
+```bash
+git clone https://github.com/MoonshotAI/kimi-cli.git
+cd kimi-cli
+make prepare
+```
+
+## 验证安装
+
+安装完成后，在终端输入：
+
+```bash
+kimi --version
+```
+
+能看到版本号即为安装成功。
+
+## 首次使用
+
+直接在终端运行：
+
+```bash
+kimi
+```
+
+首次启动会引导你登录 Moonshot 账号或输入 API Key。登录后即可开始在终端中进行 AI 辅助编程。
+
+## 更新
+
+```bash
+pip install --upgrade kimi-cli
+```
+
+或重新运行安装脚本即可更新到最新版。
+
+## 参考链接
+
+- [Kimi CLI GitHub 仓库](https://github.com/MoonshotAI/kimi-cli)
+- [Kimi Code 官方文档](https://www.kimi.com/code/docs/kimi-cli/guides/getting-started.html)
+- [Moonshot 开放平台](https://platform.moonshot.cn/)

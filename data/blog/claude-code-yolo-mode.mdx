@@ -1,0 +1,50 @@
+---
+title: 'Claude Code 上帝模式'
+date: '2026-03-21T00:58:19+08:00'
+lastmod: '2026-03-21T00:58:19+08:00'
+tags: ['工具技巧', 'ClaudeCode']
+summary: '介绍 Claude Code 的上帝模式是什么、如何开启和关闭，以及适用与不适用场景。'
+authors: ['default']
+---
+
+上帝模式（Yolo Mode / Bypass Permissions）让 Claude Code 跳过所有工具调用的权限确认，直接执行文件读写、命令运行等操作，无需逐个审批。
+
+> 注意：开启后 Claude Code 可以不经确认地执行任意命令，包括删除文件、安装包、运行脚本等。请确保你了解风险后再启用。
+
+## 开启方式
+
+编辑 `~/.claude/settings.json`（全局）或项目目录下的 `.claude/settings.json`（项目级），添加：
+
+```json
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  }
+}
+```
+
+也可以在 Claude Code 中直接输入 `/permissions` 进行设置。
+
+## 关闭方式
+
+将 `defaultMode` 改回默认值，或删除该配置项：
+
+```json
+{
+  "permissions": {
+    "defaultMode": "default"
+  }
+}
+```
+
+## 适用场景
+
+- 个人项目中频繁操作，不想反复确认
+- 批量任务执行，需要 Claude Code 自主完成多步操作
+- 熟悉 Claude Code 行为，信任其操作判断
+
+## 不建议使用的场景
+
+- 生产环境或共享服务器
+- 不熟悉项目结构时
+- 涉及不可逆操作（如数据库删除、git force push）的工作流

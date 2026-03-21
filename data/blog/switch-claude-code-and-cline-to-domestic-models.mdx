@@ -1,0 +1,70 @@
+---
+title: '如何用 CC Switch 把 Claude Code / Cline 的 API 替换成国产模型'
+date: '2026-03-21T00:58:16+08:00'
+lastmod: '2026-03-21T00:58:16+08:00'
+tags: ['工具技巧', 'CCSwitch', 'ClaudeCode', 'Cline']
+summary: '说明如何用 CC Switch 将智谱、Kimi、MiniMax 等国产模型接入 Claude Code 或 Cline。'
+authors: ['default']
+---
+
+订阅了智谱 GLM、Kimi、MiniMax 等 Coding Plan 后，使用 CC Switch 可以一键将国产模型配置到 Claude Code 和 Cline 中，无需手动改环境变量或配置文件。
+
+## 前置条件
+
+- 已安装 [CC Switch](/blog/install-cc-switch)
+- 已订购至少一个 Coding Plan 并获取 API Key（参阅 [如何订购智谱 GLM、Kimi 和 MiniMax 的 Coding Plan](/blog/coding-plan-glm-kimi-minimax)）
+- 已安装 Claude Code 或 Cline（参阅 [如何用 Kimi CLI 安装 Claude Code](/blog/install-claude-code-with-kimi-cli)）
+
+## 使用 CC Switch 配置
+
+### 第一步：添加供应商
+
+1. 打开 CC Switch
+2. 点击「添加供应商」
+3. 你可以选择**内置预设**（推荐），也可以手动填写
+
+**使用内置预设（推荐）：**
+
+CC Switch 内置了智谱 GLM、Kimi、MiniMax 等常用供应商预设，选择后只需填入你的 API Key 即可，Base URL 和模型名称会自动填好。
+
+**手动填写：**
+
+如果预设中没有你需要的供应商，手动填入以下信息：
+
+| 供应商 | Base URL | 模型名称 |
+|--------|----------|----------|
+| 智谱 GLM | `https://open.bigmodel.cn/api/paas/v4/anthropic` | `glm-4.7` 或 `glm-5` |
+| Kimi | `https://api.moonshot.cn/anthropic/v1/messages` | `kimi-k2.5` |
+| MiniMax | `https://api.minimax.chat/anthropic/v1/messages` | `MiniMax-M2.7` |
+
+> 以上为 Anthropic 兼容端点，适用于 Claude Code。Cline 使用 OpenAI 兼容端点，CC Switch 会自动处理。
+
+### 第二步：一键切换
+
+点击你想使用的供应商卡片上的开关，CC Switch 会自动将配置写入对应工具的配置文件。切换时无需重启终端或 VS Code。
+
+### 第三步：验证
+
+打开 Claude Code 或 Cline，发送一条消息，确认模型已切换成功。
+
+## 多供应商切换
+
+CC Switch 最大的优势是支持多个供应商间快速切换：
+
+- 添加多个供应商后，点击不同的卡片即可切换
+- 适合在不同场景使用不同模型（例如日常用 GLM，复杂任务用 Kimi）
+- 支持用量监控，方便追踪各供应商的使用情况
+
+## 注意事项
+
+- 各厂商的 **Base URL 格式可能随版本更新变化**，请以官方文档为准
+- 如果遇到 `Model Not Found` 错误，检查模型名称是否正确
+- 如果遇到 `Invalid API Key` 错误，确认 API Key 未过期且套餐仍在有效期内
+- CC Switch 同时支持 Claude Code、Codex、OpenCode、OpenClaw、Gemini CLI 五大工具
+
+## 参考链接
+
+- [如何安装 CC Switch](/blog/install-cc-switch)
+- [如何订购智谱 GLM、Kimi 和 MiniMax 的 Coding Plan](/blog/coding-plan-glm-kimi-minimax)
+- [CC Switch GitHub](https://github.com/farion1231/cc-switch)
+- [CC Switch 中文用户手册](https://github.com/farion1231/cc-switch/blob/main/docs/user-manual/zh/README.md)

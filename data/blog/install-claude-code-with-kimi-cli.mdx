@@ -1,0 +1,76 @@
+---
+title: '如何用 Kimi CLI 安装 Claude Code'
+date: '2026-03-21T00:57:53+08:00'
+lastmod: '2026-03-21T00:57:53+08:00'
+tags: ['工具技巧', 'KimiCLI', 'ClaudeCode']
+summary: '记录如何借助 Kimi CLI 协助安装 Claude Code，并说明手动安装与后续配置。'
+authors: ['default']
+---
+
+Claude Code 是 Anthropic 官方出品的 AI 编程 CLI 工具。由于安装过程中可能遇到网络、权限等问题，我们可以借助 Kimi CLI 来辅助完成安装。
+
+## 什么是 Claude Code
+
+Claude Code 是一个终端中运行的交互式 AI 编程助手，可以直接读写文件、执行命令、搜索代码库，帮你完成各种软件工程任务。它通过 npm 全局安装。
+
+## 前置条件
+
+- 已安装 Node.js（18 及以上版本）
+- 已安装 Kimi CLI（参阅 [如何安装 Kimi CLI](/blog/install-kimi-cli)）
+
+## 用 Kimi CLI 安装 Claude Code
+
+### 第一步：启动 Kimi CLI
+
+```bash
+kimi
+```
+
+### 第二步：让 Kimi 帮你安装
+
+在 Kimi CLI 的对话中，直接说：
+
+```text
+帮我安装 Claude Code
+```
+
+Kimi CLI 会自动执行以下命令：
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+> 如果遇到权限问题，Kimi 会帮你排查并使用合适的方式处理（如加 `sudo` 或修改 npm 全局路径）。
+
+### 手动安装（备选）
+
+如果你更喜欢手动操作：
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+安装完成后，在终端输入 `claude` 即可启动。
+
+## 安装后配置
+
+首次启动 Claude Code 需要登录 Anthropic 账号，或者配置 API Key：
+
+```bash
+claude
+```
+
+如果你想使用国产模型替代 Anthropic 官方 API，可以通过 CC Switch 一键切换，参阅 [如何用 CC Switch 把 Claude Code / Cline 的 API 替换成国产模型](/blog/switch-claude-code-and-cline-to-domestic-models)。
+
+## 为什么用 Kimi CLI 来装
+
+- Kimi CLI 可以自动检测你的环境（Node.js 版本、npm 配置等）
+- 遇到网络问题时 Kimi 能帮你配置镜像源或代理
+- 遇到权限问题时 Kimi 能帮你排查
+- 对不熟悉命令行的用户更友好
+
+## 参考链接
+
+- [Claude Code 官方文档](https://docs.anthropic.com/en/docs/claude-code)
+- [Claude Code npm 包](https://www.npmjs.com/package/@anthropic-ai/claude-code)
+- [Kimi CLI GitHub](https://github.com/MoonshotAI/kimi-cli)

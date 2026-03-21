@@ -1,0 +1,96 @@
+---
+title: '如何安装 CC Switch'
+date: '2026-03-21T00:54:49+08:00'
+lastmod: '2026-03-21T00:54:49+08:00'
+tags: ['工具技巧', 'CCSwitch']
+summary: '整理 CC Switch 在 Windows、macOS 和 Linux 上的安装方式，并说明基础使用流程。'
+authors: ['default']
+---
+
+CC Switch 是一款跨平台桌面应用，用于管理和切换 Claude Code、Codex、OpenCode、OpenClaw、Gemini CLI 等 AI 编程工具的后端模型配置。告别手动改环境变量，一键切换不同供应商和模型。
+
+## 功能特点
+
+- 支持 Claude Code、Codex、OpenCode、OpenClaw、Gemini CLI 五大工具
+- 一键切换 API 供应商，自动写入配置文件
+- 内置多个常用中转节点预设
+- 用量监控与查询
+- MCP 服务器管理
+- Prompts 提示词和 Skills 技能管理
+
+## 安装方式
+
+### Windows
+
+**方式一：MSI 安装包**
+
+前往 [GitHub Releases](https://github.com/farion1231/cc-switch/releases) 页面，下载最新版本的 `CC-Switch-v{version}-Windows.msi`，双击安装即可。
+
+**方式二：绿色版（免安装）**
+
+下载 `CC-Switch-v{version}-Windows-Portable.zip`，解压到任意目录，双击 `CC-Switch.exe` 即可运行。
+
+### macOS
+
+**方式一：Homebrew 安装（推荐）**
+
+```bash
+brew tap farion1231/ccswitch
+brew install --cask cc-switch
+```
+
+**方式二：手动安装**
+
+从 [GitHub Releases](https://github.com/farion1231/cc-switch/releases) 下载 `CC-Switch-v{version}-macOS.zip`，解压后将 `.app` 文件拖入 Applications 文件夹。
+
+> 注意：由于作者没有 Apple 开发者签名，首次打开可能会提示"无法验证开发者"。解决方法：关闭提示 -> 打开"系统设置" -> "隐私与安全性" -> 点击"仍然打开"。
+
+### Linux
+
+**方式一：paru（推荐，Arch 系）**
+
+```bash
+paru -S cc-switch-bin
+```
+
+**方式二：DEB 包（Debian/Ubuntu）**
+
+```bash
+# 下载最新 .deb 包后
+sudo dpkg -i CC-Switch-v{version}-Linux.deb
+```
+
+**方式三：AppImage（通用）**
+
+下载 `CC-Switch-v{version}-Linux.AppImage`，赋予执行权限后运行：
+
+```bash
+chmod +x CC-Switch-*.AppImage
+./CC-Switch-*.AppImage
+```
+
+## 快速上手
+
+1. **启动 CC Switch**: 打开应用后会看到主界面
+2. **添加供应商**: 点击"添加供应商"，填入名称、API Base URL、API Key、模型名称
+3. **启用供应商**: 点击供应商卡片上的开关，CC Switch 会自动将配置写入对应工具的配置文件
+4. **切换供应商**: 点击不同供应商卡片即可一键切换，无需重启终端
+
+## 内置预设
+
+CC Switch 内置了多个常用供应商预设，包括：
+
+- 智谱 GLM Coding Plan
+- Kimi（Moonshot）
+- MiniMax
+- 阿里云百炼
+- DeepSeek
+- 各种中转服务
+
+选择预设后只需填入你的 API Key 即可使用。
+
+## 参考链接
+
+- [CC Switch GitHub 仓库](https://github.com/farion1231/cc-switch)
+- [CC Switch 中文用户手册](https://github.com/farion1231/cc-switch/blob/main/docs/user-manual/zh/README.md)
+- [CC Switch 菜鸟教程](https://www.runoob.com/ai-agent/cc-switch.html)
