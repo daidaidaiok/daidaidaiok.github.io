@@ -23,6 +23,7 @@ import rehypeCitation from 'rehype-citation'
 import rehypePrismPlus from 'rehype-prism-plus'
 import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
+import bookshelfData from './data/bookshelfData'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
 import prettier from 'prettier'
 
@@ -99,9 +100,21 @@ function createSearchIndex(allBlogs) {
     siteMetadata?.search?.provider === 'kbar' &&
     siteMetadata.search.kbarConfig.searchDocumentsPath
   ) {
+    const blogDocuments = allCoreContent(sortPosts(allBlogs))
+    const bookshelfDocuments = bookshelfData.map((book) => ({
+      id: book.id,
+      type: 'book' as const,
+      title: book.title,
+      summary: book.description ?? '',
+      path: `bookshelf#${book.id}`,
+      tags: [book.author, book.publisher],
+      author: book.author,
+      publisher: book.publisher,
+    }))
+
     writeFileSync(
       `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
+      JSON.stringify([...blogDocuments, ...bookshelfDocuments])
     )
     console.log('Local search index generated...')
   }
