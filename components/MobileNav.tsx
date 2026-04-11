@@ -1,42 +1,65 @@
 'use client'
 
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
-import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
-import { Fragment, useState, useEffect, useRef } from 'react'
-import Link from './Link'
+import { clearAllBodyScrollLocks, disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import headerNavLinks from '@/data/headerNavLinks'
+import Link from './Link'
 
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const navRef = useRef(null)
+  const [expandedSection, setExpandedSection] = useState<string | null>(null)
+  const navRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const onToggleNav = () => {
-    setNavShow((status) => {
-      if (status) {
-        try {
-          enableBodyScroll(navRef.current)
-        } catch (error) {
-          console.error('Failed to enable body scroll:', error)
-        }
+  useEffect(() => {
+    const navElement = navRef.current
+
+    if (!navElement) {
+      return
+    }
+
+    try {
+      if (navShow) {
+        disableBodyScroll(navElement)
       } else {
-        try {
-          disableBodyScroll(navRef.current)
-        } catch (error) {
-          console.error('Failed to disable body scroll:', error)
-        }
+        enableBodyScroll(navElement)
       }
-      return !status
-    })
-  }
+    } catch (error) {
+      console.error('Failed to update body scroll lock:', error)
+    }
+  }, [navShow])
+
+  useEffect(() => {
+    if (!navShow) {
+      setExpandedSection(null)
+    }
+  }, [navShow])
 
   useEffect(() => {
     return clearAllBodyScrollLocks
   }, [])
+
+  const openNav = () => setNavShow(true)
+
+  const closeNav = () => setNavShow(false)
+
+  const onToggleNav = () => {
+    if (navShow) {
+      closeNav()
+      return
+    }
+
+    openNav()
+  }
+
+  const toggleSection = (title: string) => {
+    setExpandedSection((currentSection) => (currentSection === title ? null : title))
+  }
 
   return (
     <>
@@ -56,7 +79,7 @@ const MobileNav = () => {
       </button>
       {mounted && (
         <Transition appear show={navShow} as={Fragment} unmount={false}>
-          <Dialog as="div" onClose={onToggleNav} unmount={false}>
+          <Dialog as="div" onClose={closeNav} unmount={false}>
             <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
@@ -88,25 +111,55 @@ const MobileNav = () => {
                   {headerNavLinks.map((link) =>
                     link.items?.length ? (
                       <div key={link.title} className="mb-6 w-full">
-                        <div className="mb-3 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100">
-                          {link.title}
-                        </div>
-                        <div className="border-l border-gray-300/70 pl-4 dark:border-gray-700/70">
-                          {link.items.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              className="mb-3 block py-2 pr-4 text-lg font-semibold text-gray-700 outline outline-0 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
-                              onClick={onToggleNav}
-                            >
-                              <div>{item.title}</div>
-                              {item.description ? (
-                                <div className="mt-1 max-w-xs text-sm font-normal tracking-normal text-gray-500 dark:text-gray-400">
-                                  {item.description}
-                                </div>
-                              ) : null}
-                            </Link>
-                          ))}
+                        <button
+                          type="button"
+                          className="flex w-full items-center justify-between py-2 pr-4 text-left text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
+                          aria-expanded={expandedSection === link.title}
+                          aria-controls={`mobile-submenu-${link.title}`}
+                          onClick={() => toggleSection(link.title)}
+                        >
+                          <span>{link.title}</span>
+                          <svg
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            className={`h-5 w-5 transition-transform duration-200 ${
+                              expandedSection === link.title ? 'rotate-180' : ''
+                            }`}
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                        <div
+                          id={`mobile-submenu-${link.title}`}
+                          className={`grid overflow-hidden transition-all duration-200 ease-out ${
+                            expandedSection === link.title
+                              ? 'mt-3 grid-rows-[1fr] opacity-100'
+                              : 'grid-rows-[0fr] opacity-0'
+                          }`}
+                        >
+                          <div className="min-h-0 overflow-hidden">
+                            <div className="border-l border-gray-300/70 pl-4 dark:border-gray-700/70">
+                              {link.items.map((item) => (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  className="mb-3 block py-2 pr-4 text-lg font-semibold text-gray-700 outline outline-0 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
+                                  onClick={closeNav}
+                                >
+                                  <div>{item.title}</div>
+                                  {item.description ? (
+                                    <div className="mt-1 max-w-xs text-sm font-normal tracking-normal text-gray-500 dark:text-gray-400">
+                                      {item.description}
+                                    </div>
+                                  ) : null}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ) : (
@@ -114,7 +167,7 @@ const MobileNav = () => {
                         key={link.title}
                         href={link.href!}
                         className="hover:text-primary-500 dark:hover:text-primary-400 mb-4 block py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 dark:text-gray-100"
-                        onClick={onToggleNav}
+                        onClick={closeNav}
                       >
                         {link.title}
                       </Link>
