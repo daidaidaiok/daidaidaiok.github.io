@@ -85,16 +85,41 @@ const MobileNav = () => {
                   ref={navRef}
                   className="mt-8 flex h-full basis-0 flex-col items-start overflow-y-auto pt-2 pl-12 text-left"
                 >
-                  {headerNavLinks.map((link) => (
-                    <Link
-                      key={link.title}
-                      href={link.href}
-                      className="hover:text-primary-500 dark:hover:text-primary-400 mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 dark:text-gray-100"
-                      onClick={onToggleNav}
-                    >
-                      {link.title}
-                    </Link>
-                  ))}
+                  {headerNavLinks.map((link) =>
+                    link.items?.length ? (
+                      <div key={link.title} className="mb-6 w-full">
+                        <div className="mb-3 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100">
+                          {link.title}
+                        </div>
+                        <div className="border-l border-gray-300/70 pl-4 dark:border-gray-700/70">
+                          {link.items.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className="mb-3 block py-2 pr-4 text-lg font-semibold text-gray-700 outline outline-0 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
+                              onClick={onToggleNav}
+                            >
+                              <div>{item.title}</div>
+                              {item.description ? (
+                                <div className="mt-1 max-w-xs text-sm font-normal tracking-normal text-gray-500 dark:text-gray-400">
+                                  {item.description}
+                                </div>
+                              ) : null}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <Link
+                        key={link.title}
+                        href={link.href!}
+                        className="hover:text-primary-500 dark:hover:text-primary-400 mb-4 block py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 dark:text-gray-100"
+                        onClick={onToggleNav}
+                      >
+                        {link.title}
+                      </Link>
+                    )
+                  )}
                 </nav>
 
                 <button

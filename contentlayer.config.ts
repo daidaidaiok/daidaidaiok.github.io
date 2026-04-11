@@ -42,10 +42,10 @@ const icon = fromHtmlIsomorphic(
   { fragment: true }
 )
 
-let postIdCounter = 0
-const postIdMap = new Map()
+let blogIdCounter = 0
+const blogIdMap = new Map()
 
-const computedFields: ComputedFields = {
+const blogComputedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
     type: 'string',
@@ -64,12 +64,62 @@ const computedFields: ComputedFields = {
     type: 'number',
     resolve: (doc) => {
       const path = doc._raw.flattenedPath
-      if (!postIdMap.has(path)) {
-        postIdCounter += 1
-        postIdMap.set(path, postIdCounter)
+      if (!blogIdMap.has(path)) {
+        blogIdCounter += 1
+        blogIdMap.set(path, blogIdCounter)
       }
-      return postIdMap.get(path)
+      return blogIdMap.get(path)
     },
+  },
+}
+
+const authorComputedFields: ComputedFields = {
+  slug: {
+    type: 'string',
+    resolve: (doc) => doc._raw.flattenedPath.replace(/^.+?(\/)/, ''),
+  },
+  path: {
+    type: 'string',
+    resolve: (doc) => doc._raw.flattenedPath,
+  },
+  filePath: {
+    type: 'string',
+    resolve: (doc) => doc._raw.sourceFilePath,
+  },
+}
+
+function extractQuestionText(raw: string) {
+  const matched = raw.match(/(?:^|\n)##\s+3\.\s*题目\s*\n+([\s\S]*?)(?=\n##\s+)/)
+  if (!matched?.[1]) {
+    return ''
+  }
+
+  return matched[1]
+    .replace(/\[(.*?)\]\((.*?)\)/g, '$1')
+    .replace(/`/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+const structuredInterviewComputedFields: ComputedFields = {
+  readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
+  slug: {
+    type: 'string',
+    resolve: (doc) => doc._raw.flattenedPath.replace(/^gongkao\/structured-interview\//, ''),
+  },
+  path: {
+    type: 'string',
+    resolve: (doc) =>
+      `gongkao/structured-interview/${doc._raw.flattenedPath.replace(/^gongkao\/structured-interview\//, '')}`,
+  },
+  filePath: {
+    type: 'string',
+    resolve: (doc) => doc._raw.sourceFilePath,
+  },
+  toc: { type: 'json', resolve: (doc) => extractTocHeadings(doc.body.raw) },
+  questionText: {
+    type: 'string',
+    resolve: (doc) => extractQuestionText(doc.body.raw),
   },
 }
 
@@ -107,6 +157,10 @@ function createSearchIndex(allBlogs) {
   }
 }
 
+function sortDocumentsByDate(documents) {
+  return [...documents].sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)))
+}
+
 export const Blog = defineDocumentType(() => ({
   name: 'Blog',
   filePathPattern: 'blog/**/*.mdx',
@@ -125,7 +179,7 @@ export const Blog = defineDocumentType(() => ({
     canonicalUrl: { type: 'string' },
   },
   computedFields: {
-    ...computedFields,
+    ...blogComputedFields,
     structuredData: {
       type: 'json',
       resolve: (doc) => ({
@@ -162,12 +216,50 @@ export const Authors = defineDocumentType(() => ({
     github: { type: 'string' },
     layout: { type: 'string' },
   },
-  computedFields,
+  computedFields: authorComputedFields,
+}))
+
+export const StructuredInterview = defineDocumentType(() => ({
+  name: 'StructuredInterview',
+  filePathPattern: 'gongkao/structured-interview/**/*.mdx',
+  contentType: 'mdx',
+  fields: {
+    title: { type: 'string', required: true },
+    date: { type: 'date', required: true },
+    tags: { type: 'list', of: { type: 'string' }, default: [] },
+    draft: { type: 'boolean' },
+    exam_date: { type: 'date' },
+    exam_region: { type: 'string' },
+    exam_type: { type: 'string' },
+    source_title: { type: 'string' },
+    source_site: { type: 'string' },
+    source_url: { type: 'string' },
+    authenticity: { type: 'string' },
+  },
+  computedFields: {
+    ...structuredInterviewComputedFields,
+    structuredData: {
+      type: 'json',
+      resolve: (doc) => {
+        const slug = doc._raw.flattenedPath.replace(/^gongkao\/structured-interview\//, '')
+
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: doc.title,
+          datePublished: doc.date,
+          dateModified: doc.date,
+          description: extractQuestionText(doc.body.raw) || doc.source_title || doc.title,
+          url: `${siteMetadata.siteUrl}/gongkao/structured-interview/${slug}`,
+        }
+      },
+    },
+  },
 }))
 
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors],
+  documentTypes: [Blog, Authors, StructuredInterview],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
@@ -198,8 +290,8 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs } = await importData()
+    const { allBlogs, allStructuredInterviews } = await importData()
     createTagCount(allBlogs)
-    createSearchIndex(allBlogs)
+    createSearchIndex([...allBlogs, ...sortDocumentsByDate(allStructuredInterviews)])
   },
 })
