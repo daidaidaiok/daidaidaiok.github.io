@@ -32,7 +32,11 @@ export default function DesktopNav() {
                   />
                 </svg>
               </MenuButton>
-              <MenuItems className="absolute top-full left-0 z-50 mt-3 w-72 origin-top-left rounded-[28px] border border-white/80 bg-white/95 p-2 shadow-[14px_14px_28px_rgba(169,160,160,0.28),-14px_-14px_28px_rgba(255,255,255,0.8)] backdrop-blur-xl focus:outline-hidden dark:border-white/10 dark:bg-gray-950/95 dark:shadow-[14px_14px_28px_rgba(0,0,0,0.38),-14px_-14px_28px_rgba(47,58,70,0.2)]">
+              <MenuItems
+                anchor={{ to: 'bottom start', gap: '12px' }}
+                modal={false}
+                className="z-50 w-72 rounded-[28px] border border-white/80 bg-white/95 p-2 shadow-[14px_14px_28px_rgba(169,160,160,0.28),-14px_-14px_28px_rgba(255,255,255,0.8)] backdrop-blur-xl focus:outline-hidden dark:border-white/10 dark:bg-gray-950/95 dark:shadow-[14px_14px_28px_rgba(0,0,0,0.38),-14px_-14px_28px_rgba(47,58,70,0.2)]"
+              >
                 {link.items.map((item) => (
                   <MenuItem key={item.href}>
                     <Link
