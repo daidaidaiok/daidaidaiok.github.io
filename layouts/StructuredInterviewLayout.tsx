@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 import siteMetadata from '@/data/siteMetadata'
 import Link from '@/components/Link'
-import FullscreenReader from '@/components/FullscreenReader'
 import type { CoreStructuredInterview } from '@/lib/structuredInterviews'
 
 const metadataDateTemplate: Intl.DateTimeFormatOptions = {
@@ -142,7 +141,7 @@ export default function StructuredInterviewLayout({
         </aside>
 
         <div className="space-y-4">
-          <FullscreenReader>{children}</FullscreenReader>
+          {children}
 
           {(prev || next) && (
             <div className="grid gap-4 md:grid-cols-2">

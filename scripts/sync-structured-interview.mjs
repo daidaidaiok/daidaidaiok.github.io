@@ -1,9 +1,11 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import path from 'path'
 
 const sourceDir =
   '/Users/lijunfeng/Library/Mobile Documents/iCloud~md~obsidian/Documents/咖喱gaygay/32 - 结构化面试'
 const targetDir = path.join(process.cwd(), 'data', 'gongkao', 'structured-interview')
+const sourceSlidesDir = path.join(sourceDir, 'slides')
+const targetSlidesDir = path.join(process.cwd(), 'public', 'gongkao', 'structured-interview-slides')
 
 function buildFrontmatterFromFilename(sourceFile) {
   const baseName = sourceFile.replace(/\.md$/, '')
@@ -51,6 +53,8 @@ function normalizeContent(sourceFile, content) {
 
 function syncStructuredInterviews() {
   mkdirSync(targetDir, { recursive: true })
+  rmSync(targetSlidesDir, { recursive: true, force: true })
+  mkdirSync(targetSlidesDir, { recursive: true })
 
   const sourceFiles = readdirSync(sourceDir)
     .filter((fileName) => fileName.endsWith('.md'))
@@ -62,6 +66,13 @@ function syncStructuredInterviews() {
     const content = readFileSync(sourcePath, 'utf8')
 
     writeFileSync(targetPath, normalizeContent(sourceFile, content))
+
+    const sourceSlidePath = path.join(sourceSlidesDir, sourceFile.replace(/\.md$/, '.html'))
+    const targetSlidePath = path.join(targetSlidesDir, sourceFile.replace(/\.md$/, '.html'))
+
+    if (existsSync(sourceSlidePath)) {
+      copyFileSync(sourceSlidePath, targetSlidePath)
+    }
   }
 
   console.log(`Synced ${sourceFiles.length} structured interview files to ${targetDir}`)
