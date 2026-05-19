@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小桔灯工作室怎么看 - 每日一道结构化面试真题</title>
+<style>
+  :root {
+    --accent: #E8453C;
+    --accent-light: #FFF0EE;
+    --accent-dark: #C42D25;
+    --accent-grad: linear-gradient(135deg, #E8453C 0%, #FF6B5A 100%);
+    --bg-warm: #FDF8F6;
+    --bg-card: #FFFFFF;
+    --ink: #1A1A2E;
+    --ink2: #5A5A72;
+    --ink3: #8E8EA0;
+    --border: #F0E6E2;
+    --tag-bg: #FFF5F0;
+    --shadow: 0 4px 24px rgba(232,69,60,.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'PingFang SC','Noto Sans SC','Microsoft YaHei', sans-serif;
+    background: var(--bg-warm);
+    margin: 0; overflow: hidden; user-select: none;
+  }
+  #stage {
+    width: 1080px; height: 1920px;
+    position: absolute; top: 50%; left: 50%;
+    transform-origin: center center;
+  }
+  /* 竖屏窗口模式: 去掉黑边, 完全填充 */
+  @media (max-aspect-ratio: 3/4) {
+    body { background: transparent; }
+    #stage { border-radius: 0; }
+    #hud { bottom: 8px; }
+    #nav-hint { display: none; }
+  }
+  .slide {
+    width: 1080px; height: 1920px;
+    position: absolute; top: 0; left: 0;
+    overflow: hidden; opacity: 0;
+    pointer-events: none; transition: opacity .35s ease;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+  .sc {
+    position: absolute;
+    top: 120px; left: 60px; right: 80px; bottom: 160px;
+    display: flex; flex-direction: column;
+  }
+  #hud {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 999;
+  }
+  #hud .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255,255,255,.25); cursor: pointer; transition: all .2s;
+  }
+  #hud .dot.on { background: var(--accent); width: 28px; border-radius: 5px; }
+  #nav-hint {
+    position: fixed; bottom: 52px; left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,.3); font-size: 13px;
+    z-index: 999; letter-spacing: 1px;
+  }
+
+  /* S1 封面 */
+  .s-cover { background: var(--bg-warm); }
+  .s-cover .top-bar { position: absolute; top:0; left:0; right:0; height: 8px; background: var(--accent-grad); }
+  .s-cover .deco { position: absolute; border-radius: 50%; border: 3px solid rgba(232,69,60,.07); }
+  .s-cover .deco.d1 { width:420px; height:420px; right:-120px; top:260px; }
+  .s-cover .deco.d2 { width:280px; height:280px; right:-50px; top:180px; border-color:rgba(232,69,60,.04); }
+  .s-cover .deco.d3 { width:200px; height:200px; left:-70px; bottom:380px; }
+  .series-tag {
+    display: inline-flex; align-items:center; gap:10px;
+    background: var(--accent); color:#fff;
+    font-size:36px; font-weight:600;
+    padding:16px 40px; border-radius:40px;
+    letter-spacing:2px; margin-bottom:56px;
+  }
+  .series-tag::before { content:''; width:12px; height:12px; border-radius:50%; background:#fff; }
+  .cover-date { font-size:48px; color:var(--ink3); font-weight:500; margin-bottom:20px; letter-spacing:4px; }
+  .cover-exam { font-size:38px; color:var(--ink2); margin-bottom:72px; line-height:1.6; }
+  .cover-exam span { display:inline-block; background:var(--tag-bg); color:var(--accent); padding:8px 24px; border-radius:8px; font-weight:500; margin:4px 8px 4px 0; font-size:34px; }
+  .cover-line { width:100px; height:6px; background:var(--accent-grad); border-radius:3px; margin-bottom:64px; }
+  .cover-title { font-size:86px; font-weight:800; color:var(--ink); line-height:1.35; margin-bottom:52px; letter-spacing:2px; }
+  .cover-title em { font-style:normal; color:var(--accent); }
+  .cover-sub { font-size:44px; color:var(--ink2); line-height:1.7; }
+  .cover-footer { position:absolute; bottom:170px; left:60px; right:80px; display:flex; align-items:center; gap:14px; font-size:30px; color:var(--ink3); }
+  .cover-footer::before { content:''; width:8px; height:8px; border-radius:50%; background:var(--accent); opacity:.5; }
+
+  /* S2 题目 */
+  .s-question { background:#fff; }
+  .q-header { display:flex; align-items:center; gap:16px; margin-bottom:48px; }
+  .q-icon { width:72px; height:72px; background:var(--accent-grad); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:36px; color:#fff; font-weight:700; flex-shrink:0; }
+  .q-label { font-size:42px; font-weight:700; color:var(--ink); }
+  .q-meta { font-size:28px; color:var(--ink3); margin-top:4px; }
+  .q-card { background:var(--bg-warm); border-radius:24px; padding:52px 48px; border-left:6px solid var(--accent); position:relative; }
+  .q-card::before { content:'\201C'; font-size:140px; color:rgba(232,69,60,.1); position:absolute; top:-10px; left:30px; font-family:Georgia,serif; line-height:1; }
+  .q-text { font-size:44px; color:var(--ink); line-height:1.85; font-weight:500; position:relative; z-index:1; }
+  .q-text em { font-style:normal; color:var(--accent); font-weight:700; border-bottom:3px solid rgba(232,69,60,.3); }
+  .q-tags { margin-top:48px; display:flex; gap:16px; flex-wrap:wrap; }
+  .q-tag { background:var(--tag-bg); color:var(--accent); font-size:30px; font-weight:500; padding:12px 28px; border-radius:10px; }
+
+  /* S3 审题拆解 */
+  .s-analysis { background:var(--bg-warm); }
+  .sec-bar { display:flex; align-items:center; gap:16px; margin-bottom:48px; }
+  .sec-num { width:64px; height:64px; background:var(--accent-grad); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; color:#fff; flex-shrink:0; }
+  .sec-title { font-size:48px; font-weight:700; color:var(--ink); }
+  .a-list { display:flex; flex-direction:column; gap:28px; }
+  .a-item { background:var(--bg-card); border-radius:20px; padding:40px 44px; box-shadow:var(--shadow); display:flex; gap:24px; align-items:flex-start; }
+  .a-item-n { width:52px; height:52px; background:var(--accent-light); color:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; flex-shrink:0; margin-top:4px; }
+  .a-item-t { font-size:38px; color:var(--ink); line-height:1.65; font-weight:500; }
+  .a-item-t em { font-style:normal; color:var(--accent); font-weight:700; }
+
+  /* S4 五步法 */
+  .s-framework { background:#fff; }
+  .fw-flow { display:flex; flex-direction:column; gap:14px; flex:1; justify-content:center; }
+  .fw-step { display:flex; align-items:stretch; gap:20px; }
+  .fw-left { display:flex; flex-direction:column; align-items:center; width:60px; flex-shrink:0; }
+  .fw-dot { width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; color:#fff; flex-shrink:0; background:var(--accent-grad); }
+  .fw-line { flex:1; width:3px; background:var(--border); margin:6px auto; min-height:10px; }
+  .fw-card { flex:1; background:var(--bg-warm); border-radius:18px; padding:26px 30px; border:2px solid transparent; }
+  .fw-card.hl { border-color:rgba(232,69,60,.15); background:var(--accent-light); }
+  .fw-card h4 { font-size:38px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .fw-card p { font-size:30px; color:var(--ink2); line-height:1.55; }
+
+  /* S5 思维导图 */
+  .s-mindmap { background:var(--bg-warm); }
+  .vm-tree { flex:1; display:flex; flex-direction:column; align-items:center; gap:0; }
+  .vm-root { background:var(--accent-grad); color:#fff; font-size:40px; font-weight:700; padding:20px 48px; border-radius:50px; letter-spacing:2px; }
+  .vm-trunk { width:4px; height:24px; background:var(--accent); }
+  .vm-branches { width:100%; display:flex; flex-direction:column; gap:14px; }
+  .vm-branch { display:flex; align-items:flex-start; gap:14px; }
+  .vm-branch-left { display:flex; flex-direction:column; align-items:center; width:44px; flex-shrink:0; padding-top:18px; }
+  .vm-branch-dot { width:16px; height:16px; border-radius:50%; flex-shrink:0; position:relative; }
+  .vm-branch-dot::before { content:''; position:absolute; top:50%; left:50%; width:8px; height:8px; border-radius:50%; background:#fff; transform:translate(-50%,-50%); }
+  .vm-branch-stem { width:3px; flex:1; min-height:6px; }
+  .vm-branch-card { flex:1; border-radius:16px; padding:20px 24px; border:2px solid; }
+  .vm-branch-card h5 { font-size:34px; font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .vm-branch-card h5 .vm-icon { width:32px; height:32px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:17px; color:#fff; flex-shrink:0; }
+  .vm-leaves { display:flex; flex-wrap:wrap; gap:10px; }
+  .vm-leaf { font-size:28px; font-weight:500; padding:8px 16px; border-radius:7px; }
+
+  .vm-c-blue .vm-branch-dot { background:#3498DB; } .vm-c-blue .vm-branch-stem { background:#B5D8F7; } .vm-c-blue .vm-branch-card { border-color:#B5D8F7; background:#F0F8FF; } .vm-c-blue h5 { color:#2471A3; } .vm-c-blue .vm-icon { background:#3498DB; }
+  .vm-c-green .vm-branch-dot { background:#27AE60; } .vm-c-green .vm-branch-stem { background:#A9DFBF; } .vm-c-green .vm-branch-card { border-color:#A9DFBF; background:#F0FFF4; } .vm-c-green h5 { color:#1E8449; } .vm-c-green .vm-icon { background:#27AE60; }
+  .vm-c-orange .vm-branch-dot { background:#E67E22; } .vm-c-orange .vm-branch-stem { background:#F5CBA7; } .vm-c-orange .vm-branch-card { border-color:#F5CBA7; background:#FFF8F0; } .vm-c-orange h5 { color:#B7791F; } .vm-c-orange .vm-icon { background:#E67E22; }
+  .vm-c-teal .vm-branch-dot { background:#16A085; } .vm-c-teal .vm-branch-stem { background:#A3D9CC; } .vm-c-teal .vm-branch-card { border-color:#A3D9CC; background:#F0FFFA; } .vm-c-teal h5 { color:#117A65; } .vm-c-teal .vm-icon { background:#16A085; }
+  .vm-c-red .vm-branch-dot { background:#E74C3C; } .vm-c-red .vm-branch-stem { background:#F5B7B1; } .vm-c-red .vm-branch-card { border-color:#F5B7B1; background:#FFF5F5; } .vm-c-red h5 { color:#C0392B; } .vm-c-red .vm-icon { background:#E74C3C; }
+
+  /* S6-S7 参考答案 */
+  .s-answer { background:#fff; }
+  .ans-prog { display:flex; gap:8px; margin-bottom:36px; }
+  .ans-dot { width:48px; height:6px; border-radius:3px; background:var(--border); }
+  .ans-dot.on { background:var(--accent-grad); width:80px; }
+  .ans-sec { margin-bottom:24px; }
+  .ans-label { font-size:34px; font-weight:700; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+  .ans-label::before { content:''; width:5px; height:28px; background:var(--accent-grad); border-radius:3px; }
+  .ans-text { font-size:34px; color:var(--ink); line-height:1.75; font-weight:400; }
+  .ans-text em { font-style:normal; color:var(--accent); font-weight:600; }
+  .ans-box { background:var(--accent-light); border-radius:14px; padding:20px 24px; margin:14px 0; border-left:5px solid var(--accent); }
+  .ans-box p { font-size:32px; color:var(--ink); line-height:1.65; font-weight:400; }
+  .ans-box em { font-style:normal; color:var(--accent); font-weight:700; }
+
+  /* S8 CTA */
+  .s-cta { background:var(--accent-grad); }
+  .s-cta .sc { justify-content:center; align-items:center; text-align:center; }
+  .cta-title { font-size:68px; font-weight:800; color:#fff; margin-bottom:28px; letter-spacing:4px; }
+  .cta-sub { font-size:40px; color:rgba(255,255,255,.85); margin-bottom:56px; line-height:1.6; }
+  .cta-btns { display:flex; gap:24px; }
+  .cta-btn { background:rgba(255,255,255,.2); border:2px solid rgba(255,255,255,.5); color:#fff; font-size:36px; font-weight:600; padding:20px 44px; border-radius:50px; letter-spacing:2px; }
+  .cta-line { width:120px; height:4px; background:rgba(255,255,255,.3); border-radius:2px; margin:48px auto; }
+  .cta-acct { font-size:34px; color:rgba(255,255,255,.7); letter-spacing:3px; }
+  .cta-ver { font-size:22px; color:rgba(255,255,255,.3); margin-top:36px; letter-spacing:2px; }
+
+  .pg { position:absolute; bottom:170px; left:60px; font-size:24px; color:var(--ink3); letter-spacing:2px; }
+  .s-cta .pg { color:rgba(255,255,255,.35); }
+
+  /* 自动播放进度条 */
+  #autoplay-bar {
+    position:fixed; top:0; left:0; height:4px;
+    background:var(--accent-grad);
+    width:0; z-index:9999;
+    transition: width linear;
+    display:none;
+  }
+  #autoplay-badge {
+    position:fixed; top:12px; right:16px;
+    background:rgba(232,69,60,.85); color:#fff;
+    font-size:13px; padding:4px 14px; border-radius:20px;
+    z-index:9999; display:none; letter-spacing:1px;
+  }
+</style>
+</head>
+<body>
+
+<div id="autoplay-bar"></div>
+<div id="autoplay-badge">AUTO</div>
+
+<div id="stage">
+
+<!-- S1 封面 -->
+<div class="slide s-cover active" data-i="0">
+  <div class="top-bar"></div>
+  <div class="deco d1"></div><div class="deco d2"></div><div class="deco d3"></div>
+  <div class="sc">
+    <div class="series-tag">每日一道结构化面试真题</div>
+    <div class="cover-date">2026-04-07</div>
+    <div class="cover-exam"><span>山西省2025年度考试录用公务员补充录用面试</span></div>
+    <div class="cover-line"></div>
+    <div class="cover-title"><em>小桔灯工作室怎么看</em></div>
+    <div class="cover-sub">社会现象类 · 综合分析 · 基层治理</div>
+  </div>
+  <div class="cover-footer">咖喱gaygay · 结构化面试系列</div>
+</div>
+
+<!-- S2 题目 -->
+<div class="slide s-question" data-i="1">
+  <div class="sc">
+    <div class="q-header">
+      <div class="q-icon">Q</div>
+      <div><div class="q-label">面试真题</div><div class="q-meta">2025 年 6 月 21 日 下午 山西省2025年度考试录用公务员补充录用面试</div></div>
+    </div>
+    <div class="q-card"><div class="q-text">江苏省新增了“小桔灯”民警工作室、调解室，主要面对服刑人员，帮他们解决心理问题，帮助他们职业规划、家庭矛盾，工作强度大，工作效果好，你怎么看？</div></div>
+    <div class="q-tags"><div class="q-tag">社会现象类</div><div class="q-tag">综合分析</div><div class="q-tag">基层治理</div></div>
+  </div>
+  <div class="pg">02 / 08</div>
+</div>
+
+<!-- S3 审题拆解 -->
+<div class="slide s-analysis" data-i="2">
+  <div class="sc">
+    <div class="sec-bar"><div class="sec-num">01</div><div class="sec-title">审题拆解</div></div>
+    <div class="a-list">
+      <div class="a-item">
+        <div class="a-item-n">1</div>
+        <div class="a-item-t">题干关键词是“小桔灯民警工作室、调解室”“服刑人员”“心理问题、职业规划、家庭矛盾”，说明它是司法行政系统的治理创新。</div>
+      </div>
+      <div class="a-item">
+        <div class="a-item-n">2</div>
+        <div class="a-item-t">“工作强度大、工作效果好”提示答题不能停留在赞美，而要分析好效果背后的投入成本和可持续问题。</div>
+      </div>
+      <div class="a-item">
+        <div class="a-item-n">3</div>
+        <div class="a-item-t">服刑人员改造不是单一管理问题，还牵涉心理疏导、家庭支持、就业回归和社会融入，适合从系统治理角度展开。</div>
+      </div>
+      <div class="a-item">
+        <div class="a-item-n">4</div>
+        <div class="a-item-t">结尾要回到治理现代化，说明既要让“小桔灯”照亮回归路，也要用制度、专业和资源保障一线民警长期干得好。</div>
+      </div></div>
+  </div>
+  <div class="pg">03 / 08</div>
+</div>
+
+<!-- S4 五步法 -->
+<div class="slide s-framework" data-i="3">
+  <div class="sc">
+    <div class="sec-bar"><div class="sec-num">02</div><div class="sec-title">作答框架 · 五步法</div></div>
+    <div class="fw-flow">
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">1</div><div class="fw-line"></div></div>
+        <div class="fw-card hl"><h4>明确态度</h4><p>肯定“小桔灯”是教育改造和柔性治理的有益探索。</p></div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">2</div><div class="fw-line"></div></div>
+        <div class="fw-card hl"><h4>分析意义</h4><p>从服刑人员心理修复、家庭关系修复、职业规划和降低再犯风险展开。</p></div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">3</div><div class="fw-line"></div></div>
+        <div class="fw-card"><h4>点出难点</h4><p>指出工作强度大、专业要求高、民警压力重、社会资源衔接不足等现实问题。</p></div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">4</div><div class="fw-line"></div></div>
+        <div class="fw-card"><h4>提出对策</h4><p>从专业队伍、部门协同、数字台账、社会力量参与和长效激励等方面完善。</p></div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">5</div></div>
+        <div class="fw-card"><h4>总结升华</h4><p>落到以人为本、宽严相济和基层治理现代化，强调可复制但不能简单加码。</p></div>
+      </div></div>
+  </div>
+  <div class="pg">04 / 08</div>
+</div>
+
+<!-- S5 思维导图 -->
+<div class="slide s-mindmap" data-i="4">
+  <div class="sc">
+    <div class="sec-bar"><div class="sec-num">03</div><div class="sec-title">思维导图</div></div>
+    <div class="vm-tree">
+      <div class="vm-root">小桔灯工作室怎么看</div>
+      <div class="vm-trunk"></div>
+      <div class="vm-branches">
+        <div class="vm-branch vm-c-blue">
+          <div class="vm-branch-left"><div class="vm-branch-dot"></div><div class='vm-branch-stem'></div></div>
+          <div class="vm-branch-card">
+            <h5><span class="vm-icon">1</span>题目定位</h5>
+            <div class="vm-leaves"><span class="vm-leaf" style="background:#D6EAF8;color:#1A5276;">社会现象题</span><span class="vm-leaf" style="background:#D6EAF8;color:#1A5276;">司法治理创新</span><span class="vm-leaf" style="background:#D6EAF8;color:#1A5276;">监狱教育改造</span></div>
+          </div>
+        </div>
+        <div class="vm-branch vm-c-green">
+          <div class="vm-branch-left"><div class="vm-branch-dot"></div><div class='vm-branch-stem'></div></div>
+          <div class="vm-branch-card">
+            <h5><span class="vm-icon">2</span>积极意义</h5>
+            <div class="vm-leaves"><span class="vm-leaf" style="background:#D5F5E3;color:#186A3B;">心理疏导</span><span class="vm-leaf" style="background:#D5F5E3;color:#186A3B;">化解家庭矛盾</span><span class="vm-leaf" style="background:#D5F5E3;color:#186A3B;">帮助职业规划</span></div>
+          </div>
+        </div>
+        <div class="vm-branch vm-c-orange">
+          <div class="vm-branch-left"><div class="vm-branch-dot"></div><div class='vm-branch-stem'></div></div>
+          <div class="vm-branch-card">
+            <h5><span class="vm-icon">3</span>现实难点</h5>
+            <div class="vm-leaves"><span class="vm-leaf" style="background:#FDEBD0;color:#935116;">民警工作强度大</span><span class="vm-leaf" style="background:#FDEBD0;color:#935116;">专业能力要求高</span><span class="vm-leaf" style="background:#FDEBD0;color:#935116;">出监衔接链条长</span></div>
+          </div>
+        </div>
+        <div class="vm-branch vm-c-teal">
+          <div class="vm-branch-left"><div class="vm-branch-dot"></div><div class='vm-branch-stem'></div></div>
+          <div class="vm-branch-card">
+            <h5><span class="vm-icon">4</span>完善路径</h5>
+            <div class="vm-leaves"><span class="vm-leaf" style="background:#D1F2EB;color:#0E6655;">引入专业力量</span><span class="vm-leaf" style="background:#D1F2EB;color:#0E6655;">建立个案台账</span><span class="vm-leaf" style="background:#D1F2EB;color:#0E6655;">协同社区和就业资源</span></div>
+          </div>
+        </div>
+        <div class="vm-branch vm-c-red">
+          <div class="vm-branch-left"><div class="vm-branch-dot"></div></div>
+          <div class="vm-branch-card">
+            <h5><span class="vm-icon">5</span>总结升华</h5>
+            <div class="vm-leaves"><span class="vm-leaf" style="background:#FADBD8;color:#922B21;">以人为本</span><span class="vm-leaf" style="background:#FADBD8;color:#922B21;">宽严相济</span><span class="vm-leaf" style="background:#FADBD8;color:#922B21;">治理现代化</span></div>
+          </div>
+        </div></div>
+    </div>
+  </div>
+  <div class="pg">05 / 08</div>
+</div>
+
+
+<!-- S6 参考答案 1/2 -->
+<div class="slide s-answer" data-i="5">
+  <div class="sc">
+    <div class="sec-bar"><div class="sec-num">04</div><div class="sec-title">参考答案</div></div>
+    
+    <div class="ans-prog"><div class="ans-dot on"></div><div class="ans-dot"></div></div>
+    <div class="ans-sec">
+      <div class="ans-label">参考答案 (1/2)</div>
+      <div class="ans-box"><p>各位考官，对于江苏省新增“小桔灯”民警工作室、调解室这一做法，我总体上是支持和肯定的。它说明监狱管理工作不是简单地看住人、管住人，而是在依法管理的基础上，更加重视教育改造、心理疏导和社会回归，这体现了以人为本、宽严相济的治理理念。</p></div>
+<div class="ans-box"><p>首先，“小桔灯”的积极意义很明显。对服刑人员来说，他们在服刑期间可能面临心理压力、家庭关系破裂、未来就业迷茫等问题。如果这些问题长期得不到疏导，既会影响日常改造秩序，也会影响刑满释放后的社会融入。民警工作室和调解室能够通过谈心谈话、心理疏导、家庭矛盾调解、职业规划帮助等方式，把问题解决在萌芽阶段，帮助服刑人员重新建立责任意识和生活信心。从更长远看，这也有利于降低再犯风险，维护社会稳定。</p></div>
+<div class="ans-box"><p>其次，题干中也提到这项工作“工作强度大”。这提醒我们，好的基层创新不能只靠一线民警的责任心长期硬扛。心理疏导、矛盾调解、职业规划都具有较强专业性，如果缺少制度保障和资源支撑，容易出现民警压力过大、工作标准不统一、个案跟踪不连续等问题。因此，对这项做法既要肯定，也要从长效机制上继续完善。</p></div>
+
+    </div>
+  </div>
+  <div class="pg">06 / 08</div>
+</div>
+<!-- S7 参考答案 2/2 -->
+<div class="slide s-answer" data-i="6">
+  <div class="sc">
+    <div class="sec-bar"><div class="sec-num">04</div><div class="sec-title">参考答案</div></div>
+    
+    <div class="ans-prog"><div class="ans-dot"></div><div class="ans-dot on"></div></div>
+    <div class="ans-sec">
+      <div class="ans-label">参考答案 (2/2)</div>
+      <div class="ans-box"><p>具体来说，可以从几个方面发力。第一，加强专业支撑，建立民警、心理咨询师、社工、法律援助人员共同参与的工作机制，让专业的人做专业的事。第二，完善个案台账，对服刑人员的心理状态、家庭矛盾、技能特长和就业意向进行动态记录，做到一人一策、精准帮扶。第三，加强与司法所、社区、民政、人社等部门衔接，把监内教育改造和出监后的安置帮教、就业服务连接起来。第四，也要关心一线民警，通过培训、轮岗、心理减压和激励保障，避免把治理创新简单变成基层加码。</p></div>
+<div class="ans-box"><p>总之，“小桔灯”虽小，但照见的是基层治理的大方向。它启示我们，真正有效的监管改造，不仅要有法律的刚性，也要有教育的温度、专业的支撑和制度的保障。只有把这些环节贯通起来，才能让服刑人员更好改造、顺利回归，也让社会治理更有韧性、更有温度。</p></div>
+
+    </div>
+  </div>
+  <div class="pg">07 / 08</div>
+</div>
+
+<!-- CTA -->
+<div class="slide s-cta" data-i="7">
+  <div class="sc">
+    <div class="cta-title">每日一道真题</div>
+    <div class="cta-sub">关注我，带你拆解结构化面试</div>
+    <div class="cta-btns"><div class="cta-btn">点赞</div><div class="cta-btn">收藏</div><div class="cta-btn">关注</div></div>
+    <div class="cta-line"></div>
+    <div class="cta-acct">@咖喱gaygay</div>
+    <div class="cta-ver">Template v2.0</div>
+  </div>
+  <div class="pg">08 / 08</div>
+</div>
+
+</div>
+
+<div id="hud"></div>
+<div id="nav-hint">← → 翻页 &nbsp;|&nbsp; A 自动播放 &nbsp;|&nbsp; 数字键跳页</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const N = slides.length;
+  let cur = 0;
+
+  const hud = document.getElementById('hud');
+  for(let i=0;i<N;i++){
+    const d = document.createElement('div');
+    d.className = 'dot'+(i===0?' on':'');
+    d.onclick = ()=> go(i);
+    hud.appendChild(d);
+  }
+
+  function go(i){
+    if(i<0||i>=N) return;
+    slides[cur].classList.remove('active');
+    hud.children[cur].classList.remove('on');
+    cur = i;
+    slides[cur].classList.add('active');
+    hud.children[cur].classList.add('on');
+  }
+
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') go(cur+1);
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp') go(cur-1);
+    if(e.key>='1'&&e.key<='9') go(parseInt(e.key)-1);
+    if(e.key==='a'||e.key==='A') toggleAutoplay();
+    if(e.key==='Escape') stopAutoplay();
+  });
+
+  document.getElementById('stage').addEventListener('click', e=>{
+    if(autoTimer) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if(x < rect.width/2) go(cur-1); else go(cur+1);
+  });
+
+  function fit(){
+    const stage = document.getElementById('stage');
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const s = Math.min(vw/1080, vh/1920, 1);
+    stage.style.transform = 'translate(-50%,-50%) scale('+s+')';
+  }
+  fit();
+  window.addEventListener('resize', fit);
+
+  /* ── 自动播放 ── */
+  let autoTimer = null;
+  const DURATION = 8; // 每页秒数
+  const bar = document.getElementById('autoplay-bar');
+  const badge = document.getElementById('autoplay-badge');
+
+  function toggleAutoplay(){
+    if(autoTimer) stopAutoplay();
+    else startAutoplay();
+  }
+  function startAutoplay(){
+    bar.style.display = 'block';
+    badge.style.display = 'block';
+    tick();
+  }
+  function tick(){
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        bar.style.transition = 'width '+DURATION+'s linear';
+        bar.style.width = '100%';
+      });
+    });
+    autoTimer = setTimeout(()=>{
+      if(cur < N-1) { go(cur+1); tick(); }
+      else stopAutoplay();
+    }, DURATION*1000);
+  }
+  function stopAutoplay(){
+    clearTimeout(autoTimer);
+    autoTimer = null;
+    bar.style.display = 'none';
+    badge.style.display = 'none';
+  }
+})();
+</script>
+</body>
+</html>

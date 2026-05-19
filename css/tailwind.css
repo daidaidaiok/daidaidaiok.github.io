@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/forms";
+@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @source '../node_modules/pliny';
 @custom-variant dark (&:where(.dark, .dark *));
@@ -7,7 +7,8 @@
 /* Core theme configuration */
 @theme {
   /* Font families */
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+  --font-sans:
+    var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   /* Colors */
@@ -248,4 +249,37 @@ body {
   background-image:
     radial-gradient(circle at 10% 20%, rgb(39 49 58 / 35%) 0%, transparent 35%),
     radial-gradient(circle at 90% 10%, rgb(18 26 35 / 45%) 0%, transparent 30%);
+}
+
+.fullscreen-reader:fullscreen {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow-y: auto;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--color-body-light);
+}
+
+.dark .fullscreen-reader:fullscreen {
+  background: var(--color-body-dark);
+}
+
+.fullscreen-reader:fullscreen .fullscreen-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(18px);
+  background: rgb(246 242 242 / 86%);
+}
+
+.dark .fullscreen-reader:fullscreen .fullscreen-toolbar {
+  background: rgb(11 15 17 / 86%);
+}
+
+.fullscreen-reader:fullscreen .fullscreen-prose {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding-bottom: 5rem;
 }
