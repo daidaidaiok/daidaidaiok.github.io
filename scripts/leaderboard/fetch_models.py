@@ -85,6 +85,7 @@ CURATED = {
     "anthropic/claude-opus-4.7":        {"name": "Claude Opus 4.7",       "provider": "Anthropic", "model_family": "Claude Opus 4.7", "reasoning_effort": "high",  "score": 95},
     "anthropic/claude-opus-4.7-fast":   {"name": "Claude Opus 4.7 (Fast)","provider": "Anthropic", "model_family": "Claude Opus 4.7", "reasoning_effort": "medium","score": 92},
     "anthropic/claude-opus-4.6":        {"name": "Claude Opus 4.6",       "provider": "Anthropic", "model_family": "Claude Opus 4.6", "reasoning_effort": "high",  "score": 93},
+    "anthropic/claude-sonnet-5":        {"name": "Claude Sonnet 5",       "provider": "Anthropic", "model_family": "Claude Sonnet 5", "reasoning_effort": "high",  "score": 93},
 
     "openai/gpt-5.6-sol-pro":           {"name": "GPT-5.6 Sol Pro",       "provider": "OpenAI",    "model_family": "GPT-5.6 Sol",     "reasoning_effort": "max",   "score": 96},
     "openai/gpt-5.6-sol":               {"name": "GPT-5.6 Sol",           "provider": "OpenAI",    "model_family": "GPT-5.6 Sol",     "reasoning_effort": "high",  "score": 95},

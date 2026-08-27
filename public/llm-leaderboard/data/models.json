@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-08-27T01:35:59.961955+00:00",
+  "updated_at": "2026-08-27T01:48:29.514800+00:00",
   "source": "Hand-curated (LMArena/AA 2026) + OpenRouter live API",
-  "count": 48,
+  "count": 49,
   "models": [
     {
       "raw_id": "anthropic/claude-opus-5",
@@ -91,6 +91,19 @@
       "curated": true,
       "context_length": 1000000,
       "supported_efforts": ["max", "high", "medium", "low"],
+      "tier": "SOTA",
+      "open_source": false
+    },
+    {
+      "raw_id": "anthropic/claude-sonnet-5",
+      "name": "Claude Sonnet 5",
+      "provider": "Anthropic",
+      "model_family": "Claude Sonnet 5",
+      "reasoning_effort": "high",
+      "score": 93,
+      "curated": true,
+      "context_length": 1000000,
+      "supported_efforts": ["max", "xhigh", "high", "medium", "low"],
       "tier": "SOTA",
       "open_source": false
     },
