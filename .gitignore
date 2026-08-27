@@ -59,3 +59,7 @@ logs/security/
 
 # local temp worktrees
 .tmp-pr/
+
+# Python
+__pycache__/
+*.pyc
