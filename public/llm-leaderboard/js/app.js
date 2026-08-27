@@ -39,8 +39,8 @@
 
   function badgeFor(model) {
     if (isOpenSource(model)) {
-      const q = window.QUANT_MAP[model.name] || 'fp16'
-      return { type: 'open', text: q }
+      // 不标注具体量化精度——那需要逐模型核实权重格式，没依据就不写
+      return { type: 'open', text: '开源' }
     }
     const ctx = formatCtx(model.context_length)
     return { type: 'closed', text: ctx + ' ctx' }

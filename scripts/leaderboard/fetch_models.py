@@ -1,11 +1,14 @@
 """
-Fetch LLM leaderboard data from OpenRouter (公开 API), merge with hand-curated
-seed models, bucket by (tier, reasoning_effort), and write the site's models.json.
+Fetch LLM leaderboard data, normalize against Artificial Analysis Intelligence
+Index anchors, and write public/llm-leaderboard/data/models.json.
 
-设计：每个模型有 model_family（型号族）+ reasoning_effort（max/xhigh/high/medium/low），
-前端按 (tier, reasoning_effort) 二维分组成"等价行"，每行内多卡片并排。
-
-数据产物直接写入 public/llm-leaderboard/data/models.json（由本仓库的 Pages 构建一起发布）。
+数据可信度规则（2026-08 重建）：
+- 每个入选模型的 aa_index 必须来自可引用的公开来源（BENCHMARK_ANCHORS.source_url），
+  禁止凭印象填写或"推算"分数。
+- 站点展示分 = round(aa_index / 榜首aa_index * 100)，即相对榜首的指数百分比；
+  MIN_SCORE=70 表示"达到榜首 70%"，低于该线的模型不上榜。
+- OpenRouter 长尾（无基准值、此前是按上下文长度编造的占位分）已彻底废弃。
+- 锚点只认 OpenRouter 在售目录里真实存在的 raw_id，下架即自动剔除。
 """
 import ipaddress
 import json
@@ -18,8 +21,11 @@ from urllib.parse import urlparse
 
 ALLOWED_HOSTS = {"openrouter.ai"}
 
-# 上榜门槛：低于该分数的模型（含 OpenRouter 长尾）不进入天梯图
+# 上榜门槛：展示分（相对榜首 %）低于该值的模型不进入天梯图
 MIN_SCORE = 70
+
+# 归一化日期快照：AA 指数随版本漂移，锚点数值以此时间的公开报道为准
+ANCHORS_AS_OF = "2026-08"
 
 
 def _safe_urlopen(url: str, timeout: int = 30):
@@ -64,99 +70,134 @@ def is_open_source(model: dict) -> bool:
     return any(raw.startswith(p) for p in OPEN_SOURCE_ORGS)
 
 
-# 思考档位排序（高→低）
-REASONING_ORDER = ["max", "xhigh", "high", "medium", "low", "minimal", "none"]
-REASONING_LABEL = {
-    "max": "Max 推理", "xhigh": "XHigh 推理", "high": "High 推理",
-    "medium": "Medium 推理", "low": "Low 推理", "minimal": "Minimal 推理",
-    "none": "无推理",
+# ---------------------------------------------------------------------------
+# 基准锚点表 —— 天梯图唯一的数据源
+#
+# 每条记录：
+#   name / provider / model_family   展示信息
+#   aa_index                         Artificial Analysis Intelligence Index 原始值
+#                                    （2026-08 公开报道口径）
+#   effort_measured                  有明确报道的评测推理档位；未注明则留空
+#   source_url                       数值出处（人工复核入口）
+#
+# 2026-08-27 校对轮次删除了所有查不到出处的旧 curated 条目（GPT-5.4/5.2 系列、
+# Opus 4.7 及以下、Qwen3.7/3.6、GLM-5.2/5.1、Mistral Medium 等）。它们不是不存在，
+# 只是本轮没有拿到可信数值；后续校对拿到出处再放行。
+# ---------------------------------------------------------------------------
+_SRC_ROBOTMUNKI = "https://robotmunki.com/blog/llm-landscape"
+_SRC_GREENFLAG = "https://greenflagdigital.com/top-ai-models-ranked/"
+_SRC_AA_SONNET = "https://artificialanalysis.ai/articles/claude-sonnet-5-agentic-cost"
+_SRC_AA_GPT56 = "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
+_SRC_AA_MUSE = "https://artificialanalysis.ai/articles/muse-spark-1-2"
+_SRC_ORCA = "https://www.orcarouter.ai/blog/gemini-3-7-flash-vs-deepseek-v4-flash"
+
+BENCHMARK_ANCHORS = {
+    "anthropic/claude-fable-5": {
+        "name": "Claude Fable 5", "provider": "Anthropic",
+        "model_family": "Claude Fable 5", "aa_index": 62,
+        "source_url": _SRC_GREENFLAG,
+    },
+    "anthropic/claude-opus-5": {
+        "name": "Claude Opus 5", "provider": "Anthropic",
+        "model_family": "Claude Opus 5", "aa_index": 61,
+        "source_url": _SRC_ROBOTMUNKI,
+    },
+    "x-ai/grok-4.6": {
+        "name": "Grok 4.6", "provider": "xAI",
+        "model_family": "Grok 4.6", "aa_index": 61,
+        "source_url": _SRC_GREENFLAG,
+    },
+    "openai/gpt-5.6-sol": {
+        "name": "GPT-5.6 Sol", "provider": "OpenAI",
+        "model_family": "GPT-5.6 Sol", "effort_measured": "max", "aa_index": 61,
+        "source_url": "https://artificialanalysis.ai/leaderboards/models",
+    },
+    "z-ai/glm-5.3": {
+        "name": "GLM 5.3", "provider": "Zhipu",
+        "model_family": "GLM 5.3", "aa_index": 60,
+        "source_url": _SRC_ROBOTMUNKI,
+    },
+    "moonshotai/kimi-k3": {
+        "name": "Kimi K3", "provider": "Moonshot",
+        "model_family": "Kimi K3", "effort_measured": "max", "aa_index": 60,
+        "source_url": _SRC_ROBOTMUNKI,
+    },
+    "google/gemini-3.7-flash": {
+        "name": "Gemini 3.7 Flash", "provider": "Google",
+        "model_family": "Gemini 3.7 Flash", "aa_index": 56,
+        "source_url": _SRC_ORCA,
+    },
+    "qwen/qwen3.8-max": {
+        "name": "Qwen3.8 Max", "provider": "Alibaba",
+        "model_family": "Qwen3.8", "aa_index": 56,
+        # 来源给出 56–58 区间，取保守低值
+        "source_url": _SRC_ORCA,
+    },
+    "openai/gpt-5.6-terra": {
+        "name": "GPT-5.6 Terra", "provider": "OpenAI",
+        "model_family": "GPT-5.6 Terra", "effort_measured": "max", "aa_index": 55,
+        "source_url": _SRC_AA_GPT56,
+    },
+    "openai/gpt-5.5": {
+        "name": "GPT-5.5 (xhigh)", "provider": "OpenAI",
+        "model_family": "GPT-5.5", "effort_measured": "xhigh", "aa_index": 55,
+        # AA Sonnet 5 文：53 只落后 GPT-5.5 xhigh 2–3 分 → 取 55
+        "source_url": _SRC_AA_SONNET,
+    },
+    "anthropic/claude-opus-4.8": {
+        "name": "Claude Opus 4.8 (max)", "provider": "Anthropic",
+        "model_family": "Claude Opus 4.8", "effort_measured": "max", "aa_index": 55,
+        # 同上出处：与 GPT-5.5 xhigh 同档
+        "source_url": _SRC_AA_SONNET,
+    },
+    "meta/muse-spark-1.2": {
+        "name": "Muse Spark 1.2", "provider": "Meta",
+        "model_family": "Muse Spark 1.2", "effort_measured": "xhigh", "aa_index": 54,
+        "source_url": _SRC_AA_MUSE,
+    },
+    "deepseek/deepseek-v4-pro-0813": {
+        "name": "DeepSeek V4 Pro 0813", "provider": "DeepSeek",
+        "model_family": "DeepSeek V4", "aa_index": 53,
+        "source_url": "https://x.com/ArtificialAnlys/status/2088440350734201149",
+    },
+    "anthropic/claude-sonnet-5": {
+        "name": "Claude Sonnet 5", "provider": "Anthropic",
+        "model_family": "Claude Sonnet 5", "effort_measured": "max", "aa_index": 53,
+        "source_url": _SRC_AA_SONNET,
+    },
+    "deepseek/deepseek-v4-flash-0731": {
+        "name": "DeepSeek V4 Flash 0731", "provider": "DeepSeek",
+        "model_family": "DeepSeek V4", "aa_index": 52,
+        # AA 官方推文：仅比 V4 Pro 低 1 分
+        "source_url": "https://x.com/ArtificialAnlys/status/2088440350734201149",
+    },
+    "openai/gpt-5.6-luna": {
+        "name": "GPT-5.6 Luna", "provider": "OpenAI",
+        "model_family": "GPT-5.6 Luna", "effort_measured": "max", "aa_index": 51,
+        "source_url": _SRC_AA_GPT56,
+    },
+    "anthropic/claude-sonnet-4.6": {
+        "name": "Claude Sonnet 4.6", "provider": "Anthropic",
+        "model_family": "Claude Sonnet 4.6", "aa_index": 47,
+        # AA Sonnet 5 文：Sonnet 5 max 比 Sonnet 4.6 高 6 分 → 47
+        "source_url": _SRC_AA_SONNET,
+    },
+    "moonshotai/kimi-k2.7-code": {
+        "name": "Kimi K2.7 Code", "provider": "Moonshot",
+        "model_family": "Kimi K2.7", "aa_index": 43,
+        "source_url": "https://artificialanalysis.ai/models/kimi-k2-7-code",
+    },
 }
 
 
-# Hand-curated 2026 flagship models. 每个模型有:
-#   - name / provider / score (能力分 0-100)
-#   - model_family: 型号族（用于把同型号不同档位聚一起）
-#   - reasoning_effort: max / xhigh / high / medium / low / none
-# Score 在同 model_family 内按档位微调：max > xhigh > high > medium > low
-CURATED = {
-    "anthropic/claude-opus-5":          {"name": "Claude Opus 5",         "provider": "Anthropic", "model_family": "Claude Opus 5",   "reasoning_effort": "high",  "score": 98},
-    "anthropic/claude-opus-5-fast":     {"name": "Claude Opus 5 (Fast)",  "provider": "Anthropic", "model_family": "Claude Opus 5",   "reasoning_effort": "medium","score": 95},
-    "anthropic/claude-fable-5":         {"name": "Claude Fable 5",        "provider": "Anthropic", "model_family": "Claude Fable 5",  "reasoning_effort": "max",   "score": 97},
-    "anthropic/claude-opus-4.7":        {"name": "Claude Opus 4.7",       "provider": "Anthropic", "model_family": "Claude Opus 4.7", "reasoning_effort": "high",  "score": 95},
-    "anthropic/claude-opus-4.7-fast":   {"name": "Claude Opus 4.7 (Fast)","provider": "Anthropic", "model_family": "Claude Opus 4.7", "reasoning_effort": "medium","score": 92},
-    "anthropic/claude-opus-4.6":        {"name": "Claude Opus 4.6",       "provider": "Anthropic", "model_family": "Claude Opus 4.6", "reasoning_effort": "high",  "score": 93},
-    "anthropic/claude-sonnet-5":        {"name": "Claude Sonnet 5",       "provider": "Anthropic", "model_family": "Claude Sonnet 5", "reasoning_effort": "high",  "score": 93},
-
-    "openai/gpt-5.6-sol-pro":           {"name": "GPT-5.6 Sol Pro",       "provider": "OpenAI",    "model_family": "GPT-5.6 Sol",     "reasoning_effort": "max",   "score": 96},
-    "openai/gpt-5.6-sol":               {"name": "GPT-5.6 Sol",           "provider": "OpenAI",    "model_family": "GPT-5.6 Sol",     "reasoning_effort": "high",  "score": 95},
-    "openai/gpt-5.6-terra-pro":         {"name": "GPT-5.6 Terra Pro",     "provider": "OpenAI",    "model_family": "GPT-5.6 Terra",   "reasoning_effort": "max",   "score": 92},
-    "openai/gpt-5.6-terra":             {"name": "GPT-5.6 Terra",         "provider": "OpenAI",    "model_family": "GPT-5.6 Terra",   "reasoning_effort": "high",  "score": 90},
-    "openai/gpt-5.6-luna-pro":          {"name": "GPT-5.6 Luna Pro",      "provider": "OpenAI",    "model_family": "GPT-5.6 Luna",    "reasoning_effort": "max",   "score": 88},
-    "openai/gpt-5.6-luna":              {"name": "GPT-5.6 Luna",          "provider": "OpenAI",    "model_family": "GPT-5.6 Luna",    "reasoning_effort": "high",  "score": 86},
-    "openai/gpt-5.4-pro":               {"name": "GPT-5.4 Pro",           "provider": "OpenAI",    "model_family": "GPT-5.4",         "reasoning_effort": "high",  "score": 88},
-    "openai/gpt-5.4":                   {"name": "GPT-5.4",               "provider": "OpenAI",    "model_family": "GPT-5.4",         "reasoning_effort": "medium","score": 86},
-    "openai/gpt-5.2-pro":               {"name": "GPT-5.2 Pro",           "provider": "OpenAI",    "model_family": "GPT-5.2",         "reasoning_effort": "high",  "score": 82},
-    "openai/gpt-5.2":                   {"name": "GPT-5.2",               "provider": "OpenAI",    "model_family": "GPT-5.2",         "reasoning_effort": "medium","score": 80},
-
-    "google/gemini-3.7-flash":          {"name": "Gemini 3.7 Flash",      "provider": "Google",    "model_family": "Gemini 3.7 Flash","reasoning_effort": "high",  "score": 93},
-    "google/gemini-3.5-flash":          {"name": "Gemini 3.5 Flash",      "provider": "Google",    "model_family": "Gemini 3.5 Flash","reasoning_effort": "high",  "score": 85},
-    "google/gemini-3-flash-preview":    {"name": "Gemini 3 Flash Preview","provider": "Google",    "model_family": "Gemini 3 Flash",  "reasoning_effort": "high",  "score": 90},
-    "google/gemini-3.1-pro-preview":    {"name": "Gemini 3.1 Pro Preview","provider": "Google",    "model_family": "Gemini 3.1 Pro",  "reasoning_effort": "max",   "score": 88},
-    "google/gemini-3.1-flash-lite":     {"name": "Gemini 3.1 Flash Lite", "provider": "Google",    "model_family": "Gemini 3.1 Flash","reasoning_effort": "medium","score": 78},
-
-    "x-ai/grok-4.6":                    {"name": "Grok 4.6",              "provider": "xAI",       "model_family": "Grok 4.6",        "reasoning_effort": "high",  "score": 93},
-    "x-ai/grok-4.5":                    {"name": "Grok 4.5",              "provider": "xAI",       "model_family": "Grok 4.5",        "reasoning_effort": "high",  "score": 89},
-    "x-ai/grok-4.3":                    {"name": "Grok 4.3",              "provider": "xAI",       "model_family": "Grok 4.3",        "reasoning_effort": "high",  "score": 85},
-
-    "meta/muse-spark-1.2":              {"name": "Muse Spark 1.2",        "provider": "Meta",      "model_family": "Muse Spark 1.2",  "reasoning_effort": "xhigh", "score": 92},
-    "meta/muse-spark-1.1":              {"name": "Muse Spark 1.1",        "provider": "Meta",      "model_family": "Muse Spark 1.2",  "reasoning_effort": "high",  "score": 87},
-
-    "moonshotai/kimi-k3":               {"name": "Kimi K3",               "provider": "Moonshot",  "model_family": "Kimi K3",         "reasoning_effort": "max",   "score": 92},
-    "moonshotai/kimi-k2.7-code":        {"name": "Kimi K2.7 Code",        "provider": "Moonshot",  "model_family": "Kimi K2.7",       "reasoning_effort": "high",  "score": 80},
-    "moonshotai/kimi-k2.6":             {"name": "Kimi K2.6",             "provider": "Moonshot",  "model_family": "Kimi K2.7",       "reasoning_effort": "high",  "score": 78},
-
-    "z-ai/glm-5.3":                     {"name": "GLM 5.3",               "provider": "Zhipu",     "model_family": "GLM 5.3",         "reasoning_effort": "max",   "score": 92},
-    "z-ai/glm-5.2":                     {"name": "GLM 5.2",               "provider": "Zhipu",     "model_family": "GLM 5.2",         "reasoning_effort": "high",  "score": 88},
-    "z-ai/glm-5.1":                     {"name": "GLM 5.1",               "provider": "Zhipu",     "model_family": "GLM 5.1",         "reasoning_effort": "high",  "score": 82},
-
-    "mistralai/mistral-medium-3.5":     {"name": "Mistral Medium 3.5",    "provider": "Mistral",   "model_family": "Mistral Medium 3.5","reasoning_effort": "high","score": 84},
-    "mistralai/mistral-medium-3.1":     {"name": "Mistral Medium 3.1",    "provider": "Mistral",   "model_family": "Mistral Medium 3.1","reasoning_effort": "medium","score": 75},
-
-    "qwen/qwen3.8-max":                 {"name": "Qwen3.8 Max",           "provider": "Alibaba",   "model_family": "Qwen3.8",         "reasoning_effort": "max",   "score": 91},
-    "qwen/qwen3.8-2.4t-a95b":           {"name": "Qwen3.8 2.4T A95B",     "provider": "Alibaba",   "model_family": "Qwen3.8",         "reasoning_effort": "high",  "score": 88},
-    "qwen/qwen3.8-27b":                 {"name": "Qwen3.8 27B",           "provider": "Alibaba",   "model_family": "Qwen3.8",         "reasoning_effort": "medium","score": 82},
-    "qwen/qwen3.7-max":                 {"name": "Qwen3.7 Max",           "provider": "Alibaba",   "model_family": "Qwen3.7",         "reasoning_effort": "max",   "score": 87},
-    "qwen/qwen3.7-plus":                {"name": "Qwen3.7 Plus",          "provider": "Alibaba",   "model_family": "Qwen3.7",         "reasoning_effort": "high",  "score": 82},
-    "qwen/qwen3.7-flash":               {"name": "Qwen3.7 Flash",         "provider": "Alibaba",   "model_family": "Qwen3.7",         "reasoning_effort": "medium","score": 78},
-    "qwen/qwen3.6-plus":                {"name": "Qwen3.6 Plus",          "provider": "Alibaba",   "model_family": "Qwen3.6",         "reasoning_effort": "high",  "score": 76},
-    "qwen/qwen3.6-35b-a3b":             {"name": "Qwen3.6 35B A3B",       "provider": "Alibaba",   "model_family": "Qwen3.6",         "reasoning_effort": "medium","score": 75},
-
-    "deepseek/deepseek-v4-pro-0813":    {"name": "DeepSeek V4 Pro 0813",  "provider": "DeepSeek",  "model_family": "DeepSeek V4",     "reasoning_effort": "max",   "score": 85},
-    "deepseek/deepseek-v4-flash":       {"name": "DeepSeek V4 Flash",     "provider": "DeepSeek",  "model_family": "DeepSeek V4",     "reasoning_effort": "medium","score": 78},
-    "deepseek/deepseek-v3.2":           {"name": "DeepSeek V3.2",         "provider": "DeepSeek",  "model_family": "DeepSeek V3.2",   "reasoning_effort": "high",  "score": 70},
-    "deepseek/deepseek-v3.1-terminus":  {"name": "DeepSeek V3.1 Terminus","provider": "DeepSeek",  "model_family": "DeepSeek V3.1",   "reasoning_effort": "high",  "score": 65},
-
-    "meta-llama/llama-4-maverick":      {"name": "Llama 4 Maverick",      "provider": "Meta",      "model_family": "Llama 4",         "reasoning_effort": "high",  "score": 79},
-    "meta-llama/llama-4-scout":         {"name": "Llama 4 Scout",         "provider": "Meta",      "model_family": "Llama 4",         "reasoning_effort": "medium","score": 72},
-
-    "openai/gpt-oss-120b":              {"name": "GPT-OSS 120B",          "provider": "OpenAI",    "model_family": "GPT-OSS",         "reasoning_effort": "high",  "score": 70},
-    "openai/gpt-oss-20b":               {"name": "GPT-OSS 20B",           "provider": "OpenAI",    "model_family": "GPT-OSS",         "reasoning_effort": "low",   "score": 55},
-
-    "microsoft/phi-4":                  {"name": "Phi-4",                 "provider": "Microsoft", "model_family": "Phi-4",           "reasoning_effort": "none",  "score": 55},
-
-    "allenai/olmo-3-32b-think":         {"name": "OLMo 3 32B Think",      "provider": "AllenAI",   "model_family": "OLMo 3",          "reasoning_effort": "high",  "score": 50},
-}
-
-
-def assign_tier(score: float, curated: bool = False) -> str:
-    """按绝对分数阈值分桶。"""
-    if not curated:
-        return "entry"
-    for tier_name, min_score in [
-        ("SOTA", 90), ("tier1", 80), ("tier2", 65), ("tier3", 50),
-    ]:
-        if score >= min_score:
-            return tier_name
+def assign_tier(score: float) -> str:
+    """展示分（归一化后）分桶。"""
+    if score >= 90:
+        return "SOTA"
+    if score >= 80:
+        return "tier1"
+    if score >= 65:
+        return "tier2"
     return "entry"
 
 
@@ -170,28 +211,6 @@ def clean_name(name: str) -> str:
     if ":" in name:
         return name.split(":", 1)[1].strip()
     return name.strip()
-
-
-def parse_effort_from_name(name: str) -> str | None:
-    """从 name 里识别档位 (e.g. 'Claude Opus 4.7 (Fast)' -> 'medium', 'GPT-5.6 Sol Pro' -> 'max')"""
-    n = name.lower()
-    if "(fast)" in n or " fast" in n or " (fast)" in n:
-        return "medium"  # Fast 档 = 弱化版
-    if "pro" in n and "terra" not in n and "luna" not in n:
-        return "max"
-    if "max" in n:
-        return "max"
-    if "xhigh" in n:
-        return "xhigh"
-    if "high" in n:
-        return "high"
-    if "medium" in n or "med" in n:
-        return "medium"
-    if "low" in n:
-        return "low"
-    if "minimal" in n:
-        return "minimal"
-    return None
 
 
 def fetch_openrouter() -> list:
@@ -217,49 +236,55 @@ def fetch_openrouter() -> list:
         return []
 
 
-def merge(curated: list, live: list) -> list:
-    """合并 curated + live：curated 优先（带 reasoning_effort + family），live 补全长尾。"""
-    by_raw = {}
-    for m in curated:
-        by_raw[m["raw_id"]] = m
+def build_models(live: list) -> list:
+    """锚点 × 在售目录求交，补全 context_length / 开源性，输出统一结构。"""
+    canonical = {}
     for m in live:
-        if m["raw_id"] not in by_raw:
-            ctx = m.get("context_length") or 0
-            tail_score = min(50, max(30, 30 + (ctx / 1048576) * 20))
-            # 从 name 推断档位
-            eff = parse_effort_from_name(m["name"]) or "none"
-            by_raw[m["raw_id"]] = {
-                **m, "score": round(tail_score, 1), "curated": False,
-                "model_family": m["name"],
-                "reasoning_effort": eff,
-            }
-        else:
-            by_raw[m["raw_id"]].setdefault("curated", True)
-            by_raw[m["raw_id"]].setdefault("context_length", m.get("context_length"))
-            by_raw[m["raw_id"]].setdefault("supported_efforts", m.get("supported_efforts", []))
-    return list(by_raw.values())
+        base = m["raw_id"].split(":")[0]
+        # 非 batch/free 等衍生 ID 才代表本体
+        canonical.setdefault(base, m)
 
-
-def build_curated_list() -> list:
-    out = []
-    for raw_id, info in CURATED.items():
-        out.append({"raw_id": raw_id, **info, "curated": True})
-    return out
+    top_aa = max(a["aa_index"] for a in BENCHMARK_ANCHORS.values())
+    models = []
+    dropped = []
+    for raw_id, info in BENCHMARK_ANCHORS.items():
+        live_m = canonical.get(raw_id)
+        if live_m is None:
+            dropped.append(raw_id)
+            continue
+        score = round(info["aa_index"] / top_aa * 100)
+        models.append({
+            "raw_id": raw_id,
+            "name": info["name"],
+            "provider": info["provider"],
+            "model_family": info["model_family"],
+            "reasoning_effort": info.get("effort_measured") or "none",
+            "score": score,
+            "aa_index": info["aa_index"],
+            "benchmark_as_of": ANCHORS_AS_OF,
+            "benchmark_source": info["source_url"],
+            "curated": True,
+            "context_length": live_m.get("context_length"),
+            "hf_id": live_m.get("hf_id"),
+            "supported_efforts": live_m.get("supported_efforts", []),
+            "tier": assign_tier(score),
+            "open_source": is_open_source(live_m),
+        })
+    return models, dropped
 
 
 def main() -> None:
-    curated = build_curated_list()
     live = fetch_openrouter()
-    merged = merge(curated, live)
-    for m in merged:
-        m["tier"] = assign_tier(m["score"], curated=m.get("curated", False))
-        m["open_source"] = is_open_source(m)
+    merged, dropped = build_models(live)
     merged = [m for m in merged if m["score"] >= MIN_SCORE]
     if not merged:
         raise SystemExit("No data available")
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "source": "Hand-curated (LMArena/AA 2026) + OpenRouter live API",
+        "source": "Artificial Analysis Intelligence Index（2026-08 公开报道口径），"
+                  "展示分 = aa_index / 榜首 * 100",
+        "scale": {"kind": "relative_percent_of_leader", "leader_aa_index":
+                  max(m["aa_index"] for m in merged)},
         "count": len(merged),
         "models": sorted(merged, key=lambda x: -x["score"]),
     }
@@ -267,8 +292,9 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "models.json"
     out_path.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
-    curated_n = sum(1 for m in merged if m.get("curated"))
-    print(f"Wrote {len(merged)} models ({curated_n} curated) to {out_path}")
+    print(f"Wrote {len(merged)} models to {out_path}")
+    if dropped:
+        print(f"Dropped (no longer on OpenRouter): {', '.join(dropped)}")
 
 
 if __name__ == "__main__":
