@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 544 306" fill="none">
+  <rect width="544" height="306" rx="8" fill="#F5F3FF"/>
+  <rect x="40" y="40" width="464" height="226" rx="12" fill="#EDE9FE" stroke="#A78BFA" stroke-width="2"/>
+  <!-- Podium bars -->
+  <g transform="translate(130, 78)">
+    <rect x="0" y="118" width="72" height="62" rx="8" fill="#C4B5FD"/>
+    <rect x="88" y="76" width="72" height="104" rx="8" fill="#8B5CF6"/>
+    <rect x="176" y="20" width="72" height="160" rx="8" fill="#7C3AED"/>
+    <text x="36" y="158" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#4C1D95" opacity="0.55">T2</text>
+    <text x="124" y="134" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF" opacity="0.75">T1</text>
+    <text x="212" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF" opacity="0.9">S</text>
+  </g>
+  <!-- Star on top -->
+  <g transform="translate(360, 60)">
+    <circle cx="45" cy="45" r="42" fill="#7C3AED" opacity="0.12"/>
+    <path d="M45 18l7.4 15 16.6 2.4-12 11.7 2.8 16.5L45 55.9 30.2 63.6l2.8-16.5-12-11.7 16.6-2.4L45 18z" fill="#D4A017"/>
+  </g>
+  <!-- Sparkles -->
+  <circle cx="96" cy="70" r="4" fill="#A78BFA" opacity="0.8"/>
+  <circle cx="120" cy="48" r="2.5" fill="#A78BFA" opacity="0.6"/>
+  <circle cx="330" cy="200" r="3.5" fill="#8B5CF6" opacity="0.5"/>
+  <polyline points="100,206 160,190 220,196 280,170 340,150" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round" opacity="0.35"/>
+  <!-- Title -->
+  <text x="272" y="276" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#5B21B6">LLM 能力天梯图</text>
+</svg>
