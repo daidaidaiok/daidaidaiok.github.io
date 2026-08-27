@@ -11,7 +11,7 @@ const projectsData: Project[] = [
     description:
       '大模型能力排行天梯，聚合 OpenRouter 与人工精选数据，按梯队分组对比各厂商旗舰模型实力。',
     imgSrc: '/static/images/project-llm-leaderboard.svg',
-    href: 'https://daidaidaiok.github.io/llm-leaderboard/',
+    href: 'https://blog.hpb300.com/llm-leaderboard/',
   },
   {
     title: '题库智能管理系统',
