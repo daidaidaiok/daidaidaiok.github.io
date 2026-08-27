@@ -12,7 +12,6 @@
 
   function isOpenSource(model) {
     if (typeof model.open_source === 'boolean') return model.open_source
-    if (window.QUANT_MAP[model.name]) return true
     const openPrefixes = [
       'meta-llama/',
       'qwen/',
