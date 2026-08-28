@@ -213,6 +213,48 @@ def clean_name(name: str) -> str:
     return name.strip()
 
 
+TOKENS_100B = 10_000_000_000
+TOKENS_1M = 1_000_000
+
+def _parse_pricing(raw: dict | None) -> dict | None:
+    if not raw or not isinstance(raw, dict):
+        return None
+    out: dict = {}
+    for k in ("prompt", "completion", "input_cache_read", "input_cache_write",
+              "input_cache_write_1h", "image", "audio"):
+        if k in raw and raw[k] is not None:
+            try:
+                out[k] = float(raw[k])
+            except (ValueError, TypeError):
+                out[k] = None
+        else:
+            out[k] = None
+    # 是否有至少一个有效价格
+    if all(v is None for v in out.values()):
+        return None
+    # 保留原始 overrides 信息仅作透传，不参与计算
+    return out
+
+
+def _compute_pricing_costs(pricing: dict | None) -> dict | None:
+    if not pricing:
+        return None
+    prompt = pricing.get("prompt")
+    completion = pricing.get("completion")
+    cache_read = pricing.get("input_cache_read")
+    per_million = {
+        "input": round(prompt * TOKENS_1M, 4) if prompt is not None else None,
+        "output": round(completion * TOKENS_1M, 4) if completion is not None else None,
+        "cache_hit": round(cache_read * TOKENS_1M, 4) if cache_read is not None else None,
+    }
+    per_100b = {
+        "input": round(prompt * TOKENS_100B, 2) if prompt is not None else None,
+        "output": round(completion * TOKENS_100B, 2) if completion is not None else None,
+        "cache_hit": round(cache_read * TOKENS_100B, 2) if cache_read is not None else None,
+    }
+    return {"per_million": per_million, "per_100B": per_100b, "currency": "USD"}
+
+
 def fetch_openrouter() -> list:
     """抓取 OpenRouter /models。失败返回空列表。"""
     try:
@@ -229,6 +271,7 @@ def fetch_openrouter() -> list:
                 "context_length": m.get("context_length"),
                 "hf_id": m.get("hugging_face_id"),
                 "supported_efforts": (m.get("reasoning") or {}).get("supported_efforts", []),
+                "pricing_raw": m.get("pricing"),
             })
         return out
     except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError,
@@ -237,7 +280,7 @@ def fetch_openrouter() -> list:
 
 
 def build_models(live: list) -> list:
-    """锚点 × 在售目录求交，补全 context_length / 开源性，输出统一结构。"""
+    """锚点 × 在售目录求交，补全 context_length / 开源性 / 定价，输出统一结构。"""
     canonical = {}
     for m in live:
         base = m["raw_id"].split(":")[0]
@@ -253,6 +296,8 @@ def build_models(live: list) -> list:
             dropped.append(raw_id)
             continue
         score = round(info["aa_index"] / top_aa * 100)
+        pricing = _parse_pricing(live_m.get("pricing_raw"))
+        costs = _compute_pricing_costs(pricing)
         models.append({
             "raw_id": raw_id,
             "name": info["name"],
@@ -269,6 +314,8 @@ def build_models(live: list) -> list:
             "supported_efforts": live_m.get("supported_efforts", []),
             "tier": assign_tier(score),
             "open_source": is_open_source(live_m),
+            "pricing": pricing,
+            "pricing_costs": costs,
         })
     return models, dropped
 

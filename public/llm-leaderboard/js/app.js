@@ -45,6 +45,57 @@
     return { type: 'closed', text: ctx + ' ctx' }
   }
 
+  function formatUSD_100B(n) {
+    if (n == null) return '—'
+    if (n === 0) return '免费'
+    if (n >= 1) return '$' + Math.round(n).toLocaleString('en-US')
+    if (n >= 0.1) return '$' + n.toFixed(3)
+    return '$' + n.toFixed(4)
+  }
+  function formatUSD_perM(n) {
+    if (n == null) return '—'
+    if (n === 0) return '免费'
+    // 保留最多4位小数，去除尾0，更简洁：0.0700→0.07, 1.4000→1.4
+    const s = n.toFixed(4).replace(/0+$/, '').replace(/\.$/, '')
+    return '$' + s
+  }
+  function pricingHTML(model, compact) {
+    const costs = model.pricing_costs
+    if (!costs || !costs.per_100B) {
+      return compact
+        ? ''
+        : '<div class="card-pricing"><span class="pricing-empty">暂无定价</span></div>'
+    }
+    const p100 = costs.per_100B
+    const pm = costs.per_million || {}
+    // 输入 / 输出 / 缓存
+    const rows = []
+    const mkRow = (label, v100, vm) => {
+      const v100Str = formatUSD_100B(v100)
+      const vmStr = vm != null ? formatUSD_perM(vm) + '/M' : ''
+      // compact 模式只显示 100B，不显示 /M 细分
+      if (compact) {
+        return `<span class="p-item"><b>${label}</b> ${v100Str}</span>`
+      }
+      return `<div class="p-row"><span class="p-k">${label}</span><span class="p-v">${v100Str}</span><span class="p-sub">${vmStr}</span></div>`
+    }
+    rows.push(mkRow('输入', p100.input, pm.input))
+    rows.push(mkRow('输出', p100.output, pm.output))
+    // 缓存命中：若无则不展示，或显示 —
+    if (p100.cache_hit != null || !compact) {
+      rows.push(mkRow('缓存', p100.cache_hit, pm.cache_hit))
+    }
+    if (compact) {
+      return `<div class="card-pricing card-pricing-compact">${rows.join(' · ')}</div>`
+    }
+    return `
+      <div class="card-pricing">
+        <div class="pricing-head">官方价 · 100亿 tokens</div>
+        <div class="pricing-rows">${rows.join('')}</div>
+      </div>
+    `
+  }
+
   function effortOf(model) {
     return model.reasoning_effort || 'none'
   }
@@ -89,6 +140,7 @@
       effort !== 'none'
         ? `<span class="effort-badge" style="background:${effortColor}15;color:${effortColor};border-color:${effortColor}40">${escapeHTML(effortLabel)}</span>`
         : ''
+    const pricing = pricingHTML(model, !!opts.compact)
     return `
       <article class="card${opts.compact ? ' card-compact' : ''}" data-tier="${model.tier}" data-effort="${effort}">
         <div class="card-top">
@@ -102,6 +154,7 @@
           </div>
           <span class="score">${model.score.toFixed(0)}</span>
         </div>
+        ${pricing}
       </article>
     `
   }
