@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-09-05T03:00:00.303202+00:00",
+  "updated_at": "2026-09-06T02:59:30.236206+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-08 公开报道口径），展示分 = aa_index / 榜首 * 100",
   "scale": {
     "kind": "relative_percent_of_leader",
     "leader_aa_index": 62
   },
-  "count": 17,
+  "count": 16,
   "models": [
     {
       "raw_id": "anthropic/claude-fable-5",
@@ -312,51 +312,6 @@
           "input": 7500.0,
           "output": 37500.0,
           "cache_hit": 750.0
-        },
-        "currency": "USD"
-      }
-    },
-    {
-      "raw_id": "qwen/qwen3.8-max",
-      "name": "Qwen3.8 Max",
-      "provider": "Alibaba",
-      "model_family": "Qwen3.8",
-      "reasoning_effort": "none",
-      "score": 90,
-      "aa_index": 56,
-      "benchmark_as_of": "2026-08",
-      "benchmark_source": "https://www.orcarouter.ai/blog/gemini-3-7-flash-vs-deepseek-v4-flash",
-      "curated": true,
-      "context_length": 1000000,
-      "hf_id": null,
-      "supported_efforts": [
-        "xhigh",
-        "high",
-        "medium",
-        "low",
-        "minimal"
-      ],
-      "tier": "SOTA",
-      "open_source": true,
-      "pricing": {
-        "prompt": 2e-06,
-        "completion": 6e-06,
-        "input_cache_read": 2.5e-07,
-        "input_cache_write": 2.5e-06,
-        "input_cache_write_1h": null,
-        "image": null,
-        "audio": null
-      },
-      "pricing_costs": {
-        "per_million": {
-          "input": 2.0,
-          "output": 6.0,
-          "cache_hit": 0.25
-        },
-        "per_100B": {
-          "input": 20000.0,
-          "output": 60000.0,
-          "cache_hit": 2500.0
         },
         "currency": "USD"
       }
