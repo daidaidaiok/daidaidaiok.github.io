@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-10T03:09:07.435179+00:00",
+  "updated_at": "2026-09-11T03:04:10.946645+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-08 公开报道口径），展示分 = aa_index / 榜首 * 100",
   "scale": {
     "kind": "relative_percent_of_leader",
@@ -251,9 +251,9 @@
       "tier": "SOTA",
       "open_source": true,
       "pricing": {
-        "prompt": 3e-06,
-        "completion": 1.5e-05,
-        "input_cache_read": 3e-07,
+        "prompt": 2.1e-06,
+        "completion": 1.053e-05,
+        "input_cache_read": 2.35e-07,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -261,14 +261,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 3.0,
-          "output": 15.0,
-          "cache_hit": 0.3
+          "input": 2.1,
+          "output": 10.53,
+          "cache_hit": 0.235
         },
         "per_100B": {
-          "input": 30000.0,
-          "output": 150000.0,
-          "cache_hit": 3000.0
+          "input": 21000.0,
+          "output": 105300.0,
+          "cache_hit": 2350.0
         },
         "currency": "USD"
       }
