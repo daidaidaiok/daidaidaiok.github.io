@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-11T03:04:10.946645+00:00",
+  "updated_at": "2026-09-12T03:10:52.890872+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-08 公开报道口径），展示分 = aa_index / 榜首 * 100",
   "scale": {
     "kind": "relative_percent_of_leader",
@@ -251,9 +251,9 @@
       "tier": "SOTA",
       "open_source": true,
       "pricing": {
-        "prompt": 2.1e-06,
-        "completion": 1.053e-05,
-        "input_cache_read": 2.35e-07,
+        "prompt": 2.30272875e-06,
+        "completion": 1.1550195e-05,
+        "input_cache_read": 2.63169e-07,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -261,14 +261,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 2.1,
-          "output": 10.53,
-          "cache_hit": 0.235
+          "input": 2.3027,
+          "output": 11.5502,
+          "cache_hit": 0.2632
         },
         "per_100B": {
-          "input": 21000.0,
-          "output": 105300.0,
-          "cache_hit": 2350.0
+          "input": 23027.29,
+          "output": 115501.95,
+          "cache_hit": 2631.69
         },
         "currency": "USD"
       }
@@ -518,9 +518,9 @@
       "tier": "tier1",
       "open_source": true,
       "pricing": {
-        "prompt": 1.0494e-06,
-        "completion": 3.1482e-06,
-        "input_cache_read": 3.498e-08,
+        "prompt": 5.7816e-07,
+        "completion": 1.73448e-06,
+        "input_cache_read": 1.8396e-08,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -528,14 +528,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 1.0494,
-          "output": 3.1482,
-          "cache_hit": 0.035
+          "input": 0.5782,
+          "output": 1.7345,
+          "cache_hit": 0.0184
         },
         "per_100B": {
-          "input": 10494.0,
-          "output": 31482.0,
-          "cache_hit": 349.8
+          "input": 5781.6,
+          "output": 17344.8,
+          "cache_hit": 183.96
         },
         "currency": "USD"
       }
