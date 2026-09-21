@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-20T03:28:30.215884+00:00",
+  "updated_at": "2026-09-21T03:23:32.305703+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-08 公开报道口径），展示分 = aa_index / 榜首 * 100",
   "scale": {
     "kind": "relative_percent_of_leader",
@@ -208,9 +208,9 @@
       "tier": "SOTA",
       "open_source": true,
       "pricing": {
-        "prompt": 8.96e-07,
-        "completion": 2.816e-06,
-        "input_cache_read": 1.664e-07,
+        "prompt": 9.1e-07,
+        "completion": 2.86e-06,
+        "input_cache_read": 1.69e-07,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -218,14 +218,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.896,
-          "output": 2.816,
-          "cache_hit": 0.1664
+          "input": 0.91,
+          "output": 2.86,
+          "cache_hit": 0.169
         },
         "per_100B": {
-          "input": 8960.0,
-          "output": 28160.0,
-          "cache_hit": 1664.0
+          "input": 9100.0,
+          "output": 28600.0,
+          "cache_hit": 1690.0
         },
         "currency": "USD"
       }
@@ -518,9 +518,9 @@
       "tier": "tier1",
       "open_source": true,
       "pricing": {
-        "prompt": 6.6e-07,
-        "completion": 1.98e-06,
-        "input_cache_read": 2.2e-08,
+        "prompt": 1.32e-06,
+        "completion": 3.96e-06,
+        "input_cache_read": 4.4e-08,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -528,14 +528,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.66,
-          "output": 1.98,
-          "cache_hit": 0.022
+          "input": 1.32,
+          "output": 3.96,
+          "cache_hit": 0.044
         },
         "per_100B": {
-          "input": 6600.0,
-          "output": 19800.0,
-          "cache_hit": 220.0
+          "input": 13200.0,
+          "output": 39600.0,
+          "cache_hit": 440.0
         },
         "currency": "USD"
       }
@@ -607,7 +607,7 @@
       "open_source": true,
       "pricing": {
         "prompt": 4e-08,
-        "completion": 8e-08,
+        "completion": 1.6e-07,
         "input_cache_read": 1.6e-08,
         "input_cache_write": null,
         "input_cache_write_1h": null,
@@ -617,12 +617,12 @@
       "pricing_costs": {
         "per_million": {
           "input": 0.04,
-          "output": 0.08,
+          "output": 0.16,
           "cache_hit": 0.016
         },
         "per_100B": {
           "input": 400.0,
-          "output": 800.0,
+          "output": 1600.0,
           "cache_hit": 160.0
         },
         "currency": "USD"
