@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-08T04:34:35.804848+00:00",
+  "updated_at": "2026-10-09T04:38:00.382647+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-08 公开报道口径），展示分 = aa_index / 榜首 * 100",
   "scale": {
     "kind": "relative_percent_of_leader",
@@ -208,9 +208,9 @@
       "tier": "SOTA",
       "open_source": true,
       "pricing": {
-        "prompt": 4.9e-08,
-        "completion": 3.39e-06,
-        "input_cache_read": 4.8e-08,
+        "prompt": 3.9e-08,
+        "completion": 7e-06,
+        "input_cache_read": 3.8e-08,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -218,14 +218,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.049,
-          "output": 3.39,
-          "cache_hit": 0.048
+          "input": 0.039,
+          "output": 7.0,
+          "cache_hit": 0.038
         },
         "per_100B": {
-          "input": 490.0,
-          "output": 33900.0,
-          "cache_hit": 480.0
+          "input": 390.0,
+          "output": 70000.0,
+          "cache_hit": 380.0
         },
         "currency": "USD"
       }
@@ -251,9 +251,9 @@
       "tier": "SOTA",
       "open_source": true,
       "pricing": {
-        "prompt": 7.2e-07,
-        "completion": 1.5e-05,
-        "input_cache_read": 4.3e-07,
+        "prompt": 5.6e-07,
+        "completion": 1.2e-05,
+        "input_cache_read": 3e-07,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -261,14 +261,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.72,
-          "output": 15.0,
-          "cache_hit": 0.43
+          "input": 0.56,
+          "output": 12.0,
+          "cache_hit": 0.3
         },
         "per_100B": {
-          "input": 7200.0,
-          "output": 150000.0,
-          "cache_hit": 4300.0
+          "input": 5600.0,
+          "output": 120000.0,
+          "cache_hit": 3000.0
         },
         "currency": "USD"
       }
