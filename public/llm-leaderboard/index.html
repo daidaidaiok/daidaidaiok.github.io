@@ -1,61 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- served from daidaidaiok.github.io (consolidated) -->
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LLM 能力天梯</title>
-  <meta name="description" content="按能力等价分组展示主流大语言模型（开源 + 闭源）">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header class="site-header">
-    <div class="container">
-      <h1 class="site-title">LLM 能力天梯</h1>
-      <p class="site-subtitle">
-        按能力等价分组 ·
-        <span id="model-count">--</span> 个模型 ·
-        分数为相对榜首的 AI 指数百分比 ·
-        卡片内为官方 API 定价（100亿 tokens：输入 / 输出 / 缓存命中）·
-        数据更新于 <span id="updated-at">--</span>
-      </p>
-      <div class="controls">
-        <div class="tabs" role="tablist">
-          <button class="tab active" data-filter="all" role="tab">全部</button>
-          <button class="tab" data-filter="open" role="tab">开源</button>
-          <button class="tab" data-filter="closed" role="tab">闭源</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLM 能力天梯</title>
+    <meta name="description" content="按能力等价分组展示主流大语言模型（开源 + 闭源）" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <h1 class="site-title">LLM 能力天梯</h1>
+        <p class="site-subtitle">
+          按能力等价分组 ·
+          <span id="model-count">--</span> 个模型 ·
+          分数为相对榜首的 AI 指数百分比 ·
+          卡片内为官方 API 定价（100亿 tokens：输入 / 输出 / 缓存命中）·
+          数据更新于 <span id="updated-at">--</span>
+        </p>
+        <p class="kill-page-link">
+          <a href="kill-line.html">☠ 模型斩杀线：看哪些旗舰已被时间斩落 →</a>
+        </p>
+        <div class="controls">
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-filter="all" role="tab">全部</button>
+            <button class="tab" data-filter="open" role="tab">开源</button>
+            <button class="tab" data-filter="closed" role="tab">闭源</button>
+          </div>
+          <input
+            type="search"
+            id="search"
+            class="search"
+            placeholder="搜索模型名或提供商..."
+            aria-label="搜索模型"
+          />
         </div>
-        <input
-          type="search"
-          id="search"
-          class="search"
-          placeholder="搜索模型名或提供商..."
-          aria-label="搜索模型"
-        >
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main class="container" id="tiers-container">
-    <!-- tiers 渲染到这里 -->
-  </main>
+    <main class="container" id="tiers-container">
+      <!-- tiers 渲染到这里 -->
+    </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>
-        数据来源：
-        <a href="https://artificialanalysis.ai/leaderboards/models" target="_blank" rel="noopener">Artificial Analysis Intelligence Index</a>
-        （每个模型的指数原始值与出处见 data/models.json）
-        +
-        <a href="https://openrouter.ai" target="_blank" rel="noopener">OpenRouter 在售目录</a>
-        （存在性、上下文长度与官方 API 定价；定价取自各厂商官方价，OpenRouter 同步）
-        · 展示分 = aa_index ÷ 榜首 × 100
-        · 卡片价格 = 官方价 × 100亿 tokens（输入 / 输出 / 缓存命中），括号内为每百万 tokens 价；USD 计价
-      </p>
-    </div>
-  </footer>
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          数据来源：
+          <a href="https://artificialanalysis.ai/leaderboards/models" target="_blank" rel="noopener">Artificial Analysis Intelligence Index</a>
+          （每个模型的指数原始值与出处见 data/models.json）
+          +
+          <a href="https://openrouter.ai" target="_blank" rel="noopener">OpenRouter 在售目录</a>
+          （存在性、上下文长度与官方 API 定价；定价取自各厂商官方价，OpenRouter 同步）
+          · 展示分 = aa_index ÷ 榜首 × 100
+          · 卡片价格 = 官方价 × 100亿 tokens（输入 / 输出 / 缓存命中），括号内为每百万 tokens 价；USD 计价
+        </p>
+      </div>
+    </footer>
 
-  <script src="js/tiers.js"></script>
-  <script src="js/app.js"></script>
-</body>
+    <script src="js/tiers.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>

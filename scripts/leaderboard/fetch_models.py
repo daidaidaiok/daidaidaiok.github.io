@@ -2,13 +2,15 @@
 Fetch LLM leaderboard data, normalize against Artificial Analysis Intelligence
 Index anchors, and write public/llm-leaderboard/data/models.json.
 
-数据可信度规则（2026-08 重建）：
+数据可信度规则（2026-10 重建）：
 - 每个入选模型的 aa_index 必须来自可引用的公开来源（BENCHMARK_ANCHORS.source_url），
   禁止凭印象填写或"推算"分数。
 - 站点展示分 = round(aa_index / 榜首aa_index * 100)，即相对榜首的指数百分比；
   MIN_SCORE=70 表示"达到榜首 70%"，低于该线的模型不上榜。
 - OpenRouter 长尾（无基准值、此前是按上下文长度编造的占位分）已彻底废弃。
 - 锚点只认 OpenRouter 在售目录里真实存在的 raw_id，下架即自动剔除。
+- AA 指数会在版本更新时整体重定基（2026-08 快照榜首 62 → 2026-10 v4.3.2 榜首 58），
+  新旧口径分数不可混用；换锚点必须整表换成同一份最新榜单快照。
 """
 import ipaddress
 import json
@@ -25,7 +27,7 @@ ALLOWED_HOSTS = {"openrouter.ai"}
 MIN_SCORE = 70
 
 # 归一化日期快照：AA 指数随版本漂移，锚点数值以此时间的公开报道为准
-ANCHORS_AS_OF = "2026-08"
+ANCHORS_AS_OF = "2026-10"
 
 
 def _safe_urlopen(url: str, timeout: int = 30):
@@ -54,11 +56,15 @@ def _safe_urlopen(url: str, timeout: int = 30):
 
 
 # 开源组织前缀（仅在 hf_id 缺失时使用）
+# inclusionai/：同厂 ling-3.0 系列在 OpenRouter 带 hf_id（inclusionAI/Ling-3.0-flash），
+#   该组织模型均开源权重，ling-3.1-flash 缺 hf_id 视为漏标。
+# xiaomi/：MiMo 系列在 OpenRouter 带 hf_id（XiaomiMiMo/MiMo-V2.6-*）。
 OPEN_SOURCE_ORGS = (
     "meta-llama/", "qwen/", "deepseek/",
     "mistralai/", "microsoft/", "01-ai/", "moonshotai/",
     "allenai/", "openai/gpt-oss",
     "google/gemma", "thudm/", "baichuan-inc/", "internlm/",
+    "inclusionai/", "xiaomi/",
 )
 
 
@@ -76,116 +82,109 @@ def is_open_source(model: dict) -> bool:
 # 每条记录：
 #   name / provider / model_family   展示信息
 #   aa_index                         Artificial Analysis Intelligence Index 原始值
-#                                    （2026-08 公开报道口径）
-#   effort_measured                  有明确报道的评测推理档位；未注明则留空
+#                                    （2026-10 榜单快照，Intelligence Index v4.3.2 口径）
+#   effort_measured                  榜单标注的评测推理档位；未注明则留空
 #   source_url                       数值出处（人工复核入口）
 #
-# 2026-08-27 校对轮次删除了所有查不到出处的旧 curated 条目（GPT-5.4/5.2 系列、
-# Opus 4.7 及以下、Qwen3.7/3.6、GLM-5.2/5.1、Mistral Medium 等）。它们不是不存在，
-# 只是本轮没有拿到可信数值；后续校对拿到出处再放行。
+# 2026-10-12 校对轮次（全部数值取自 AA 官方榜单同一份快照，整表统一口径）：
+# - 榜首 Claude Opus 5.5 (max) = 58，AA 指数自 2026-08 旧口径（榜首 62）整体重定基，
+#   旧锚点分数不可与新表混用，故 8 月条目全部作废重录。
+# - 剔除（现行榜单已无分数或已下架）：Claude Fable 5、Claude Opus 5、GPT-5.6 Sol、
+#   GPT-5.5、Opus 4.8、Grok 4.6、Gemini 3.7 Flash、Sonnet 5、Sonnet 4.6、
+#   Muse Spark 1.2、DeepSeek V4 Flash 0731、Kimi K2.7 Code。
+# - 剔除：Gemini 4 Argon（53）——AA 在榜但未上 OpenRouter 在售目录，等上架再收。
+# - 同一模型只收录榜单头牌推理档位（如 Opus 5.5 收 max 不收 xhigh）。
 # ---------------------------------------------------------------------------
-_SRC_ROBOTMUNKI = "https://robotmunki.com/blog/llm-landscape"
-_SRC_GREENFLAG = "https://greenflagdigital.com/top-ai-models-ranked/"
-_SRC_AA_SONNET = "https://artificialanalysis.ai/articles/claude-sonnet-5-agentic-cost"
-_SRC_AA_GPT56 = "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
-_SRC_AA_MUSE = "https://artificialanalysis.ai/articles/muse-spark-1-2"
-_SRC_ORCA = "https://www.orcarouter.ai/blog/gemini-3-7-flash-vs-deepseek-v4-flash"
+_SRC_AA_BOARD = "https://artificialanalysis.ai/leaderboards/models"
 
 BENCHMARK_ANCHORS = {
-    "anthropic/claude-fable-5": {
-        "name": "Claude Fable 5", "provider": "Anthropic",
-        "model_family": "Claude Fable 5", "aa_index": 62,
-        "source_url": _SRC_GREENFLAG,
+    "anthropic/claude-opus-5.5": {
+        "name": "Claude Opus 5.5", "provider": "Anthropic",
+        "model_family": "Claude Opus 5.5", "effort_measured": "max", "aa_index": 58,
+        # 现行榜首（2026-09-22 发布）
+        "source_url": _SRC_AA_BOARD,
     },
-    "anthropic/claude-opus-5": {
-        "name": "Claude Opus 5", "provider": "Anthropic",
-        "model_family": "Claude Opus 5", "aa_index": 61,
-        "source_url": _SRC_ROBOTMUNKI,
+    "anthropic/claude-sonnet-5.5": {
+        "name": "Claude Sonnet 5.5", "provider": "Anthropic",
+        "model_family": "Claude Sonnet 5.5", "effort_measured": "max", "aa_index": 56,
+        "source_url": _SRC_AA_BOARD,
     },
-    "x-ai/grok-4.6": {
-        "name": "Grok 4.6", "provider": "xAI",
-        "model_family": "Grok 4.6", "aa_index": 61,
-        "source_url": _SRC_GREENFLAG,
+    "anthropic/claude-fable-5.1": {
+        "name": "Claude Fable 5.1", "provider": "Anthropic",
+        "model_family": "Claude Fable 5.1", "effort_measured": "max", "aa_index": 53,
+        "source_url": _SRC_AA_BOARD,
     },
-    "openai/gpt-5.6-sol": {
-        "name": "GPT-5.6 Sol", "provider": "OpenAI",
-        "model_family": "GPT-5.6 Sol", "effort_measured": "max", "aa_index": 61,
-        "source_url": "https://artificialanalysis.ai/leaderboards/models",
+    "openai/gpt-6-astra": {
+        "name": "GPT-6 Astra", "provider": "OpenAI",
+        "model_family": "GPT-6 Astra", "effort_measured": "max", "aa_index": 53,
+        "source_url": _SRC_AA_BOARD,
+    },
+    "openai/gpt-6.1-sol": {
+        "name": "GPT-6.1 Sol", "provider": "OpenAI",
+        "model_family": "GPT-6.1 Sol", "effort_measured": "max", "aa_index": 52,
+        "source_url": _SRC_AA_BOARD,
+    },
+    "meta/muse-spark-1.3": {
+        "name": "Muse Spark 1.3", "provider": "Meta",
+        "model_family": "Muse Spark 1.3", "effort_measured": "max", "aa_index": 48,
+        "source_url": _SRC_AA_BOARD,
+    },
+    "x-ai/grok-4.7": {
+        "name": "Grok 4.7", "provider": "SpaceXAI",
+        "model_family": "Grok 4.7", "effort_measured": "xhigh", "aa_index": 46,
+        "source_url": _SRC_AA_BOARD,
+    },
+    "xiaomi/mimo-v2.6-pro": {
+        "name": "MiMo-V2.6-Pro", "provider": "Xiaomi",
+        "model_family": "MiMo-V2.6", "aa_index": 46,
+        # AA 官方 FAQ：当前最强开源权重模型
+        "source_url": _SRC_AA_BOARD,
+    },
+    "qwen/qwen3.8-max-0902": {
+        "name": "Qwen3.8 Max 0902", "provider": "Alibaba",
+        "model_family": "Qwen3.8", "aa_index": 45,
+        "source_url": _SRC_AA_BOARD,
     },
     "z-ai/glm-5.3": {
-        "name": "GLM 5.3", "provider": "Zhipu",
-        "model_family": "GLM 5.3", "aa_index": 60,
-        "source_url": _SRC_ROBOTMUNKI,
+        "name": "GLM-5.3", "provider": "Z.ai",
+        "model_family": "GLM-5.3", "effort_measured": "max", "aa_index": 45,
+        # AA 官方 FAQ 开源权重前三（MiMo 46 / GLM 45 / Kimi 44）
+        "source_url": _SRC_AA_BOARD,
+    },
+    "stepfun/step-5-preview": {
+        "name": "Step 5 Preview", "provider": "StepFun",
+        "model_family": "Step 5", "aa_index": 44,
+        "source_url": _SRC_AA_BOARD,
     },
     "moonshotai/kimi-k3": {
         "name": "Kimi K3", "provider": "Moonshot",
-        "model_family": "Kimi K3", "effort_measured": "max", "aa_index": 60,
-        "source_url": _SRC_ROBOTMUNKI,
+        "model_family": "Kimi K3", "effort_measured": "max", "aa_index": 44,
+        "source_url": _SRC_AA_BOARD,
     },
-    "google/gemini-3.7-flash": {
-        "name": "Gemini 3.7 Flash", "provider": "Google",
-        "model_family": "Gemini 3.7 Flash", "aa_index": 56,
-        "source_url": _SRC_ORCA,
-    },
-    "qwen/qwen3.8-max": {
-        "name": "Qwen3.8 Max", "provider": "Alibaba",
-        "model_family": "Qwen3.8", "aa_index": 56,
-        # 来源给出 56–58 区间，取保守低值
-        "source_url": _SRC_ORCA,
+    "anthropic/claude-haiku-5.5": {
+        "name": "Claude Haiku 5.5", "provider": "Anthropic",
+        "model_family": "Claude Haiku 5.5", "effort_measured": "max", "aa_index": 43,
+        "source_url": _SRC_AA_BOARD,
     },
     "openai/gpt-5.6-terra": {
         "name": "GPT-5.6 Terra", "provider": "OpenAI",
-        "model_family": "GPT-5.6 Terra", "effort_measured": "max", "aa_index": 55,
-        "source_url": _SRC_AA_GPT56,
+        "model_family": "GPT-5.6 Terra", "effort_measured": "max", "aa_index": 42,
+        "source_url": _SRC_AA_BOARD,
     },
-    "openai/gpt-5.5": {
-        "name": "GPT-5.5 (xhigh)", "provider": "OpenAI",
-        "model_family": "GPT-5.5", "effort_measured": "xhigh", "aa_index": 55,
-        # AA Sonnet 5 文：53 只落后 GPT-5.5 xhigh 2–3 分 → 取 55
-        "source_url": _SRC_AA_SONNET,
+    "z-ai/glm-5.3-flash": {
+        "name": "GLM-5.3-Flash", "provider": "Z.ai",
+        "model_family": "GLM-5.3", "aa_index": 42,
+        "source_url": _SRC_AA_BOARD,
     },
-    "anthropic/claude-opus-4.8": {
-        "name": "Claude Opus 4.8 (max)", "provider": "Anthropic",
-        "model_family": "Claude Opus 4.8", "effort_measured": "max", "aa_index": 55,
-        # 同上出处：与 GPT-5.5 xhigh 同档
-        "source_url": _SRC_AA_SONNET,
+    "inclusionai/ling-3.1-flash": {
+        "name": "Ling 3.1 Flash", "provider": "inclusionAI",
+        "model_family": "Ling 3.1", "aa_index": 41,
+        "source_url": _SRC_AA_BOARD,
     },
-    "meta/muse-spark-1.2": {
-        "name": "Muse Spark 1.2", "provider": "Meta",
-        "model_family": "Muse Spark 1.2", "effort_measured": "xhigh", "aa_index": 54,
-        "source_url": _SRC_AA_MUSE,
-    },
-    "deepseek/deepseek-v4-pro-0813": {
-        "name": "DeepSeek V4 Pro 0813", "provider": "DeepSeek",
-        "model_family": "DeepSeek V4", "aa_index": 53,
-        "source_url": "https://x.com/ArtificialAnlys/status/2088440350734201149",
-    },
-    "anthropic/claude-sonnet-5": {
-        "name": "Claude Sonnet 5", "provider": "Anthropic",
-        "model_family": "Claude Sonnet 5", "effort_measured": "max", "aa_index": 53,
-        "source_url": _SRC_AA_SONNET,
-    },
-    "deepseek/deepseek-v4-flash-0731": {
-        "name": "DeepSeek V4 Flash 0731", "provider": "DeepSeek",
-        "model_family": "DeepSeek V4", "aa_index": 52,
-        # AA 官方推文：仅比 V4 Pro 低 1 分
-        "source_url": "https://x.com/ArtificialAnlys/status/2088440350734201149",
-    },
-    "openai/gpt-5.6-luna": {
-        "name": "GPT-5.6 Luna", "provider": "OpenAI",
-        "model_family": "GPT-5.6 Luna", "effort_measured": "max", "aa_index": 51,
-        "source_url": _SRC_AA_GPT56,
-    },
-    "anthropic/claude-sonnet-4.6": {
-        "name": "Claude Sonnet 4.6", "provider": "Anthropic",
-        "model_family": "Claude Sonnet 4.6", "aa_index": 47,
-        # AA Sonnet 5 文：Sonnet 5 max 比 Sonnet 4.6 高 6 分 → 47
-        "source_url": _SRC_AA_SONNET,
-    },
-    "moonshotai/kimi-k2.7-code": {
-        "name": "Kimi K2.7 Code", "provider": "Moonshot",
-        "model_family": "Kimi K2.7", "aa_index": 43,
-        "source_url": "https://artificialanalysis.ai/models/kimi-k2-7-code",
+    "google/gemini-3.8-flash": {
+        "name": "Gemini 3.8 Flash", "provider": "Google",
+        "model_family": "Gemini 3.8 Flash", "effort_measured": "high", "aa_index": 41,
+        "source_url": _SRC_AA_BOARD,
     },
 }
 
@@ -328,8 +327,9 @@ def main() -> None:
         raise SystemExit("No data available")
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "source": "Artificial Analysis Intelligence Index（2026-08 公开报道口径），"
-                  "展示分 = aa_index / 榜首 * 100",
+        "source": "Artificial Analysis Intelligence Index（2026-10 榜单快照，"
+                  "v4.3.2 口径），展示分 = aa_index / 榜首 * 100",
+        "aa_index_version": "v4.3.2",
         "scale": {"kind": "relative_percent_of_leader", "leader_aa_index":
                   max(m["aa_index"] for m in merged)},
         "count": len(merged),

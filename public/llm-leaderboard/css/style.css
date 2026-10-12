@@ -50,6 +50,11 @@ a:hover {
   color: #6b7280;
   font-size: 14px;
 }
+.kill-page-link {
+  margin: -12px 0 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
 .controls {
   display: flex;
   align-items: center;
@@ -374,6 +379,154 @@ a:hover {
   color: #b91c1c;
   padding: 24px;
   text-align: center;
+}
+
+/* ===== Kill-line（斩杀线页） ===== */
+.kill-breadcrumb {
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+.kill-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.kill-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 108px;
+  background: #fff;
+}
+.kill-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.kill-stat-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+.kill-stat-danger .kill-stat-value {
+  color: #dc2626;
+}
+.kill-intro {
+  margin: 32px 0 8px;
+  padding: 16px 20px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fafafa;
+}
+.kill-intro-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.kill-intro p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #374151;
+}
+.kill-intro-note {
+  font-size: 12px !important;
+  color: #6b7280 !important;
+}
+.kill-chart-wrap {
+  margin: 24px 0 8px;
+}
+.kill-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot-closed {
+  background: #1d4ed8;
+}
+.dot-open {
+  background: #047857;
+}
+.dot-dead {
+  background: #9ca3af;
+  opacity: 0.55;
+}
+.dot-estimated {
+  background: #fff;
+  border: 1.5px dashed #6b7280;
+}
+.legend-line {
+  width: 22px;
+  height: 0;
+}
+.legend-line-frontier {
+  border-top: 2px solid #374151;
+}
+.legend-line-kill {
+  border-top: 1.5px dashed #dc2626;
+}
+.kill-chart-scroll {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 8px;
+  overflow-x: auto;
+  position: relative;
+  background: #fff;
+}
+.kill-chart-caption {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 8px 2px 0;
+}
+.kill-tooltip {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  background: #111;
+  color: #f9fafb;
+  font-size: 12px;
+  line-height: 1.6;
+  border-radius: 6px;
+  padding: 8px 10px;
+  max-width: 230px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.kill-notes {
+  margin: 32px 0 8px;
+}
+.kill-notes ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #6b7280;
+}
+.kill-notes li {
+  margin-bottom: 6px;
+}
+@media (max-width: 768px) {
+  .kill-stat {
+    min-width: 88px;
+    padding: 8px 10px;
+  }
+  .kill-stat-value {
+    font-size: 17px;
+  }
 }
 
 /* ===== Mobile ===== */
