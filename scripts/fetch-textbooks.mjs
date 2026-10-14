@@ -15,7 +15,7 @@
  *   - 下载链接使用 raw.githubusercontent.com，浏览器可直接下载。
  */
 
-import { writeFileSync, readFileSync } from 'node:fs'
+import { writeFileSync, readFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -237,7 +237,21 @@ async function main() {
   const tree = treeArg ? readTreeFromFile(treeArg) : await fetchTree()
 
   const payload = buildBooks(tree)
-  writeFileSync(OUT_PATH, JSON.stringify(payload, null, 2), 'utf8')
+
+  // 若数据内容未变化，保留旧 generatedAt，避免定时任务产生噪音提交
+  try {
+    const old = JSON.parse(readFileSync(OUT_PATH, 'utf8'))
+    const oldCore = JSON.stringify({ source: old.source, books: old.books })
+    const newCore = JSON.stringify({ source: payload.source, books: payload.books })
+    if (oldCore === newCore && old.generatedAt) {
+      payload.generatedAt = old.generatedAt
+    }
+  } catch {
+    // 旧文件不存在或损坏，直接使用新时间戳
+  }
+
+  mkdirSync(dirname(OUT_PATH), { recursive: true })
+  writeFileSync(OUT_PATH, JSON.stringify(payload, null, 2) + '\n', 'utf8')
 
   console.log(`✅ 已生成 ${OUT_PATH}`)
   console.log(`   教材总数: ${payload.totalBooks}`)
