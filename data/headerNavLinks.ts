@@ -23,6 +23,7 @@ const headerNavLinks: HeaderNavLink[] = [
       },
     ],
   },
+  { href: '/textbooks', title: '教材下载' },
   { href: '/tags', title: '标签' },
   { href: '/projects', title: '项目' },
   { href: '/about', title: '关于' },
