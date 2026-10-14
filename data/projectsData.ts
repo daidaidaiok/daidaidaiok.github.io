@@ -34,6 +34,13 @@ const projectsData: Project[] = [
     imgSrc: '/static/images/project-calc.svg',
     href: 'https://cal.hpb300.com/',
   },
+  {
+    title: '钢筋平法识图 3D 可视化学习',
+    description:
+      '钢筋平法识图 3D 可视化学习平台，通过三维模型直观展示钢筋构造与平法标注，帮助快速理解平法图集。',
+    imgSrc: '/static/images/project-rebar.svg',
+    href: 'https://rebar.hpb300.com/',
+  },
 ]
 
 export default projectsData
