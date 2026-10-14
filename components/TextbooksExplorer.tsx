@@ -44,6 +44,41 @@ const SUBJECT_DISPLAY: Record<string, string> = {
   初中练习题_带答案: '初中练习题（带答案）',
 }
 
+/** 科目 → 封面徽章单字 */
+const SUBJECT_ICON: Record<string, string> = {
+  语文: '文',
+  数学: '数',
+  英语: '英',
+  物理: '理',
+  化学: '化',
+  生物学: '生',
+  历史: '史',
+  地理: '地',
+  地理图册: '图',
+  人文地理: '地',
+  道德与法治: '德',
+  思想政治: '政',
+  科学: '科',
+  音乐: '音',
+  美术: '美',
+  艺术: '艺',
+  体育与健康: '体',
+  信息技术: '息',
+  通用技术: '技',
+  日语: '日',
+  俄语: '俄',
+  高等数学: '高',
+  线性代数: '线',
+  概率论: '率',
+  离散数学: '离',
+  语文·书法练习指导: '书',
+  初中练习题_带答案: '练',
+}
+
+function subjectIcon(subject: string): string {
+  return SUBJECT_ICON[subject] || subject.charAt(0) || '书'
+}
+
 const COVER_COLORS = [
   '#b91c1c', // red-700
   '#c2410c', // orange-700
@@ -90,45 +125,65 @@ function formatDate(iso: string): string {
 function BookCover({ book, onClick }: { book: Textbook; onClick: () => void }) {
   const key = book.version || book.subject || book.title
   const color = COVER_COLORS[hashString(key) % COVER_COLORS.length]
+  const footer = book.publisher || book.version || '电子教材'
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group relative flex w-full flex-col overflow-hidden rounded-md p-3 text-left text-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2"
-      style={{ backgroundColor: color, aspectRatio: '3 / 4' }}
+      className="group relative flex w-full flex-col overflow-hidden rounded-md text-left text-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2"
+      style={{ aspectRatio: '3 / 4', backgroundColor: color }}
       aria-label={`查看《${book.title}》下载信息`}
     >
-      {/* 书脊阴影 */}
-      <div className="absolute inset-y-0 left-0 w-1.5 bg-black/25" />
-      {/* 顶部装饰线 */}
-      <div className="absolute inset-x-0 top-0 h-1 bg-white/20" />
+      {/* 光影渐变，模拟纸质封面层次 */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(165deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 42%, rgba(0,0,0,0.18) 100%)',
+        }}
+      />
 
-      {/* 版本 / 出版社徽章 */}
-      <div className="ml-1.5 line-clamp-1 text-[10px] font-bold tracking-widest uppercase opacity-90">
-        {book.version || SUBJECT_DISPLAY[book.subject] || book.subject}
-      </div>
+      {/* 封面几何装饰 */}
+      <div className="pointer-events-none absolute -top-5 -right-5 h-16 w-16 rounded-full border-[3px] border-white/20" />
+      <div className="pointer-events-none absolute top-9 -left-4 h-8 w-8 rounded-full bg-white/10" />
+      <div className="pointer-events-none absolute -right-3 bottom-8 h-12 w-12 rotate-12 bg-white/5" />
 
-      {/* 书名 */}
-      <div className="mt-2 ml-1.5 line-clamp-5 text-sm leading-snug font-bold drop-shadow-sm sm:text-[15px]">
-        {book.title}
-      </div>
+      {/* 书脊阴影 + 高光线 */}
+      <div className="absolute inset-y-0 left-0 w-1.5 bg-black/30" />
+      <div className="absolute inset-y-0 left-1.5 w-px bg-white/20" />
 
-      {/* 底部信息 */}
-      <div className="mt-auto ml-1.5">
-        {book.grade ? (
-          <div className="line-clamp-1 text-[11px] font-semibold opacity-90">{book.grade}</div>
-        ) : null}
-        <div className="mt-1.5 flex items-center justify-between gap-1">
-          <span className="line-clamp-1 text-[10px] opacity-75">
-            {SUBJECT_DISPLAY[book.subject] || book.subject}
+      <div className="relative flex h-full flex-col p-2.5 sm:p-3">
+        {/* 顶部：学段抬头 */}
+        <div className="truncate text-center text-[9px] font-bold tracking-[0.18em] text-white uppercase opacity-95">
+          {book.stageDisplay}
+        </div>
+        <div className="mx-auto mt-1 h-px w-8 bg-white/40" />
+
+        {/* 中央：科目徽章 + 书名 + 年级 */}
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 text-center">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/20 text-[11px] font-bold ring-1 ring-white/45 sm:h-7 sm:w-7">
+            {subjectIcon(book.subject)}
           </span>
+          <span className="line-clamp-4 text-xs leading-snug font-extrabold drop-shadow-sm sm:text-sm">
+            {book.title}
+          </span>
+          {book.grade ? (
+            <span className="line-clamp-1 text-[10px] font-semibold text-white/85">
+              {book.grade}
+            </span>
+          ) : null}
+        </div>
+
+        {/* 底部：出版社 + 大小/分片 */}
+        <div className="mt-1 flex items-end justify-between gap-1 text-[9px] font-semibold text-white/85">
+          <span className="min-w-0 truncate">{footer}</span>
           {book.split ? (
-            <span className="shrink-0 rounded-sm bg-white/25 px-1 py-0.5 text-[9px] font-semibold">
-              分片
+            <span className="shrink-0 rounded-sm bg-black/30 px-1 py-px text-[8px] font-bold">
+              {book.files.length} 片
             </span>
           ) : (
-            <span className="shrink-0 text-[9px] opacity-60">{formatSize(book.totalSize)}</span>
+            <span className="shrink-0">{formatSize(book.totalSize)}</span>
           )}
         </div>
       </div>
@@ -407,7 +462,7 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
               >
                 TapXWorld/ChinaTextbook
               </Link>
-              。点击封面即可下载，按出版社（版本）颜色分类展示，方便快速找到学校使用的教材。
+              。点击封面即可下载。封面按出版社（版本）统一配色，同版本教材同色展示，方便快速找到学校使用的教材。
             </p>
           </div>
 
