@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 544 306" fill="none">
+  <rect width="544" height="306" rx="8" fill="#F0FDF4"/>
+  <rect x="40" y="40" width="464" height="226" rx="12" fill="#DCFCE7" stroke="#4ADE80" stroke-width="2"/>
+  <!-- Stacked textbook covers -->
+  <g transform="translate(112, 72)">
+    <rect x="0" y="24" width="54" height="124" rx="5" fill="#B91C1C"/>
+    <rect x="9" y="38" width="36" height="7" rx="2" fill="#FFFFFF" opacity="0.85"/>
+    <rect x="9" y="53" width="28" height="5" rx="2" fill="#FFFFFF" opacity="0.5"/>
+    <rect x="9" y="66" width="20" height="5" rx="2" fill="#FFFFFF" opacity="0.35"/>
+    <rect x="68" y="10" width="58" height="138" rx="5" fill="#1D4ED8"/>
+    <rect x="79" y="24" width="36" height="7" rx="2" fill="#FFFFFF" opacity="0.85"/>
+    <rect x="79" y="39" width="28" height="5" rx="2" fill="#FFFFFF" opacity="0.5"/>
+    <rect x="79" y="52" width="20" height="5" rx="2" fill="#FFFFFF" opacity="0.35"/>
+    <rect x="140" y="30" width="50" height="118" rx="5" fill="#15803D"/>
+    <rect x="149" y="44" width="32" height="7" rx="2" fill="#FFFFFF" opacity="0.85"/>
+    <rect x="149" y="59" width="24" height="5" rx="2" fill="#FFFFFF" opacity="0.5"/>
+  </g>
+  <!-- Decorative circle -->
+  <circle cx="396" cy="84" r="36" fill="#4ADE80" opacity="0.15"/>
+  <circle cx="396" cy="84" r="24" fill="#4ADE80" opacity="0.12"/>
+  <!-- Download arrow -->
+  <g transform="translate(368, 118)">
+    <path d="M28 6 L28 48" stroke="#15803D" stroke-width="6" stroke-linecap="round"/>
+    <path d="M13 34 L28 50 L43 34" stroke="#15803D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="10" y="60" width="36" height="6" rx="3" fill="#15803D" opacity="0.5"/>
+  </g>
+  <!-- Sparkles -->
+  <circle cx="108" cy="58" r="4" fill="#4ADE80" opacity="0.7"/>
+  <circle cx="156" cy="232" r="3" fill="#22C55E" opacity="0.5"/>
+  <circle cx="320" cy="210" r="3" fill="#16A34A" opacity="0.4"/>
+  <!-- Title -->
+  <text x="272" y="276" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#166534">中小学教材下载</text>
+</svg>

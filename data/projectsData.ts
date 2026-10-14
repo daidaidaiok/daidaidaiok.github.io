@@ -21,6 +21,13 @@ const projectsData: Project[] = [
     href: 'https://paperx.cloud/',
   },
   {
+    title: '中小学教材下载',
+    description:
+      '汇集小初高、大学各版本教材 PDF 电子版，按出版社封面分类展示，支持一键下载，每日自动同步开源仓库更新。',
+    imgSrc: '/static/images/project-textbooks.svg',
+    href: '/textbooks/',
+  },
+  {
     title: '土木工程计算工具',
     description:
       '专业的土木工程在线计算工具，提供结构力学、材料计算、施工参数等多种工程计算功能，助力工程师提高工作效率。',
