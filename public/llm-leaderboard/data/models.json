@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-15T03:15:41.961379+00:00",
+  "updated_at": "2026-10-16T03:11:33.934302+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-10 榜单快照，v4.3.2 口径），展示分 = aa_index / 榜首 * 100",
   "aa_index_version": "v4.3.2",
   "scale": {
@@ -461,19 +461,19 @@
       "benchmark_as_of": "2026-10",
       "benchmark_source": "https://artificialanalysis.ai/leaderboards/models",
       "curated": true,
-      "context_length": 1000000,
-      "hf_id": null,
+      "context_length": 1048576,
+      "hf_id": "stepfun-ai/Step-5-Preview",
       "supported_efforts": [
         "high",
         "medium",
         "low"
       ],
       "tier": "tier2",
-      "open_source": false,
+      "open_source": true,
       "pricing": {
         "prompt": 1e-06,
         "completion": 2.7e-06,
-        "input_cache_read": 5e-08,
+        "input_cache_read": 1e-07,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -483,12 +483,12 @@
         "per_million": {
           "input": 1.0,
           "output": 2.7,
-          "cache_hit": 0.05
+          "cache_hit": 0.1
         },
         "per_100B": {
           "input": 10000.0,
           "output": 27000.0,
-          "cache_hit": 500.0
+          "cache_hit": 1000.0
         },
         "currency": "USD"
       }
@@ -509,14 +509,15 @@
       "supported_efforts": [
         "max",
         "high",
-        "low"
+        "low",
+        "none"
       ],
       "tier": "tier2",
       "open_source": true,
       "pricing": {
-        "prompt": 4.5e-07,
-        "completion": 1.5e-05,
-        "input_cache_read": 2.8e-07,
+        "prompt": 3.04e-07,
+        "completion": 1.1588e-05,
+        "input_cache_read": 2.1e-07,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -524,14 +525,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.45,
-          "output": 15.0,
-          "cache_hit": 0.28
+          "input": 0.304,
+          "output": 11.588,
+          "cache_hit": 0.21
         },
         "per_100B": {
-          "input": 4500.0,
-          "output": 150000.0,
-          "cache_hit": 2800.0
+          "input": 3040.0,
+          "output": 115880.0,
+          "cache_hit": 2100.0
         },
         "currency": "USD"
       }
@@ -554,7 +555,8 @@
         "xhigh",
         "high",
         "medium",
-        "low"
+        "low",
+        "none"
       ],
       "tier": "tier2",
       "open_source": false,
@@ -648,9 +650,9 @@
       "tier": "tier2",
       "open_source": true,
       "pricing": {
-        "prompt": 3.6e-08,
-        "completion": 9e-07,
-        "input_cache_read": 1.125e-08,
+        "prompt": 2.853e-08,
+        "completion": 1.125e-06,
+        "input_cache_read": 9e-09,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -658,14 +660,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.036,
-          "output": 0.9,
-          "cache_hit": 0.0112
+          "input": 0.0285,
+          "output": 1.125,
+          "cache_hit": 0.009
         },
         "per_100B": {
-          "input": 360.0,
-          "output": 9000.0,
-          "cache_hit": 112.5
+          "input": 285.3,
+          "output": 11250.0,
+          "cache_hit": 90.0
         },
         "currency": "USD"
       }
@@ -730,24 +732,24 @@
       "tier": "tier2",
       "open_source": false,
       "pricing": {
-        "prompt": 7.5e-07,
-        "completion": 3.75e-06,
-        "input_cache_read": 7.5e-08,
+        "prompt": 8.25e-07,
+        "completion": 4.125e-06,
+        "input_cache_read": 8.25e-08,
         "input_cache_write": 4.16666666666667e-08,
         "input_cache_write_1h": null,
-        "image": 7.5e-07,
-        "audio": 7.5e-07
+        "image": 8.25e-07,
+        "audio": 8.25e-07
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.75,
-          "output": 3.75,
-          "cache_hit": 0.075
+          "input": 0.825,
+          "output": 4.125,
+          "cache_hit": 0.0825
         },
         "per_100B": {
-          "input": 7500.0,
-          "output": 37500.0,
-          "cache_hit": 750.0
+          "input": 8250.0,
+          "output": 41250.0,
+          "cache_hit": 825.0
         },
         "currency": "USD"
       }
