@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-16T03:11:33.934302+00:00",
+  "updated_at": "2026-10-17T03:02:36.658203+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-10 榜单快照，v4.3.2 口径），展示分 = aa_index / 榜首 * 100",
   "aa_index_version": "v4.3.2",
   "scale": {
@@ -516,7 +516,7 @@
       "open_source": true,
       "pricing": {
         "prompt": 3.04e-07,
-        "completion": 1.1588e-05,
+        "completion": 1.1936e-05,
         "input_cache_read": 2.1e-07,
         "input_cache_write": null,
         "input_cache_write_1h": null,
@@ -526,12 +526,12 @@
       "pricing_costs": {
         "per_million": {
           "input": 0.304,
-          "output": 11.588,
+          "output": 11.936,
           "cache_hit": 0.21
         },
         "per_100B": {
           "input": 3040.0,
-          "output": 115880.0,
+          "output": 119360.0,
           "cache_hit": 2100.0
         },
         "currency": "USD"
@@ -650,9 +650,9 @@
       "tier": "tier2",
       "open_source": true,
       "pricing": {
-        "prompt": 2.853e-08,
-        "completion": 1.125e-06,
-        "input_cache_read": 9e-09,
+        "prompt": 4e-08,
+        "completion": 2e-07,
+        "input_cache_read": 6e-09,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -660,14 +660,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.0285,
-          "output": 1.125,
-          "cache_hit": 0.009
+          "input": 0.04,
+          "output": 0.2,
+          "cache_hit": 0.006
         },
         "per_100B": {
-          "input": 285.3,
-          "output": 11250.0,
-          "cache_hit": 90.0
+          "input": 400.0,
+          "output": 2000.0,
+          "cache_hit": 60.0
         },
         "currency": "USD"
       }
