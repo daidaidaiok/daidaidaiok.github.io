@@ -26,7 +26,22 @@ jobs:
             echo "$FILE missing or empty; aborting"
             exit 1
           fi
-          node -e "const d=require('./$FILE'); if(!d.books||!d.books.length) process.exit(1); console.log('OK', d.totalBooks, 'books', d.totalFiles, 'files')"
+          SIZE=$(stat -c%s "$FILE")
+          echo "size: $SIZE bytes"
+          # schema v2 目标约 1.2MB；超过 1.5MB 说明回退到 v1（每文件带 url）或数据异常
+          if [ "$SIZE" -gt 1500000 ]; then
+            echo "data file too large ($SIZE bytes), schema regression?"
+            exit 1
+          fi
+          node -e "
+            const d = require('./$FILE')
+            if (!d.books || !d.books.length) throw new Error('empty books')
+            if (d.schemaVersion !== 2) throw new Error('expect schemaVersion 2, got ' + d.schemaVersion)
+            const f = d.books[0].files[0]
+            if (!f.p) throw new Error('expect files[].p')
+            if (f.url) throw new Error('files[].url must be dropped in schema v2')
+            console.log('OK', d.totalBooks, 'books', d.totalFiles, 'files', 'schema', d.schemaVersion)
+          "
 
       - name: Commit & push
         run: |

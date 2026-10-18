@@ -1,47 +1,80 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from '@/components/Link'
 
+/** 每个文件只存相对仓库根的未编码路径，下载链接运行时拼接 */
 interface TextbookFile {
-  name: string
+  p: string
   size: number
-  url: string
 }
 
 interface Textbook {
   id: string
   title: string
   stage: string
-  stageDisplay: string
   subject: string
-  version: string
-  publisher: string
-  grade: string
-  series: string
-  path: string
+  version?: string
+  publisher?: string
+  grade?: string
+  series?: string
   files: TextbookFile[]
-  split: boolean
   totalSize: number
+  split?: boolean
+}
+
+interface TextbookSource {
+  repo: string
+  htmlUrl: string
+  defaultBranch: string
+  mergeToolUrl: string
+  rawBase: string
 }
 
 interface TextbookData {
+  schemaVersion?: number
   generatedAt: string
-  source: {
-    repo: string
-    htmlUrl: string
-    defaultBranch: string
-    mergeToolUrl: string
-    rawBase: string
-  }
+  source: TextbookSource
   totalBooks: number
   totalFiles: number
   totalSizeBytes: number
   books: Textbook[]
 }
 
+/** 兼容 schema v1（files[].url + path + stageDisplay）与 v2（files[].p） */
+interface RawBook {
+  id?: string
+  path?: string
+  title?: string
+  stage?: string
+  subject?: string
+  version?: string
+  publisher?: string
+  grade?: string
+  series?: string
+  stageDisplay?: string
+  totalSize?: number
+  split?: boolean
+  files?: { p?: string; url?: string; size?: number; name?: string }[]
+}
+
 const SUBJECT_DISPLAY: Record<string, string> = {
   初中练习题_带答案: '初中练习题（带答案）',
+}
+
+/** 学段 → 展示名（数据里不再落盘 stageDisplay） */
+const STAGE_DISPLAY: Record<string, string> = {
+  小学: '小学',
+  初中: '初中',
+  高中: '高中',
+  大学: '大学',
+  '小学（五•四学制）': '小学（五四学制）',
+  '初中（五•四学制）': '初中（五四学制）',
+  学数学最重要的刷习题在这里: '刷习题',
+}
+
+function stageLabel(stage: string): string {
+  return STAGE_DISPLAY[stage] || stage
 }
 
 /** 科目 → 封面徽章单字 */
@@ -94,6 +127,10 @@ const COVER_COLORS = [
   '#334155', // slate-700
 ]
 
+/** 首屏与每次追加的封面数（约 96 张 ≈ 1.5 千 DOM 节点） */
+const INITIAL_COUNT = 96
+const BATCH_SIZE = 96
+
 function hashString(str: string): number {
   let h = 0
   for (let i = 0; i < str.length; i++) {
@@ -101,6 +138,19 @@ function hashString(str: string): number {
     h |= 0
   }
   return Math.abs(h)
+}
+
+/** 逐段编码，保留 `/` 分隔符 */
+function encodePath(p: string): string {
+  return p.split('/').map(encodeURIComponent).join('/')
+}
+
+function fileUrl(rawBase: string, p: string): string {
+  return rawBase + encodePath(p)
+}
+
+function fileName(p: string): string {
+  return p.split('/').pop() || p
 }
 
 function formatSize(bytes: number): string {
@@ -122,7 +172,62 @@ function formatDate(iso: string): string {
   }
 }
 
-function BookCover({ book, onClick }: { book: Textbook; onClick: () => void }) {
+/** v1/v2 归一化：文件统一为 { p, size }，去掉 path / stageDisplay 等冗余字段 */
+function normalizePayload(raw: {
+  schemaVersion?: number
+  generatedAt: string
+  source: TextbookSource
+  totalBooks?: number
+  totalFiles?: number
+  totalSizeBytes?: number
+  books?: RawBook[]
+}): TextbookData {
+  const rawBase = raw.source?.rawBase || ''
+  const books: Textbook[] = (raw.books || []).map((book) => {
+    const files: TextbookFile[] = []
+    for (const file of book.files || []) {
+      if (file.p) {
+        files.push({ p: file.p, size: file.size || 0 })
+      } else if (file.url && rawBase && file.url.startsWith(rawBase)) {
+        files.push({
+          p: file.url.slice(rawBase.length).split('/').map(decodeURIComponent).join('/'),
+          size: file.size || 0,
+        })
+      }
+    }
+    return {
+      id: book.id || book.path || '',
+      title: book.title || '',
+      stage: book.stage || '',
+      subject: book.subject || '',
+      version: book.version,
+      publisher: book.publisher,
+      grade: book.grade,
+      series: book.series,
+      files,
+      totalSize: book.totalSize || files.reduce((sum, f) => sum + f.size, 0),
+      split: Boolean(book.split),
+    }
+  })
+
+  return {
+    schemaVersion: raw.schemaVersion,
+    generatedAt: raw.generatedAt,
+    source: raw.source,
+    totalBooks: raw.totalBooks || books.length,
+    totalFiles: raw.totalFiles || books.reduce((sum, b) => sum + b.files.length, 0),
+    totalSizeBytes: raw.totalSizeBytes || books.reduce((sum, b) => sum + b.totalSize, 0),
+    books,
+  }
+}
+
+const BookCover = memo(function BookCover({
+  book,
+  onSelect,
+}: {
+  book: Textbook
+  onSelect: (book: Textbook) => void
+}) {
   const key = book.version || book.subject || book.title
   const color = COVER_COLORS[hashString(key) % COVER_COLORS.length]
   const footer = book.publisher || book.version || '电子教材'
@@ -130,8 +235,8 @@ function BookCover({ book, onClick }: { book: Textbook; onClick: () => void }) {
   return (
     <button
       type="button"
-      onClick={onClick}
-      className="group relative flex w-full flex-col overflow-hidden rounded-md text-left text-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2"
+      onClick={() => onSelect(book)}
+      className="group relative flex w-full flex-col overflow-hidden rounded-md text-left text-white shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
       style={{ aspectRatio: '3 / 4', backgroundColor: color }}
       aria-label={`查看《${book.title}》下载信息`}
     >
@@ -156,7 +261,7 @@ function BookCover({ book, onClick }: { book: Textbook; onClick: () => void }) {
       <div className="relative flex h-full flex-col p-2.5 sm:p-3">
         {/* 顶部：学段抬头 */}
         <div className="truncate text-center text-[9px] font-bold tracking-[0.18em] text-white uppercase opacity-95">
-          {book.stageDisplay}
+          {stageLabel(book.stage)}
         </div>
         <div className="mx-auto mt-1 h-px w-8 bg-white/40" />
 
@@ -189,11 +294,17 @@ function BookCover({ book, onClick }: { book: Textbook; onClick: () => void }) {
       </div>
     </button>
   )
-}
+})
 
-function DownloadModal({ book, onClose }: { book: Textbook; onClose: () => void }) {
-  const mergeToolUrl = 'https://github.com/TapXWorld/ChinaTextbook-tools/releases'
-
+function DownloadModal({
+  book,
+  source,
+  onClose,
+}: {
+  book: Textbook
+  source: TextbookSource
+  onClose: () => void
+}) {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -206,10 +317,7 @@ function DownloadModal({ book, onClose }: { book: Textbook; onClose: () => void 
     }
   }, [onClose])
 
-  const githubPageUrl = `https://github.com/TapXWorld/ChinaTextbook/blob/master/${book.path
-    .split('/')
-    .map((seg) => encodeURIComponent(seg))
-    .join('/')}`
+  const githubPageUrl = `${source.htmlUrl}/blob/${source.defaultBranch}/${encodePath(book.id)}`
 
   return (
     <div
@@ -228,7 +336,7 @@ function DownloadModal({ book, onClose }: { book: Textbook; onClose: () => void 
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="text-xs font-semibold tracking-[0.2em] text-gray-500 uppercase dark:text-gray-400">
-              {book.stageDisplay} · {SUBJECT_DISPLAY[book.subject] || book.subject}
+              {stageLabel(book.stage)} · {SUBJECT_DISPLAY[book.subject] || book.subject}
             </div>
             <h2 className="mt-2 text-xl font-extrabold tracking-tight text-gray-900 sm:text-2xl dark:text-gray-100">
               {book.title}
@@ -279,7 +387,7 @@ function DownloadModal({ book, onClose }: { book: Textbook; onClose: () => void 
               PDF（分片放在同一目录，运行工具即可自动合并）。
             </p>
             <Link
-              href={mergeToolUrl}
+              href={source.mergeToolUrl}
               className="mt-2 inline-block font-semibold text-amber-700 underline-offset-4 hover:underline dark:text-amber-300"
             >
               下载合并工具 ↗
@@ -288,24 +396,22 @@ function DownloadModal({ book, onClose }: { book: Textbook; onClose: () => void 
         ) : null}
 
         <div className="mt-5 space-y-2">
-          {book.files.map((file) => (
+          {book.files.map((file, index) => (
             <div
-              key={file.name}
+              key={file.p}
               className="bg-neo-item-light dark:bg-neo-item-dark flex items-center justify-between gap-3 rounded-xl px-4 py-3"
             >
               <div className="min-w-0">
                 <div className="truncate text-sm font-semibold text-gray-800 dark:text-gray-100">
-                  {file.name}
+                  {fileName(file.p)}
                 </div>
                 <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
                   {formatSize(file.size)}
-                  {book.split
-                    ? ` · 第 ${book.files.indexOf(file) + 1}/${book.files.length} 个分片`
-                    : ''}
+                  {book.split ? ` · 第 ${index + 1}/${book.files.length} 个分片` : ''}
                 </div>
               </div>
               <Link
-                href={file.url}
+                href={fileUrl(source.rawBase, file.p)}
                 className="neo-inset shrink-0 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
               >
                 下载
@@ -331,6 +437,14 @@ function DownloadModal({ book, onClose }: { book: Textbook; onClose: () => void 
   )
 }
 
+interface RenderSection {
+  key: string
+  subjectName: string
+  versionName: string
+  total: number
+  items: Textbook[]
+}
+
 export default function TextbooksExplorer({ basePath = '' }: { basePath?: string }) {
   const [data, setData] = useState<TextbookData | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -339,16 +453,19 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
   const [version, setVersion] = useState<string>('全部')
   const [query, setQuery] = useState('')
   const [selectedBook, setSelectedBook] = useState<Textbook | null>(null)
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let cancelled = false
-    fetch(`${basePath}/data/textbooks.json`)
+    // ?v=2 换缓存键，避免命中 CDN 上缓存的 schema v1 数据
+    fetch(`${basePath}/data/textbooks.json?v=2`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
       })
-      .then((json: TextbookData) => {
-        if (!cancelled) setData(json)
+      .then((json) => {
+        if (!cancelled) setData(normalizePayload(json))
       })
       .catch((err) => {
         if (!cancelled) setError(err.message || '加载失败')
@@ -377,7 +494,7 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
         data.books
           .filter((b) => b.stage === stage && (subject === '全部' || b.subject === subject))
           .map((b) => b.version)
-          .filter(Boolean)
+          .filter((v): v is string => Boolean(v))
       ),
     ].sort((a, b) => a.localeCompare(b, 'zh'))
   }, [data, stage, subject])
@@ -391,8 +508,8 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
       if (version !== '全部' && book.version !== version) return false
       if (!q) return true
       return [book.title, book.subject, book.version, book.publisher, book.grade, book.series]
-        .filter(Boolean)
-        .some((field) => field!.toLowerCase().includes(q))
+        .filter((field): field is string => Boolean(field))
+        .some((field) => field.toLowerCase().includes(q))
     })
   }, [data, stage, subject, version, query])
 
@@ -405,9 +522,62 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
     }
     return [...map.entries()].map(([key, items]) => {
       const [subjectName, versionName] = key.split('||')
-      return { subjectName, versionName, items }
+      return { key, subjectName, versionName, items }
     })
   }, [filteredBooks])
+
+  // 按封面数（而非分组数）控制首屏渲染量，单组可能上百本
+  const renderSections = useMemo(() => {
+    let budget = visibleCount
+    const out: RenderSection[] = []
+    for (const group of groups) {
+      if (budget <= 0) break
+      const items = group.items.slice(0, budget)
+      budget -= items.length
+      out.push({
+        key: group.key,
+        subjectName: group.subjectName,
+        versionName: group.versionName,
+        total: group.items.length,
+        items,
+      })
+    }
+    return out
+  }, [groups, visibleCount])
+
+  const totalCount = filteredBooks.length
+  const shownCount = Math.min(visibleCount, totalCount)
+  const hasMore = shownCount < totalCount
+
+  // 筛选条件变化时同步重置分页（渲染期调整 state，避免旧列表多闪一帧）
+  const filterKey = `${stage}\u0000${subject}\u0000${version}\u0000${query.trim()}`
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey)
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey)
+    setVisibleCount(INITIAL_COUNT)
+  }
+
+  const loadMore = useCallback(() => {
+    setVisibleCount((count) => count + BATCH_SIZE)
+  }, [])
+
+  // 滚动到哨兵附近时自动追加一批；按钮为无 IntersectionObserver / 无障碍场景兜底
+  useEffect(() => {
+    if (!hasMore) return
+    const el = sentinelRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect() // 先断开，避免同一帧内连锁加载全部
+          loadMore()
+        }
+      },
+      { rootMargin: '600px 0px', threshold: 0 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasMore, shownCount, loadMore])
 
   const selectStage = useCallback((s: string) => {
     setStage(s)
@@ -521,7 +691,7 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
                       : 'bg-neo-item-light dark:bg-neo-item-dark text-gray-600 hover:text-gray-950 dark:text-gray-300 dark:hover:text-white'
                   }`}
                 >
-                  {data.books.find((b) => b.stage === s)?.stageDisplay || s}
+                  {stageLabel(s)}
                 </button>
               ))}
             </div>
@@ -584,51 +754,81 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
 
             {/* 结果统计 */}
             <div className="text-xs font-semibold tracking-[0.16em] text-gray-500 uppercase dark:text-gray-400">
-              共 {filteredBooks.length} 本教材
+              共 {totalCount} 本教材
               {query.trim() ? ` · 搜索“${query.trim()}”` : ''}
             </div>
           </section>
 
           {/* 封面墙 */}
-          {filteredBooks.length === 0 ? (
+          {totalCount === 0 ? (
             <div className="neo-surface p-10 text-center text-gray-500 dark:text-gray-400">
               没有找到匹配的教材，试试更换筛选条件或搜索关键词。
             </div>
           ) : (
             <div className="space-y-8">
-              {groups.map((group) => (
-                <section key={`${group.subjectName}||${group.versionName}`} className="space-y-3">
+              {renderSections.map((section) => (
+                <section
+                  key={section.key}
+                  className="space-y-3 [contain-intrinsic-size:auto_480px] [content-visibility:auto]"
+                >
                   <h2 className="flex flex-wrap items-baseline gap-x-3 text-lg font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                    <span>{SUBJECT_DISPLAY[group.subjectName] || group.subjectName}</span>
+                    <span>{SUBJECT_DISPLAY[section.subjectName] || section.subjectName}</span>
                     <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                      {group.versionName}
+                      {section.versionName}
                     </span>
                     <span className="text-xs font-semibold text-gray-400 dark:text-gray-500">
-                      {group.items.length} 本
+                      {section.items.length === section.total
+                        ? `${section.total} 本`
+                        : `已显示 ${section.items.length} / ${section.total} 本`}
                     </span>
                   </h2>
                   <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8">
-                    {group.items.map((book) => (
-                      <BookCover key={book.id} book={book} onClick={() => setSelectedBook(book)} />
+                    {section.items.map((book) => (
+                      <BookCover key={book.id} book={book} onSelect={setSelectedBook} />
                     ))}
                   </div>
                 </section>
               ))}
+
+              <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+                已显示 {shownCount} / {totalCount} 本教材
+              </p>
+
+              {hasMore ? (
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={loadMore}
+                    className="neo-inset px-6 py-2.5 text-sm font-semibold text-gray-700 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
+                  >
+                    加载更多教材
+                  </button>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    已显示 {shownCount} / {totalCount} 本
+                  </p>
+                </div>
+              ) : null}
+
+              <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
             </div>
           )}
         </>
       ) : (
         <div className="neo-surface flex items-center justify-center p-16 text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-3">
-            <span className="border-t-primary-500 h-5 w-5 animate-spin rounded-full border-2 border-gray-300" />
+            <span className="border-t-primary-500 h-5 w-5 animate-spin rounded-full border-2 border-gray-300 motion-reduce:animate-none" />
             正在加载教材数据…
           </div>
         </div>
       )}
 
       {/* 下载弹窗 */}
-      {selectedBook ? (
-        <DownloadModal book={selectedBook} onClose={() => setSelectedBook(null)} />
+      {selectedBook && data ? (
+        <DownloadModal
+          book={selectedBook}
+          source={data.source}
+          onClose={() => setSelectedBook(null)}
+        />
       ) : null}
     </div>
   )
