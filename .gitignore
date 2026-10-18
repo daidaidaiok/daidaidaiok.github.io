@@ -63,3 +63,6 @@ logs/security/
 # Python
 __pycache__/
 *.pyc
+
+# AI workspace data
+.workbuddy-ai/
