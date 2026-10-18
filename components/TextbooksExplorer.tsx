@@ -360,11 +360,7 @@ export default function TextbooksExplorer({ basePath = '' }: { basePath?: string
 
   const stages = useMemo(() => {
     if (!data) return []
-    const seen: string[] = []
-    for (const book of data.books) {
-      if (!seen.includes(book.stage)) seen.push(book.stage)
-    }
-    return seen
+    return [...new Set(data.books.map((b) => b.stage))]
   }, [data])
 
   const subjects = useMemo(() => {
