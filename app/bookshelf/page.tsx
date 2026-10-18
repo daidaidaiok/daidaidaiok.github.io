@@ -1,6 +1,7 @@
 import bookshelfData from '@/data/bookshelfData'
 import Image from '@/components/Image'
 import Link from '@/components/Link'
+import CopyLinkButton from '@/components/CopyLinkButton'
 import { genPageMetadata } from 'app/seo'
 
 export const metadata = genPageMetadata({ title: '书架' })
@@ -37,13 +38,14 @@ export default function Bookshelf() {
                   </p>
                 )}
               </div>
-              <div className="mt-4">
+              <div className="mt-4 flex items-center gap-4">
                 <Link
                   href={book.href}
                   className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 text-sm leading-6 font-medium"
                 >
                   下载阅读 &rarr;
                 </Link>
+                <CopyLinkButton url={book.href} />
               </div>
             </div>
           </div>

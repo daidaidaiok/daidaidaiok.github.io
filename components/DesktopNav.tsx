@@ -5,11 +5,11 @@ import headerNavLinks from '@/data/headerNavLinks'
 import Link from './Link'
 
 const linkClassName =
-  'dark:hover:bg-neo-hover-dark rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-white hover:text-black dark:text-gray-200 dark:hover:text-white'
+  'dark:hover:bg-neo-hover-dark shrink-0 rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-white hover:text-black dark:text-gray-200 dark:hover:text-white'
 
 export default function DesktopNav() {
   return (
-    <div className="neo-inset no-scrollbar hidden max-w-40 items-center gap-x-1 overflow-x-auto p-1 sm:flex md:max-w-72 lg:max-w-96">
+    <div className="neo-inset no-scrollbar hidden items-center gap-x-1 overflow-x-auto p-1 sm:flex sm:max-w-56 md:max-w-72 lg:max-w-none">
       {headerNavLinks
         .filter((link) => link.href !== '/')
         .map((link) =>

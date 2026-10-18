@@ -63,7 +63,7 @@ const MobileNav = () => {
 
   return (
     <>
-      <button aria-label="切换菜单" onClick={onToggleNav} className="sm:hidden">
+      <button aria-label="切换菜单" onClick={onToggleNav} className="md:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"

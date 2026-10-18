@@ -23,6 +23,21 @@ const headerNavLinks: HeaderNavLink[] = [
       },
     ],
   },
+  {
+    title: '考研',
+    items: [
+      {
+        href: '/kaoyan/concrete-structure',
+        title: '混凝土结构设计原理',
+        description: '考研专业课 - 混凝土结构设计原理',
+      },
+      {
+        href: '/kaoyan/soil-mechanics',
+        title: '土力学',
+        description: '考研专业课 - 土力学',
+      },
+    ],
+  },
   { href: '/tags', title: '标签' },
   { href: '/projects', title: '项目' },
   { href: '/bookshelf', title: '书架' },
