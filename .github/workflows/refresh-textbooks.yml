@@ -1,0 +1,42 @@
+name: Refresh Textbooks Data
+
+on:
+  schedule:
+    - cron: "17 1 * * *"   # 每天 UTC 1:17（错开 leaderboard 的 0:00）
+  workflow_dispatch:        # 也支持手动触发
+
+permissions:
+  contents: write          # 允许 push 提交
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run fetch script
+        run: node scripts/fetch-textbooks.mjs
+        continue-on-error: true   # 网络失败也不让 workflow 整体挂掉
+
+      - name: Verify data file
+        run: |
+          FILE=public/data/textbooks.json
+          if [ ! -s "$FILE" ]; then
+            echo "$FILE missing or empty; aborting"
+            exit 1
+          fi
+          node -e "const d=require('./$FILE'); if(!d.books||!d.books.length) process.exit(1); console.log('OK', d.totalBooks, 'books', d.totalFiles, 'files')"
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/textbooks.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          # 不带 [skip ci]：数据变化后需要触发 Pages 重新构建部署
+          git commit -m "chore(data): refresh textbooks"
+          git push

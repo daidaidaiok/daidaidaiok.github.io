@@ -1,0 +1,46 @@
+name: Refresh LLM Leaderboard Data
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # 每天 UTC 0:00
+  workflow_dispatch:        # 也支持手动触发
+
+permissions:
+  contents: write          # 允许 push 提交
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run fetch script
+        run: python3 scripts/leaderboard/fetch_models.py
+        continue-on-error: true   # 网络失败也不让 workflow 整体挂掉
+
+      - name: Verify data file
+        run: |
+          FILE=public/llm-leaderboard/data/models.json
+          if [ ! -s "$FILE" ]; then
+            echo "$FILE missing or empty; aborting"
+            exit 1
+          fi
+          python3 -c "import json; d=json.load(open('$FILE')); assert d.get('models'); print('OK', len(d['models']), 'models')"
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/llm-leaderboard/data/models.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "chore(data): refresh LLM leaderboard [skip ci]"
+          git push

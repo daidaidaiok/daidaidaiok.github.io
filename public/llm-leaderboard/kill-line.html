@@ -1,0 +1,113 @@
+<!doctype html>
+<!-- served from daidaidaiok.github.io (consolidated) -->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>模型斩杀线 · LLM 能力天梯</title>
+    <meta
+      name="description"
+      content="大模型斩杀线时间线：榜首分数不断抬高，跌过线的模型会被淘汰。基于 Artificial Analysis Intelligence Index（v4.3.2）。"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <p class="kill-breadcrumb"><a href="./">← 返回 LLM 能力天梯</a></p>
+        <h1 class="site-title">模型斩杀线 ☠</h1>
+        <p class="site-subtitle">
+          榜首每涨一分，斩杀线就抬高一截——去年的旗舰，今年可能连上榜线都够不着。
+        </p>
+        <div class="kill-stats">
+          <div class="kill-stat">
+            <span class="kill-stat-value" id="stat-leader">--</span>
+            <span class="kill-stat-label">当前榜首指数</span>
+          </div>
+          <div class="kill-stat kill-stat-danger">
+            <span class="kill-stat-value" id="stat-kill">--</span>
+            <span class="kill-stat-label">今日斩杀线（×70%）</span>
+          </div>
+          <div class="kill-stat">
+            <span class="kill-stat-value" id="stat-count">--</span>
+            <span class="kill-stat-label">收录模型</span>
+          </div>
+          <div class="kill-stat">
+            <span class="kill-stat-value" id="stat-dead">--</span>
+            <span class="kill-stat-label">已坠线</span>
+          </div>
+          <div class="kill-stat">
+            <span class="kill-stat-value" id="stat-updated">--</span>
+            <span class="kill-stat-label">快照日期</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="kill-intro">
+        <h2 class="kill-intro-title">什么是「斩杀线」？</h2>
+        <p>
+          本站天梯图有一条上榜门槛：<strong>模型分数必须达到当前榜首的 70%</strong>。
+          把这条门槛画在时间轴上，就是「斩杀线」——它不固定，而是随着榜首刷新不断上移。
+          新旗舰每发布一次，老模型就集体下坠一截；一旦跌到线下，就意味着 「与最强模型差距超过
+          30%，不值得再作为主力模型使用」。
+        </p>
+        <p class="kill-intro-note">
+          图中黑灰色阶梯线是「可见前沿」（按发布时间取当时最高分），红色虚线是前沿 × 70% 的斩杀线。
+          所有分数统一使用 Artificial Analysis 当前口径（Intelligence Index
+          <span id="index-version">--</span>）回溯计分，因此新老模型可以直接对比。
+        </p>
+      </section>
+
+      <section class="kill-chart-wrap">
+        <div class="kill-legend">
+          <span class="legend-item"><span class="dot dot-closed"></span>闭源</span>
+          <span class="legend-item"><span class="dot dot-open"></span>开源权重</span>
+          <span class="legend-item"
+            ><span class="dot dot-dead"></span>已坠线（低于今日斩杀线）</span
+          >
+          <span class="legend-item"
+            ><span class="dot dot-estimated"></span>AA 估算值（榜单带 *）</span
+          >
+          <span class="legend-item legend-line legend-line-frontier"></span
+          ><span class="legend-item">可见前沿</span>
+          <span class="legend-item legend-line legend-line-kill"></span
+          ><span class="legend-item">斩杀线</span>
+        </div>
+        <div class="kill-chart-scroll">
+          <div id="kill-chart"></div>
+        </div>
+        <p class="kill-chart-caption">
+          提示：月级精度的发布日期按当月 15 日定位，悬停数据点可查看口径详情。
+        </p>
+      </section>
+
+      <section class="kill-notes">
+        <h2 class="kill-intro-title">口径与数据说明</h2>
+        <ul id="kill-notes-list">
+          <!-- notes 渲染到这里 -->
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          分数来源：
+          <a href="https://artificialanalysis.ai/leaderboards/models" target="_blank" rel="noopener"
+            >Artificial Analysis Intelligence Index（v4.3.2 榜单快照）</a
+          >
+          · 发布日期来源：
+          <a href="https://artificialanalysis.ai/articles" target="_blank" rel="noopener"
+            >AA 官方文章索引</a
+          >
+          与各发布方官方公告 · 斩杀线比例与本站<a href="./">天梯图</a>上榜门槛一致（榜首 × 70%） ·
+          完整数据见 <a href="data/killline.json">data/killline.json</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/kill-line.js"></script>
+  </body>
+</html>

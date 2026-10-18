@@ -7,11 +7,25 @@ interface Project {
 
 const projectsData: Project[] = [
   {
+    title: 'LLM 能力天梯图',
+    description:
+      '大模型能力排行天梯，聚合 OpenRouter 与人工精选数据，按梯队分组对比各厂商旗舰模型实力。',
+    imgSrc: '/static/images/project-llm-leaderboard.svg',
+    href: 'https://blog.hpb300.com/llm-leaderboard/',
+  },
+  {
     title: '题库智能管理系统',
     description:
       '一款智能化的题库管理平台，支持多种题型管理、试卷生成、在线考试等功能，帮助教育机构高效管理教学资源。',
     imgSrc: '/static/images/project-exam.svg',
-    href: 'https://paperx.cloud',
+    href: 'https://paperx.cloud/',
+  },
+  {
+    title: '中小学教材下载',
+    description:
+      '汇集小初高、大学各版本教材 PDF 电子版，按出版社封面分类展示，支持一键下载，每日自动同步开源仓库更新。',
+    imgSrc: '/static/images/project-textbooks.svg',
+    href: '/textbooks/',
   },
   {
     title: '土木工程计算工具',
@@ -21,11 +35,11 @@ const projectsData: Project[] = [
     href: 'https://cal.hpb300.com/',
   },
   {
-    title: '我的网盘',
+    title: '钢筋平法识图 3D 可视化学习',
     description:
-      '个人网盘服务，提供文件存储、分享和管理功能，支持多种文件格式的在线预览，随时随地访问您的文件。',
-    imgSrc: '/static/images/project-drive.svg',
-    href: 'https://drive.hpb300.com',
+      '钢筋平法识图 3D 可视化学习平台，通过三维模型直观展示钢筋构造与平法标注，帮助快速理解平法图集。',
+    imgSrc: '/static/images/project-rebar.svg',
+    href: 'https://rebar.hpb300.com/',
   },
 ]
 
