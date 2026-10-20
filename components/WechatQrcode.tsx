@@ -5,7 +5,6 @@ import { Wechat } from '@/components/social-icons/icons'
 import Image from '@/components/Image'
 
 const WECHAT_ACCOUNT = '人工石教育'
-const WECHAT_ID = 'galigaygay_ok'
 
 export default function WechatQrcode() {
   const [open, setOpen] = useState(false)
@@ -77,9 +76,6 @@ export default function WechatQrcode() {
               height={224}
               className="mx-auto h-56 w-56 rounded-lg object-contain"
             />
-            <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
-              微信号：{WECHAT_ID}
-            </p>
           </div>
         </div>
       )}
