@@ -14,6 +14,7 @@ import {
   Bilibili,
   Douyin,
   QQ,
+  Wechat,
 } from './icons'
 
 const components = {
@@ -32,6 +33,7 @@ const components = {
   bilibili: Bilibili,
   douyin: Douyin,
   qq: QQ,
+  wechat: Wechat,
 }
 
 type SocialIconProps = {

@@ -1,6 +1,7 @@
 import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
+import WechatQrcode from './WechatQrcode'
 
 const placeholderLinks = new Set([
   'mailto:address@yoursite.com',
@@ -37,10 +38,11 @@ export default function Footer() {
   return (
     <footer>
       <div className="neo-surface mt-6 mb-6 flex flex-col items-center px-6 py-6">
-        <div className="mb-3 flex space-x-4">
+        <div className="mb-3 flex items-center space-x-4">
           {validSocialLinks.map(({ kind, href }) => (
             <SocialIcon key={kind} kind={kind} href={href} size={6} />
           ))}
+          <WechatQrcode />
         </div>
         <div className="mb-2 flex space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <div>{siteMetadata.author}</div>
