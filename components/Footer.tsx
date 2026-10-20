@@ -21,6 +21,7 @@ const placeholderLinks = new Set([
 const socialLinks = [
   { kind: 'mail', href: `mailto:${siteMetadata.email}` },
   { kind: 'github', href: siteMetadata.github },
+  { kind: 'x', href: siteMetadata.x },
   { kind: 'youtube', href: siteMetadata.youtube },
   { kind: 'bilibili', href: siteMetadata.bilibili },
   { kind: 'douyin', href: siteMetadata.douyin },

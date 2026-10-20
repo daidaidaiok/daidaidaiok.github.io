@@ -13,7 +13,7 @@ const siteMetadata = {
   mastodon: '',
   email: 'daidaidaidaidaiok@gmail.com',
   github: 'https://github.com/daidaidaiok',
-  x: '',
+  x: 'https://x.com/daidaiok1',
   twitter: '',
   facebook: '',
   youtube: 'https://www.youtube.com/@gaygay8700',
