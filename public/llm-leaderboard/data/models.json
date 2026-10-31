@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-30T04:26:13.528469+00:00",
+  "updated_at": "2026-10-31T04:07:14.711383+00:00",
   "source": "Artificial Analysis Intelligence Index（2026-10 榜单快照，v4.3.2 口径），展示分 = aa_index / 榜首 * 100",
   "aa_index_version": "v4.3.2",
   "scale": {
@@ -428,9 +428,9 @@
       "tier": "tier2",
       "open_source": true,
       "pricing": {
-        "prompt": 8e-08,
-        "completion": 3.6e-06,
-        "input_cache_read": 7.6e-08,
+        "prompt": 6.99e-08,
+        "completion": 1.4e-06,
+        "input_cache_read": 6.89e-08,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -438,14 +438,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.08,
-          "output": 3.6,
-          "cache_hit": 0.076
+          "input": 0.0699,
+          "output": 1.4,
+          "cache_hit": 0.0689
         },
         "per_100B": {
-          "input": 800.0,
-          "output": 36000.0,
-          "cache_hit": 760.0
+          "input": 699.0,
+          "output": 14000.0,
+          "cache_hit": 689.0
         },
         "currency": "USD"
       }
@@ -650,9 +650,9 @@
       "tier": "tier2",
       "open_source": true,
       "pricing": {
-        "prompt": 4.87e-08,
-        "completion": 7.01e-08,
-        "input_cache_read": 3e-08,
+        "prompt": 2.37e-08,
+        "completion": 1.142e-07,
+        "input_cache_read": 2.37e-08,
         "input_cache_write": null,
         "input_cache_write_1h": null,
         "image": null,
@@ -660,14 +660,14 @@
       },
       "pricing_costs": {
         "per_million": {
-          "input": 0.0487,
-          "output": 0.0701,
-          "cache_hit": 0.03
+          "input": 0.0237,
+          "output": 0.1142,
+          "cache_hit": 0.0237
         },
         "per_100B": {
-          "input": 487.0,
-          "output": 701.0,
-          "cache_hit": 300.0
+          "input": 237.0,
+          "output": 1142.0,
+          "cache_hit": 237.0
         },
         "currency": "USD"
       }
