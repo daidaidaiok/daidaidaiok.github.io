@@ -86,6 +86,37 @@ describe('compressed bundle budget', () => {
     expect(result.shared.bytes).toBe(gzipSync(Buffer.from(shared)).length)
   })
 
+  it('keeps standalone HTML files separate from the root index route', () => {
+    const build = createBuild('out', { '/': ['home.js'] })
+    writeChunk(build, 'home.js', 'window.home = true;')
+    writeFileSync(
+      join(build.outDir, '404.html'),
+      '<html><script src="/_next/static/chunks/not-found.js"></script></html>'
+    )
+    writeChunk(build, 'not-found.js', 'window.notFound = true;')
+
+    const result = collectBundleMetrics(build.outDir)
+
+    expect(result.routes['/']).toBeDefined()
+    expect(result.routes['/404.html']).toBeDefined()
+    expect(result.routes['/404.html'].bytes).toBeGreaterThan(0)
+  })
+
+  it('normalizes a configured base path before resolving Next static scripts', () => {
+    const build = createBuild('out', { '/': ['shared.js'] })
+    const content = 'window.shared = true;'
+    writeChunk(build, 'shared.js', content)
+    writeFileSync(
+      join(build.outDir, 'index.html'),
+      '<html><script src="/myblog/_next/static/chunks/shared.js"></script></html>'
+    )
+
+    const result = collectBundleMetrics(build.outDir)
+
+    expect(result.routes['/'].bytes).toBe(gzipSync(Buffer.from(content)).length)
+    expect(result.shared.bytes).toBe(gzipSync(Buffer.from(content)).length)
+  })
+
   it('passes exactly ten percent growth and fails growth above ten percent', () => {
     const baseline = metrics(100, { '/': 100, '/about/': 100 })
     const boundary = compareBundleMetrics(baseline, metrics(110, { '/': 110, '/about/': 110 }))

@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync, mkdirSync } from 'node:fs'
 import { gzipSync } from 'node:zlib'
-import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const DEFAULT_BUDGET_FILE = 'scripts/bundle-budget.json'
@@ -35,16 +35,24 @@ function safePath(root, relativePath) {
 function routeForHtml(outDir, htmlPath) {
   const relativePath = relative(outDir, htmlPath)
   const directory = dirname(relativePath)
+  if (basename(relativePath).toLowerCase() !== 'index.html') {
+    return `/${relativePath.split(sep).join('/')}`
+  }
   return directory === '.' ? '/' : `/${directory.split(sep).join('/')}/`
 }
 
 function resolveBundleAsset(source, outDir) {
-  let pathname
+  let url
   try {
-    pathname = new URL(source, 'https://bundle-budget.local').pathname
+    url = new URL(source, 'https://bundle-budget.local')
   } catch {
     return null
   }
+  if (url.origin !== 'https://bundle-budget.local') return null
+  const staticPrefix = '/_next/static/'
+  const prefixIndex = url.pathname.indexOf(staticPrefix)
+  if (prefixIndex < 0) return null
+  const pathname = url.pathname.slice(prefixIndex)
   if (!pathname.startsWith('/_next/static/') || !pathname.toLowerCase().endsWith('.js')) return null
 
   let decodedPathname
