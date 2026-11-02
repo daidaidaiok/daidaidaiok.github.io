@@ -24,6 +24,9 @@ jobs:
       - name: Validate MDX frontmatter
         run: yarn validate:content
       - name: Build static export
+        env:
+          EXPORT: '1'
+          UNOPTIMIZED: '1'
         run: yarn build
       - name: Validate internal links and generated RSS
         run: yarn validate:content:built
