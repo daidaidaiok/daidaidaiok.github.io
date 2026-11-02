@@ -1,9 +1,11 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { extname, isAbsolute, join, posix, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { JSDOM } from 'jsdom'
 import matter from 'gray-matter'
 import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
 import remarkMdx from 'remark-mdx'
 import { remark } from 'remark'
 import { visit } from 'unist-util-visit'
@@ -138,6 +140,7 @@ function routeForContentFile(filePath, contentRoot) {
   const withoutExtension = contentPath.replace(/\.mdx$/i, '')
   if (withoutExtension.startsWith('blog/')) return `/${withoutExtension}/`
   if (withoutExtension.startsWith('gongkao/structured-interview/')) return `/${withoutExtension}/`
+  if (withoutExtension === 'authors/default') return '/about/'
   if (withoutExtension.startsWith('authors/')) return `/${withoutExtension}/`
   return '/'
 }
@@ -159,22 +162,42 @@ function staticTargetExists(pathname, outDir) {
   const relativeTarget = relative(outDir, target)
   if (relativeTarget.startsWith('..') || isAbsolute(relativeTarget)) return false
 
-  const candidates = [target]
-  if (!extname(target)) {
-    candidates.push(join(target, 'index.html'), join(target, 'index.txt'), `${target}.html`)
-  }
+  const candidates = [target, join(target, 'index.html'), join(target, 'index.txt')]
+  if (!extname(target)) candidates.push(`${target}.html`)
   return candidates.some((candidate) => existsSync(candidate) && statSync(candidate).isFile())
+}
+
+function normalizeReferenceIdentifier(identifier) {
+  return identifier.trim().replace(/\s+/g, ' ').toLowerCase()
 }
 
 function mdxLinkNodes(source) {
   const frontmatter = parseFrontmatter(source)
   if (frontmatter.error) return { error: frontmatter.error, line: frontmatter.line, links: [] }
-  const tree = remark().use(remarkGfm).use(remarkMdx).parse(frontmatter.content)
+  const tree = remark().use(remarkGfm).use(remarkMath).use(remarkMdx).parse(frontmatter.content)
   const links = []
+  const definitions = new Map()
+
+  visit(tree, 'definition', (node) => {
+    if (typeof node.identifier === 'string' && typeof node.url === 'string') {
+      definitions.set(normalizeReferenceIdentifier(node.identifier), node.url)
+    }
+  })
+
   visit(tree, (node) => {
+    let url
     if ((node.type === 'link' || node.type === 'image') && typeof node.url === 'string') {
+      url = node.url
+    } else if (
+      (node.type === 'linkReference' || node.type === 'imageReference') &&
+      typeof node.identifier === 'string'
+    ) {
+      url = definitions.get(normalizeReferenceIdentifier(node.identifier))
+    }
+
+    if (typeof url === 'string') {
       links.push({
-        url: node.url,
+        url,
         line: frontmatter.bodyLineOffset + (node.position?.start.line ?? 1),
       })
     }
@@ -450,7 +473,10 @@ function readSiteMetadata(metadataFile) {
   if (extname(metadataFile).toLowerCase() === '.json') {
     return { metadata: JSON.parse(source), source }
   }
-  return { metadata: siteMetadata, source }
+  const requireFromValidator = createRequire(import.meta.url)
+  const modulePath = requireFromValidator.resolve(metadataFile)
+  delete requireFromValidator.cache[modulePath]
+  return { metadata: requireFromValidator(modulePath), source }
 }
 
 function parseArguments(args) {

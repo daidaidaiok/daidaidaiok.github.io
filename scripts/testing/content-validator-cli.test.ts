@@ -117,6 +117,48 @@ describe('content validator CLI', () => {
     expect(result.stderr).toContain('internal link target not found: /blog/not-found/')
   })
 
+  it('checks directory indexes for route slugs that contain dots', () => {
+    const fixture = createFixture()
+    writeValidPost(fixture.contentRoot, 'See [next.js](/blog/next.js/).')
+    mkdirSync(join(fixture.outDir, 'blog/next.js'), { recursive: true })
+    writeFileSync(join(fixture.outDir, 'blog/next.js/index.html'), '<html></html>')
+
+    const result = runValidator(fixture, 'links')
+
+    expect(result.exitCode).toBe(0)
+    expect(result.stderr).toBe('')
+  })
+
+  it('parses supported LaTeX math while extracting Markdown links', () => {
+    const fixture = createFixture()
+    writeValidPost(fixture.contentRoot, '$\\frac{1}{\\sqrt{2}}$\n\nSee [known](/blog/known/).')
+    mkdirSync(join(fixture.outDir, 'blog/known'), { recursive: true })
+    writeFileSync(join(fixture.outDir, 'blog/known/index.html'), '<html></html>')
+
+    const result = runValidator(fixture, 'links')
+
+    expect(result.exitCode).toBe(0)
+    expect(result.stderr).toBe('')
+  })
+
+  it('validates reference-style Markdown links and images at their reference locations', () => {
+    const fixture = createFixture()
+    writeValidPost(
+      fixture.contentRoot,
+      '[missing][missing-page]\n![missing image][missing-image]\n\n[missing-page]: /blog/not-found/\n[missing-image]: /static/not-found.png'
+    )
+
+    const result = runValidator(fixture, 'links')
+
+    expect(result.exitCode).toBe(1)
+    expect(result.stderr).toContain(
+      'data/blog/post.mdx:5: internal link target not found: /blog/not-found/'
+    )
+    expect(result.stderr).toContain(
+      'data/blog/post.mdx:6: internal link target not found: /static/not-found.png'
+    )
+  })
+
   it('fails on missing RSS channel metadata and identifies the feed', () => {
     const fixture = createFixture()
     writeFileSync(
@@ -185,6 +227,57 @@ describe('content validator CLI', () => {
     expect(result.stderr).toContain(
       'internal link target not found: https://example.test/blog/not-found/'
     )
+  })
+
+  it('loads metadata from the selected JavaScript file for RSS validation', () => {
+    const fixture = createFixture()
+    writeValidFeed(fixture.outDir)
+    const metadataFile = join(fixture.root, 'custom-site-metadata.js')
+    writeFileSync(
+      metadataFile,
+      `module.exports = ${JSON.stringify({ ...metadata, siteUrl: 'ftp://custom.example' })}\n`
+    )
+    fixture.metadataFile = metadataFile
+
+    const result = runValidator(fixture, 'rss')
+
+    expect(result.exitCode).toBe(1)
+    expect(result.stderr).toContain(
+      'custom-site-metadata.js:1: RSS metadata "siteUrl" must be an absolute HTTP(S) URL'
+    )
+  })
+
+  it('uses the selected JavaScript metadata origin for same-site links', () => {
+    const fixture = createFixture()
+    const metadataFile = join(fixture.root, 'custom-site-metadata.js')
+    writeFileSync(metadataFile, `module.exports = ${JSON.stringify(metadata)}\n`)
+    fixture.metadataFile = metadataFile
+    writeValidPost(fixture.contentRoot, 'See [missing](https://example.test/blog/not-found/).')
+
+    const result = runValidator(fixture, 'links')
+
+    expect(result.exitCode).toBe(1)
+    expect(result.stderr).toContain(
+      'internal link target not found: https://example.test/blog/not-found/'
+    )
+  })
+
+  it('resolves author-relative links against the rendered about route', () => {
+    const fixture = createFixture()
+    const authorPath = join(fixture.contentRoot, 'authors/default.mdx')
+    mkdirSync(join(fixture.contentRoot, 'authors'), { recursive: true })
+    writeFileSync(authorPath, '---\nname: Author\n---\n[简介](#个人简介)\n')
+    mkdirSync(join(fixture.outDir, 'about'), { recursive: true })
+    writeFileSync(join(fixture.outDir, 'about/index.html'), '<html></html>')
+
+    const errors = validateLocalLinks(authorPath, readFileSync(authorPath, 'utf8'), {
+      contentRoot: fixture.contentRoot,
+      outDir: fixture.outDir,
+      siteUrl: metadata.siteUrl,
+      repoRoot: fixture.root,
+    })
+
+    expect(errors).toEqual([])
   })
 
   it('uses file and line diagnostics for invalid dates and site metadata', () => {
