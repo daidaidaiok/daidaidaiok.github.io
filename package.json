@@ -85,7 +85,7 @@
     "lint-staged": "^16.2.7",
     "playwright": "1.64.1",
     "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "remark-mdx": "^3.1.1",
     "typescript": "^5.9.3",
     "vite": "^7",
