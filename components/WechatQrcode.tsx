@@ -24,7 +24,7 @@ export default function WechatQrcode() {
         type="button"
         aria-label="微信公众号二维码"
         onClick={() => setOpen(true)}
-        className="text-sm text-gray-500 transition hover:text-gray-600"
+        className="cursor-pointer text-sm text-gray-500 transition hover:text-gray-600"
       >
         <Wechat className="hover:text-primary-500 dark:hover:text-primary-400 h-6 w-6 fill-current text-gray-700 dark:text-gray-200" />
       </button>
@@ -51,7 +51,7 @@ export default function WechatQrcode() {
               type="button"
               aria-label="关闭"
               onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-200"
+              className="absolute top-3 right-3 cursor-pointer text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-200"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
