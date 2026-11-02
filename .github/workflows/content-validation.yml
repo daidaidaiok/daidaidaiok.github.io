@@ -1,0 +1,32 @@
+name: Content validation
+
+on:
+  pull_request:
+    branches: [staging, main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Content and RSS validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Validate MDX frontmatter
+        run: yarn validate:content
+      - name: Build static export
+        env:
+          EXPORT: '1'
+          UNOPTIMIZED: '1'
+        run: yarn build
+      - name: Validate internal links and generated RSS
+        run: yarn validate:content:built

@@ -8157,7 +8157,7 @@ remark-mdx-frontmatter@^4.0.0:
     unified "^11.0.0"
     yaml "^2.0.0"
 
-remark-mdx@^3.0.0:
+remark-mdx@^3.0.0, remark-mdx@^3.1.1:
   version "3.1.1"
   resolved "https://registry.npmjs.org/remark-mdx/-/remark-mdx-3.1.1.tgz"
   integrity sha512-Pjj2IYlUY3+D8x00UJsIOg5BEvfMyeI+2uLPn9VO9Wg4MEtN/VTIq2NEJQfde9PnX15KgtHyl9S0BcTnWrIuWg==

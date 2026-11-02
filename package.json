@@ -11,6 +11,8 @@
     "audit:yarn-high": "node scripts/check-yarn-audit.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "validate:content": "node scripts/validate-content.mjs --mode frontmatter",
+    "validate:content:built": "node scripts/validate-content.mjs --mode built",
     "check:bundle-budget": "node scripts/check-bundle-budget.mjs",
     "check:image-budget": "node scripts/check-image-budget.mjs",
     "a11y:check": "node scripts/a11y-scan.mjs",
@@ -84,6 +86,7 @@
     "playwright": "1.64.1",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "remark-mdx": "^3.1.1",
     "typescript": "^5.9.3",
     "vite": "^7",
     "vitest": "^5.0.5"
