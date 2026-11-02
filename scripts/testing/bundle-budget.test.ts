@@ -60,7 +60,7 @@ describe('compressed bundle budget', () => {
     expect(workflow).toContain('BASE_SHA: ${{ github.event.pull_request.base.sha }}')
     expect(workflow).toContain('git worktree add')
     expect(workflow).toContain('yarn check:bundle-budget')
-    expect(workflow).toContain('actions/upload-artifact@v4')
+    expect(workflow).toMatch(/actions\/upload-artifact@v\d+/)
     expect(config).toEqual({ maxGrowthPercent: 10, routeExceptions: [] })
   })
 
