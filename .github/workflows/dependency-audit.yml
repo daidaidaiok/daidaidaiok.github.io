@@ -1,0 +1,27 @@
+name: Dependency audit
+
+on:
+  pull_request:
+    branches: [staging, main]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Dependency audit / High+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Audit Yarn dependency graph
+        run: yarn audit:yarn-high
+      - name: Audit npm lockfile
+        run: npm audit --audit-level=high
