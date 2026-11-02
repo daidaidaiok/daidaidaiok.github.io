@@ -69,7 +69,7 @@ export default function FullscreenReader({
             type="button"
             onClick={toggleFullscreen}
             aria-pressed={isFullscreen}
-            className="neo-inset min-w-28 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
+            className="neo-inset min-w-28 cursor-pointer px-4 py-2 text-sm font-semibold text-gray-700 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
           >
             {isFullscreen ? '退出全屏' : '全屏阅读'}
           </button>
