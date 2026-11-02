@@ -9,7 +9,7 @@ const linkClassName =
 
 export default function DesktopNav() {
   return (
-    <div className="neo-inset no-scrollbar hidden items-center gap-x-1 overflow-x-auto p-1 sm:flex sm:max-w-56 md:max-w-72 lg:max-w-none">
+    <div className="neo-inset no-scrollbar hidden items-center gap-x-1 overflow-x-auto p-1 sm:max-w-56 md:flex md:max-w-72 lg:max-w-none">
       {headerNavLinks
         .filter((link) => link.href !== '/')
         .map((link) =>
