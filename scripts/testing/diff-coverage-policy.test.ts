@@ -108,6 +108,33 @@ describe('diff coverage policy', () => {
     expect(parseUnifiedDiff(diff).has('docs/sample.md')).toBe(false)
   })
 
+  it('decodes quoted Unicode paths emitted by Git', () => {
+    const diff = [
+      'diff --git "a/components/\\346\\265\\213\\350\\257\\225 file.tsx" "b/components/\\346\\265\\213\\350\\257\\225 file.tsx"',
+      '--- "a/components/\\346\\265\\213\\350\\257\\225 file.tsx"',
+      '+++ "b/components/\\346\\265\\213\\350\\257\\225 file.tsx"',
+      '@@ -0,0 +1 @@',
+      '+const value = 1',
+    ].join('\n')
+
+    expect([...(parseUnifiedDiff(diff).get('components/测试 file.tsx') ?? [])]).toEqual([1])
+  })
+
+  it('counts added source lines that begin with plus signs', () => {
+    const diff = [
+      'diff --git a/components/counter.ts b/components/counter.ts',
+      '--- a/components/counter.ts',
+      '+++ b/components/counter.ts',
+      '@@ -0,0 +1,4 @@',
+      '+let counter = 0',
+      '+++counter',
+      '+++ counter',
+      '+console.log(counter)',
+    ].join('\n')
+
+    expect([...(parseUnifiedDiff(diff).get('components/counter.ts') ?? [])]).toEqual([1, 2, 3, 4])
+  })
+
   it('counts missing coverage records as uncovered changes', () => {
     const changedLines = new Map([['components/new-file.ts', new Set([1, 2])]])
     const summary = calculateDiffCoverage(changedLines, new Map(), '/repo')

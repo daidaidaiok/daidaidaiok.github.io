@@ -8,4 +8,8 @@ describe('PageTitle', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: '关于本站' })).toBeInTheDocument()
   })
+
+  it('starts the next test with a clean document', () => {
+    expect(screen.queryByRole('heading', { level: 1, name: '关于本站' })).not.toBeInTheDocument()
+  })
 })

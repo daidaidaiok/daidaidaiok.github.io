@@ -13,6 +13,41 @@ function normalizeRelativePath(filePath) {
   return filePath.replaceAll('\\', '/').replace(/^\.\//, '')
 }
 
+function unquoteGitPath(filePath) {
+  if (!filePath.startsWith('"') || !filePath.endsWith('"')) return filePath
+
+  const quotedPath = filePath.slice(1, -1)
+  const bytes = []
+  const escapedCharacters = { a: '\x07', b: '\b', f: '\f', n: '\n', r: '\r', t: '\t', v: '\x0b' }
+
+  for (let index = 0; index < quotedPath.length; ) {
+    const character = quotedPath[index]
+    if (character !== '\\') {
+      const codePoint = String.fromCodePoint(quotedPath.codePointAt(index))
+      bytes.push(...Buffer.from(codePoint))
+      index += codePoint.length
+      continue
+    }
+
+    const nextCharacter = quotedPath[index + 1]
+    const octalMatch = quotedPath.slice(index + 1).match(/^[0-7]{1,3}/)
+    if (octalMatch) {
+      bytes.push(Number.parseInt(octalMatch[0], 8))
+      index += octalMatch[0].length + 1
+      continue
+    }
+
+    const unescaped =
+      nextCharacter === '"' || nextCharacter === '\\'
+        ? nextCharacter
+        : (escapedCharacters[nextCharacter] ?? nextCharacter)
+    bytes.push(...Buffer.from(unescaped))
+    index += 2
+  }
+
+  return Buffer.from(bytes).toString('utf8')
+}
+
 export function isRuntimeSourcePath(filePath) {
   const normalized = normalizeRelativePath(filePath)
   return (
@@ -26,10 +61,18 @@ export function parseUnifiedDiff(diffText) {
   const changedLines = new Map()
   let filePath = null
   let newLineNumber = null
+  let insideHunk = false
 
   for (const line of diffText.split(/\r?\n/)) {
-    if (line.startsWith('+++ ')) {
-      const headerPath = line.slice(4).split('\t', 1)[0]
+    if (line.startsWith('diff --git ')) {
+      filePath = null
+      newLineNumber = null
+      insideHunk = false
+      continue
+    }
+
+    if (!insideHunk && line.startsWith('+++ ')) {
+      const headerPath = unquoteGitPath(line.slice(4).split('\t', 1)[0])
       filePath =
         headerPath === '/dev/null' ? null : normalizeRelativePath(headerPath.replace(/^b\//, ''))
       continue
@@ -38,12 +81,13 @@ export function parseUnifiedDiff(diffText) {
     if (line.startsWith('@@')) {
       const hunk = line.match(/\+(\d+)(?:,\d+)?/)
       newLineNumber = hunk ? Number(hunk[1]) : null
+      insideHunk = true
       continue
     }
 
-    if (newLineNumber === null) continue
+    if (!insideHunk || newLineNumber === null) continue
 
-    if (line.startsWith('+') && !line.startsWith('+++')) {
+    if (line.startsWith('+')) {
       if (filePath && isRuntimeSourcePath(filePath)) {
         if (!changedLines.has(filePath)) changedLines.set(filePath, new Set())
         changedLines.get(filePath).add(newLineNumber)
