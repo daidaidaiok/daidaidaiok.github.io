@@ -10,6 +10,8 @@
     "analyze": "cross-env ANALYZE=true next build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "validate:content": "node scripts/validate-content.mjs --mode frontmatter",
+    "validate:content:built": "node scripts/validate-content.mjs --mode built",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
     "sync:structured-interview": "node ./scripts/sync-structured-interview.mjs",
     "prepare": "husky"
@@ -75,6 +77,7 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "remark-mdx": "^3.1.1",
     "typescript": "^5.9.3",
     "vite": "^7",
     "vitest": "^5.0.5"
