@@ -1,0 +1,40 @@
+name: Accessibility
+
+on:
+  pull_request:
+    branches: [staging, main]
+
+permissions:
+  contents: read
+
+jobs:
+  axe:
+    name: Accessibility / axe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build static export
+        env:
+          EXPORT: '1'
+          UNOPTIMIZED: '1'
+        run: yarn build
+      - name: Install Chromium and Linux dependencies
+        run: yarn playwright install --with-deps chromium
+      - name: Scan core routes with axe
+        run: yarn a11y:check --out-dir out --report-path artifacts/a11y/report.json
+      - name: Upload accessibility report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-report
+          path: artifacts/a11y/report.json
+          if-no-files-found: warn

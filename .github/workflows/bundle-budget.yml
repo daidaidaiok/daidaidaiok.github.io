@@ -1,0 +1,75 @@
+name: Bundle budget
+
+on:
+  pull_request:
+    branches: [staging, main]
+
+permissions:
+  contents: read
+
+jobs:
+  bundle-budget:
+    name: Bundle budget / per-route and shared JS
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+
+      - name: Create target-branch worktree
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_DIR: ${{ runner.temp }}/bundle-budget-base
+        run: git worktree add "$BASE_DIR" "$BASE_SHA"
+
+      - name: Install target-branch dependencies
+        working-directory: ${{ runner.temp }}/bundle-budget-base
+        run: yarn install --frozen-lockfile
+
+      - name: Build target-branch export
+        working-directory: ${{ runner.temp }}/bundle-budget-base
+        env:
+          EXPORT: '1'
+          UNOPTIMIZED: '1'
+        run: yarn build
+
+      - name: Install PR dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build PR export
+        env:
+          EXPORT: '1'
+          UNOPTIMIZED: '1'
+        run: yarn build
+
+      - name: Compare route and shared JavaScript gzip sizes
+        run: >-
+          yarn check:bundle-budget
+          --base-dir "$RUNNER_TEMP/bundle-budget-base/out"
+          --current-dir out
+          --report-path artifacts/bundle-budget/report.json
+
+      - name: Upload bundle report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-budget-report
+          path: artifacts/bundle-budget/report.json
+          if-no-files-found: warn
+
+      - name: Remove target-branch worktree
+        if: always()
+        env:
+          BASE_DIR: ${{ runner.temp }}/bundle-budget-base
+        run: |
+          if git worktree list --porcelain | grep -Fx "worktree $BASE_DIR" >/dev/null; then
+            git worktree remove --force "$BASE_DIR"
+          fi
