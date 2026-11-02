@@ -6,6 +6,9 @@ describe('Tag contrast', () => {
   it('uses the accessible primary text shade', () => {
     render(<Tag text="claudecode" />)
 
-    expect(screen.getByRole('link', { name: 'claudecode' })).toHaveClass('text-primary-700')
+    expect(screen.getByRole('link', { name: 'claudecode' })).toHaveClass(
+      'text-primary-700',
+      'dark:text-primary-400'
+    )
   })
 })

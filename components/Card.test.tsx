@@ -15,6 +15,6 @@ describe('Card accessible link', () => {
 
     const moreLink = screen.getByRole('link', { name: /learn more/i })
     expect(moreLink).toHaveAccessibleName('Learn more: Accessible project')
-    expect(moreLink).toHaveClass('text-primary-700')
+    expect(moreLink).toHaveClass('text-primary-700', 'dark:text-primary-400')
   })
 })

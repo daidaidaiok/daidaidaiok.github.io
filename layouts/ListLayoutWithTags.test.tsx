@@ -20,7 +20,10 @@ describe('blog list contrast', () => {
   it('uses accessible colors for the section label and post date', () => {
     render(<ListLayoutWithTags posts={posts} title="博客" />)
 
-    expect(screen.getByRole('heading', { name: '全部文章' })).toHaveClass('text-primary-700')
+    expect(screen.getByRole('heading', { name: '全部文章' })).toHaveClass(
+      'text-primary-700',
+      'dark:text-primary-400'
+    )
     expect(screen.getByText('March 21, 2026').closest('dd')).toHaveClass('text-gray-600')
   })
 })
