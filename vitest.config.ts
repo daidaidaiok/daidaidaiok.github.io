@@ -7,6 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': rootDir,
+      app: `${rootDir}/app`,
     },
   },
   esbuild: {

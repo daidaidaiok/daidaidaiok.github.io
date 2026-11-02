@@ -2,6 +2,7 @@ import bookshelfData from '@/data/bookshelfData'
 import Image from '@/components/Image'
 import Link from '@/components/Link'
 import CopyLinkButton from '@/components/CopyLinkButton'
+import PageTitle from '@/components/PageTitle'
 import { genPageMetadata } from 'app/seo'
 
 export const metadata = genPageMetadata({ title: '书架' })
@@ -10,6 +11,12 @@ export default function Bookshelf() {
   return (
     <div className="container py-8">
       <div className="space-y-6">
+        <section className="neo-surface p-6 sm:p-8">
+          <PageTitle>书架</PageTitle>
+          <p className="mt-4 text-base leading-8 text-gray-600 dark:text-gray-300">
+            浏览精选书籍，查找适合阅读与学习的作品。
+          </p>
+        </section>
         {bookshelfData.map((book) => (
           <div key={book.id} className="neo-surface flex flex-col overflow-hidden sm:flex-row">
             <Link
