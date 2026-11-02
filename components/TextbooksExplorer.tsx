@@ -348,7 +348,18 @@ function DownloadModal({
             className="neo-inset flex h-9 w-9 shrink-0 items-center justify-center text-gray-600 transition hover:text-gray-950 dark:text-gray-300 dark:hover:text-white"
             aria-label="关闭"
           >
-            ✕
+            <svg
+              aria-hidden="true"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
@@ -380,7 +391,20 @@ function DownloadModal({
         {book.split ? (
           <div className="mt-5 rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm leading-6 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
             <p className="font-semibold">
-              ⚠️ 该教材超过 50MB，已被拆分为 {book.files.length} 个分片。
+              <svg
+                aria-hidden="true"
+                className="mr-2 inline-block h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 3 22 20H2L12 3Z" />
+                <path d="M12 9v5m0 3h.01" />
+              </svg>
+              该教材超过 50MB，已被拆分为 {book.files.length} 个分片。
             </p>
             <p className="mt-1">
               请下载全部文件后，使用仓库提供的合并工具合并为完整
