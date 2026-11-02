@@ -48,7 +48,7 @@ export default function Home({ posts }) {
                 key={post.slug}
                 className="ios-radius bg-neo-item-light dark:bg-neo-item-dark px-4 py-3"
               >
-                <div className="mb-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="mb-1 text-xs text-gray-600 dark:text-gray-400">
                   {formatDate(post.date, siteMetadata.locale)}
                 </div>
                 <Link
@@ -100,7 +100,7 @@ export default function Home({ posts }) {
                 key={post.slug}
                 className="ios-radius bg-neo-item-light dark:bg-neo-item-dark p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
               >
-                <div className="text-xs text-gray-500 dark:text-gray-400">
+                <div className="text-xs text-gray-600 dark:text-gray-400">
                   {formatDate(post.date, siteMetadata.locale)}
                 </div>
                 <h3 className="mt-2 text-lg font-bold tracking-tight">
