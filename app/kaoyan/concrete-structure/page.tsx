@@ -2,7 +2,7 @@ import { genPageMetadata } from '@/app/seo'
 
 export const metadata = genPageMetadata({
   title: '混凝土结构设计原理',
-  description: '考研专业课 - 混凝凝土结构设计原理',
+  description: '考研专业课 - 混凝土结构设计原理',
 })
 
 export default function ConcreteStructurePage() {
