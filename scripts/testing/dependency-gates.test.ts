@@ -64,4 +64,8 @@ describe('dependency security gate contract', () => {
     expect(packageManifest.resolutions['**/@opentelemetry/propagator-jaeger']).toBe('2.9.0')
     expect(packageManifest.overrides['@opentelemetry/propagator-jaeger']).toBe('2.9.0')
   })
+
+  it('declares the OpenTelemetry SDK peer imported by the legacy telemetry package', () => {
+    expect(packageManifest.dependencies['@opentelemetry/sdk-trace-base']).toBe('1.30.1')
+  })
 })
