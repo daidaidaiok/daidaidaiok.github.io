@@ -1,0 +1,26 @@
+name: Image asset budget
+
+on:
+  pull_request:
+    branches: [staging, main]
+
+permissions:
+  contents: read
+
+jobs:
+  image-budget:
+    name: Image asset budget
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Enforce image asset budget
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-image-budget.mjs --base "origin/$BASE_REF"
