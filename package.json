@@ -10,6 +10,7 @@
     "analyze": "cross-env ANALYZE=true next build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "check:bundle-budget": "node scripts/check-bundle-budget.mjs",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
     "sync:structured-interview": "node ./scripts/sync-structured-interview.mjs",
     "prepare": "husky"
