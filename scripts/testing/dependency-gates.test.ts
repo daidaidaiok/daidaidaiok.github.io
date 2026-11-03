@@ -10,6 +10,8 @@ const dependencyReview = readFileSync(
 const pagesWorkflow = readFileSync(resolve(root, '.github/workflows/nextjs.yml'), 'utf8')
 const dependencyAuditWorkflowPath = resolve(root, '.github/workflows/dependency-audit.yml')
 const packageManifest = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'))
+const packageLockfile = JSON.parse(readFileSync(resolve(root, 'package-lock.json'), 'utf8'))
+const yarnLockfile = readFileSync(resolve(root, 'yarn.lock'), 'utf8')
 
 describe('dependency security gate contract', () => {
   it('reviews manifest changes on both integration branches and blocks High or Critical', () => {
@@ -61,8 +63,22 @@ describe('dependency security gate contract', () => {
     expect(packageManifest.dependencies['@opentelemetry/api']).toBe('1.9.0')
     expect(packageManifest.resolutions['**/@opentelemetry/api']).toBe('1.9.0')
     expect(packageManifest.overrides['@opentelemetry/api']).toBe('1.9.0')
-    expect(packageManifest.resolutions['**/@opentelemetry/propagator-jaeger']).toBe('2.9.0')
-    expect(packageManifest.overrides['@opentelemetry/propagator-jaeger']).toBe('2.9.0')
+    expect(packageManifest.dependencies['@opentelemetry/core']).toBe('1.30.1')
+    expect(packageManifest.resolutions['**/@opentelemetry/propagator-jaeger']).toBe('2.12.0')
+    expect(packageManifest.overrides['@opentelemetry/propagator-jaeger']).toBe('2.12.0')
+    expect(packageLockfile.packages['node_modules/@opentelemetry/core'].version).toBe('1.30.1')
+    expect(packageLockfile.packages['node_modules/@opentelemetry/propagator-jaeger'].version).toBe(
+      '2.12.0'
+    )
+    expect(
+      packageLockfile.packages[
+        'node_modules/@opentelemetry/propagator-jaeger/node_modules/@opentelemetry/core'
+      ].version
+    ).toBe('2.12.0')
+    expect(yarnLockfile).toMatch(
+      /"@opentelemetry\/propagator-jaeger@2\.12\.0":\n {2}version "2\.12\.0"/
+    )
+    expect(yarnLockfile).toMatch(/"@opentelemetry\/core@2\.12\.0":\n {2}version "2\.12\.0"/)
   })
 
   it('declares the OpenTelemetry SDK peer imported by the legacy telemetry package', () => {
