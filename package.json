@@ -3,11 +3,11 @@
   "version": "2.4.0",
   "private": true,
   "scripts": {
-    "start": "next dev",
-    "dev": "cross-env INIT_CWD=$PWD next dev",
-    "build": "cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
+    "start": "next dev --webpack",
+    "dev": "cross-env INIT_CWD=$PWD next dev --webpack",
+    "build": "cross-env INIT_CWD=$PWD next build --webpack && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
     "serve": "next start",
-    "analyze": "cross-env ANALYZE=true next build",
+    "analyze": "cross-env ANALYZE=true next build --webpack",
     "audit:yarn-high": "node scripts/check-yarn-audit.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -16,7 +16,7 @@
     "check:bundle-budget": "node scripts/check-bundle-budget.mjs",
     "check:image-budget": "node scripts/check-image-budget.mjs",
     "a11y:check": "node scripts/a11y-scan.mjs",
-    "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
+    "lint": "eslint --fix app components lib layouts scripts",
     "sync:structured-interview": "node ./scripts/sync-structured-interview.mjs",
     "prepare": "husky"
   },
@@ -27,7 +27,7 @@
     "@opentelemetry/core": "1.30.1",
     "@opentelemetry/sdk-trace-base": "1.30.1",
     "@headlessui/react": "2.2.10",
-    "@next/bundle-analyzer": "15.5.28",
+    "@next/bundle-analyzer": "16.4.4",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
@@ -38,7 +38,7 @@
     "gray-matter": "^4.0.3",
     "hast-util-from-html-isomorphic": "^2.0.0",
     "image-size": "2.0.4",
-    "next": "15.5.28",
+    "next": "16.4.4",
     "next-contentlayer2": "0.5.8",
     "next-themes": "^0.4.6",
     "pliny": "0.4.1",
@@ -77,7 +77,7 @@
     "@vitest/coverage-v8": "^5.0.5",
     "cross-env": "^10.1.0",
     "eslint": "^9.18.0",
-    "eslint-config-next": "15.5.28",
+    "eslint-config-next": "16.4.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.3.0",
@@ -129,7 +129,7 @@
       "postcss": "$postcss",
       "sharp": "0.35.5"
     },
-    "next@15.5.28": {
+    "next@16.4.4": {
       "postcss": "8.5.32"
     },
     "minimatch@^3.0.3": {
