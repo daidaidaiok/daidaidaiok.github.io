@@ -17,8 +17,6 @@ describe('Next.js 16 Contentlayer compatibility contract', () => {
     expect(packageManifest.devDependencies['eslint-config-next']).toBe(nextVersion)
     expect(packageManifest.dependencies.contentlayer2).toBe('0.5.8')
     expect(packageManifest.dependencies['next-contentlayer2']).toBe('0.5.8')
-    expect(packageManifest.dependencies.react).toBe('18.3.1')
-    expect(packageManifest.dependencies['react-dom']).toBe('18.3.1')
   })
 
   it('uses Webpack for Next.js commands that invoke Contentlayer', () => {

@@ -61,8 +61,7 @@ describe('compressed bundle budget', () => {
     expect(workflow).toContain('git worktree add')
     expect(workflow).toContain('yarn check:bundle-budget')
     expect(workflow).toMatch(/actions\/upload-artifact@v\d+/)
-    // Next 16's framework runtime sets this one-time migration baseline; follow-up batches re-evaluate 10%.
-    expect(config).toEqual({ maxGrowthPercent: 22, routeExceptions: [] })
+    expect(config).toEqual({ maxGrowthPercent: 10, routeExceptions: [] })
   })
 
   it('collects gzip sizes for route scripts and their shared intersection', () => {
