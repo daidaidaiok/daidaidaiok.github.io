@@ -47,7 +47,9 @@ function readExceptions(root, exceptionsFile) {
     config = JSON.parse(source)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${repositoryPath(exceptionsFile)}:1: invalid JSON: ${message}`)
+    throw new Error(`${repositoryPath(exceptionsFile)}:1: invalid JSON: ${message}`, {
+      cause: error,
+    })
   }
   if (!config || !Array.isArray(config.exceptions)) {
     throw new Error(`${repositoryPath(exceptionsFile)}:1: expected an "exceptions" array`)

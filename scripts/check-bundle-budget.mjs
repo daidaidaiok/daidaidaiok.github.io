@@ -212,7 +212,7 @@ function readBudgetConfig(configFile) {
     config = JSON.parse(source)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${configFile}: invalid JSON: ${message}`)
+    throw new Error(`${configFile}: invalid JSON: ${message}`, { cause: error })
   }
   if (!config || !Number.isFinite(config.maxGrowthPercent)) {
     throw new Error(`${configFile}: maxGrowthPercent must be a number`)
