@@ -22,4 +22,11 @@ describe('Yarn dependency resolution contract', () => {
     expect(viteRequire('picomatch/package.json').version).toBe('4.0.7')
     expect(micromatchRequire('picomatch/package.json').version).toBe('2.3.2')
   })
+
+  it('keeps debug optional color support resolvable for Superagent builds', () => {
+    const superagentRequire = createRequire(rootRequire.resolve('superagent/package.json'))
+    const debugRequire = createRequire(superagentRequire.resolve('debug/package.json'))
+
+    expect(() => debugRequire.resolve('supports-color')).not.toThrow()
+  })
 })

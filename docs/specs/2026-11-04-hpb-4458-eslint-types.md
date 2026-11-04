@@ -13,7 +13,7 @@
 
 ## 选定设计
 
-将 `eslint`、`@eslint/js` 升级至 10.x，TypeScript 固定在 6.0.x；保留 Next 16.4.4 与 typescript-eslint 8.x。TypeScript 6 将 `baseUrl` 标记为弃用，因此从 tsconfig/jsconfig 移除该选项，改为带 `./` 的 paths 目标并显式保留项目当前使用的 `app/*`、`css/*` 导入解析。TS6 要求 ESLint 配置的导出类型显式标注；ESLint 10 的推荐规则要求异常包装保留 `cause`，并以最新 ECMAScript globals 识别 `Promise`。通过独立依赖契约测试固定 major/peer 兼容边界，再运行完整 lint、类型检查、测试、静态构建及仓库门禁。
+将 `eslint`、`@eslint/js` 升级至 10.x，TypeScript 固定在 6.0.x；保留 Next 16.4.4 与 typescript-eslint 8.x。TypeScript 6 将 `baseUrl` 标记为弃用，因此从 tsconfig/jsconfig 移除该选项，改为带 `./` 的 paths 目标并显式保留项目当前使用的 `app/*`、`css/*` 导入解析。TS6 要求 ESLint 配置的导出类型显式标注；ESLint 10 的推荐规则要求异常包装保留 `cause`，并以最新 ECMAScript globals 识别 `Promise`。ESLint10 的新依赖图移除了原先间接 hoist 的 `supports-color`，暴露 Superagent 内部 debug 的可选 require 并产生 Next 构建警告；将 `supports-color` 作为直接运行时依赖固定，并以解析契约测试覆盖。通过独立依赖契约测试固定 major/peer 兼容边界，再运行完整 lint、类型检查、测试、静态构建及仓库门禁。
 
 TypeScript 7 推迟到独立后续工单：验证 typescript-eslint 官方支持后重新评估编译器 API 和 Next/Vitest 构建兼容性。HPB-4458 在该后续工作完成前保持 In Progress。
 
@@ -29,7 +29,8 @@ TypeScript 7 推迟到独立后续工单：验证 typescript-eslint 官方支持
 - [x] tsconfig/jsconfig 不再使用 TypeScript 6 弃用的 `baseUrl`；path aliases 仍通过类型检查与构建解析。
 - [x] ESLint 10 配置类型检查通过；推荐规则导致的 Promise 与 caught-error 报错按现代语法和 `cause` 语义修复。
 - [x] 依赖兼容契约测试先 RED 后 GREEN；ESLint 实际加载配置并完成 lint。
-- [x] `yarn lint`、`yarn tsc --noEmit`、完整 coverage（30 files / 105 tests）、Next 静态构建64 pages及内容/a11y/image/bundle/audit/diff coverage检查通过。
+- [x] Superagent debug 可解析其可选 `supports-color` 依赖，Next 构建不再出现该模块缺失警告。
+- [x] `yarn lint`、`yarn tsc --noEmit`、完整 coverage（30 files / 106 tests）、Next 静态构建64 pages及内容/a11y/image/bundle/audit/diff coverage检查通过。
 - [ ] 独立 PR 的本地 review、安全 review、远端 CI 均完成；合并后 HPB-4458 保持 In Progress，并跟踪 TypeScript 7 后续工单。
 
 ## 官方参考
