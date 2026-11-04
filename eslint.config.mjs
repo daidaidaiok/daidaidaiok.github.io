@@ -14,7 +14,8 @@ const compat = new FlatCompat({
 })
 const jsxA11yPlugin = nextVitals[0].plugins['jsx-a11y']
 
-export default [
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
   {
     ignores: ['next-env.d.ts', 'next.config.js'],
   },
@@ -51,7 +52,7 @@ export default [
       },
 
       parser: tsParser,
-      ecmaVersion: 5,
+      ecmaVersion: 'latest',
       sourceType: 'commonjs',
 
       parserOptions: {
@@ -81,3 +82,5 @@ export default [
     },
   },
 ]
+
+export default config

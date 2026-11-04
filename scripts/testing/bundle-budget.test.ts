@@ -64,6 +64,25 @@ describe('compressed bundle budget', () => {
     expect(config).toEqual({ maxGrowthPercent: 10, routeExceptions: [] })
   })
 
+  it('reports malformed bundle budget JSON', () => {
+    const build = createBuild('out', { '/': [] })
+    const config = join(build.root, 'bundle-budget.json')
+    writeFileSync(config, '{ invalid json')
+
+    const result = run([
+      '--base-dir',
+      build.outDir,
+      '--current-dir',
+      build.outDir,
+      '--config-file',
+      config,
+    ])
+
+    expect(result.exitCode).toBe(2)
+    expect(result.stderr).toContain('invalid JSON')
+    expect(result.stderr).toContain('Usage:')
+  })
+
   it('collects gzip sizes for route scripts and their shared intersection', () => {
     const build = createBuild('out', {
       '/': ['shared.js', 'home.js'],
