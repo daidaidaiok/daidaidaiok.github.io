@@ -1,12 +1,25 @@
 import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-const yarnLock = readFileSync(resolve(process.cwd(), 'yarn.lock'), 'utf8')
+const root = process.cwd()
+const rootRequire = createRequire(resolve(root, 'package.json'))
+const yarnLock = readFileSync(resolve(root, 'yarn.lock'), 'utf8')
+const picomatchLockVersions = yarnLock
+  .split(/\n\s*\n/)
+  .filter((block) => /^picomatch@/.test(block))
+  .map((block) => block.match(/^ {2}version "([^"]+)"/m)?.[1])
+  .filter((version): version is string => Boolean(version))
 
 describe('Yarn dependency resolution contract', () => {
   it('keeps root and Vite/Vitest picomatch resolutions on their intended versions', () => {
-    expect(yarnLock).toMatch(/^picomatch@2\.3\.2,.*:\n {2}version "2\.3\.2"/m)
-    expect(yarnLock).toMatch(/^picomatch@4\.0\.7,.*:\n {2}version "4\.0\.7"/m)
+    const viteRequire = createRequire(rootRequire.resolve('vite/package.json'))
+    const micromatchRequire = createRequire(rootRequire.resolve('micromatch/package.json'))
+
+    expect(picomatchLockVersions).toContain('2.3.2')
+    expect(picomatchLockVersions).toContain('4.0.7')
+    expect(viteRequire('picomatch/package.json').version).toBe('4.0.7')
+    expect(micromatchRequire('picomatch/package.json').version).toBe('2.3.2')
   })
 })
