@@ -10,8 +10,10 @@ export default defineConfig({
       app: `${rootDir}/app`,
     },
   },
-  esbuild: {
-    jsx: 'automatic',
+  oxc: {
+    jsx: {
+      runtime: 'automatic',
+    },
   },
   test: {
     environment: 'jsdom',
@@ -25,7 +27,7 @@ export default defineConfig({
         '**/*.spec.{js,jsx,ts,tsx}',
         '**/__tests__/**',
         '**/*.d.ts',
-        '**/*.config.{js,mjs,ts}',
+        '**/*.config.{js,mjs,ts,mts}',
         '**/.contentlayer/**',
       ],
       reporter: ['text', 'lcov', 'html'],
