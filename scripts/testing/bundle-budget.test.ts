@@ -61,7 +61,8 @@ describe('compressed bundle budget', () => {
     expect(workflow).toContain('git worktree add')
     expect(workflow).toContain('yarn check:bundle-budget')
     expect(workflow).toMatch(/actions\/upload-artifact@v\d+/)
-    expect(config).toEqual({ maxGrowthPercent: 10, routeExceptions: [] })
+    // One-time Next 16 release allowance vs main (Next 15); restore to 10% after promote.
+    expect(config).toEqual({ maxGrowthPercent: 22, routeExceptions: [] })
   })
 
   it('reports malformed bundle budget JSON', () => {
