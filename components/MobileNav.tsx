@@ -147,7 +147,7 @@ const MobileNav = () => {
                                 <Link
                                   key={item.href}
                                   href={item.href}
-                                  className="mb-3 block py-2 pr-4 text-lg font-semibold text-gray-700 outline outline-0 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
+                                  className="mb-3 block py-2 pr-4 text-lg font-semibold text-gray-700 transition hover:text-gray-950 dark:text-gray-200 dark:hover:text-white"
                                   onClick={closeNav}
                                 >
                                   <div>{item.title}</div>
@@ -166,7 +166,7 @@ const MobileNav = () => {
                       <Link
                         key={link.title}
                         href={link.href!}
-                        className="hover:text-primary-500 dark:hover:text-primary-400 mb-4 block py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 dark:text-gray-100"
+                        className="hover:text-primary-500 dark:hover:text-primary-400 mb-4 block py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
                         onClick={closeNav}
                       >
                         {link.title}
