@@ -14,17 +14,18 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "baseUrl": ".",
+    "jsx": "react-jsx",
     "paths": {
-      "@/app/*": ["app/*"],
-      "@/components/*": ["components/*"],
-      "@/data/*": ["data/*"],
-      "@/layouts/*": ["layouts/*"],
-      "@/lib/*": ["lib/*"],
-      "@/css/*": ["css/*"],
+      "@/app/*": ["./app/*"],
+      "app/*": ["./app/*"],
+      "@/components/*": ["./components/*"],
+      "@/data/*": ["./data/*"],
+      "@/layouts/*": ["./layouts/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/css/*": ["./css/*"],
+      "css/*": ["./css/*"],
       "contentlayer/generated": ["./.contentlayer/generated"],
-      "pliny/*": ["node_modules/pliny/*"]
+      "pliny/*": ["./node_modules/pliny/*"]
     },
     "plugins": [
       {

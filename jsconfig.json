@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/data/*": ["data/*"],
-      "@/layouts/*": ["layouts/*"],
-      "@/css/*": ["css/*"],
+      "app/*": ["./app/*"],
+      "@/components/*": ["./components/*"],
+      "@/data/*": ["./data/*"],
+      "@/layouts/*": ["./layouts/*"],
+      "@/css/*": ["./css/*"],
+      "css/*": ["./css/*"],
       "contentlayer/generated": ["./.contentlayer/generated"]
     }
   }

@@ -177,6 +177,17 @@ describe('new image asset budget', () => {
     ).toContain('Image path is outside the repository: ../outside.png')
   })
 
+  it('reports malformed image exception JSON', () => {
+    const fixture = createFixture()
+    writeFileSync(join(fixture.root, 'scripts/image-budget-exceptions.json'), '{ invalid json')
+
+    const result = runBudget(fixture)
+
+    expect(result.exitCode).toBe(2)
+    expect(result.stderr).toContain('invalid JSON')
+    expect(result.stderr).toContain('Usage:')
+  })
+
   it('ignores large non-image files and reports missing CLI arguments', () => {
     const fixture = createFixture()
     addAsset(fixture.root, 'public/static/images/video.mp4', 700_000)

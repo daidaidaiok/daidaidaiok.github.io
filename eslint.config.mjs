@@ -5,26 +5,40 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
 import { FlatCompat } from '@eslint/eslintrc'
+import nextVitals from 'eslint-config-next/core-web-vitals'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const compat = new FlatCompat({
   baseDirectory: __dirname,
 })
+const jsxA11yPlugin = nextVitals[0].plugins['jsx-a11y']
 
-export default [
+/** @type {import('eslint').Linter.Config[]} */
+const config = [
   {
     ignores: ['next-env.d.ts', 'next.config.js'],
   },
   js.configs.recommended,
+  {
+    plugins: {
+      'jsx-a11y': jsxA11yPlugin,
+    },
+    rules: jsxA11yPlugin.configs.recommended.rules,
+  },
   ...compat.extends(
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:jsx-a11y/recommended',
-    'plugin:prettier/recommended',
-    'next',
-    'next/core-web-vitals'
+    'plugin:prettier/recommended'
   ),
+  ...nextVitals,
+  {
+    files: ['components/MobileNav.tsx', 'components/ThemeSwitch.tsx'],
+    rules: {
+      // These existing mount gates prevent hydration mismatches; revisit with the React/types batch.
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
   {
     plugins: {
       '@typescript-eslint': typescriptEslint,
@@ -38,7 +52,7 @@ export default [
       },
 
       parser: tsParser,
-      ecmaVersion: 5,
+      ecmaVersion: 'latest',
       sourceType: 'commonjs',
 
       parserOptions: {
@@ -68,3 +82,5 @@ export default [
     },
   },
 ]
+
+export default config
