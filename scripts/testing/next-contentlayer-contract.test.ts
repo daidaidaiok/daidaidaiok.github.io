@@ -12,7 +12,7 @@ describe('Next.js 16 Contentlayer compatibility contract', () => {
   it('aligns the Next.js package group while retaining the legacy React/Contentlayer peer set', () => {
     const nextVersion = packageManifest.dependencies.next
 
-    expect(nextVersion).toBe('16.4.4')
+    expect(nextVersion).toBe('16.4.5')
     expect(packageManifest.dependencies['@next/bundle-analyzer']).toBe(nextVersion)
     expect(packageManifest.devDependencies['eslint-config-next']).toBe(nextVersion)
     expect(packageManifest.dependencies.contentlayer2).toBe('0.5.8')
