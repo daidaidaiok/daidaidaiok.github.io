@@ -60,9 +60,9 @@ describe('dependency security gate contract', () => {
   })
 
   it('keeps legacy OpenTelemetry packages within their supported API peer range', () => {
-    expect(packageManifest.dependencies['@opentelemetry/api']).toBe('1.9.0')
-    expect(packageManifest.resolutions['**/@opentelemetry/api']).toBe('1.9.0')
-    expect(packageManifest.overrides['@opentelemetry/api']).toBe('1.9.0')
+    expect(packageManifest.dependencies['@opentelemetry/api']).toBe('1.10.0')
+    expect(packageManifest.resolutions['**/@opentelemetry/api']).toBe('1.10.0')
+    expect(packageManifest.overrides['@opentelemetry/api']).toBe('1.10.0')
     expect(packageManifest.dependencies['@opentelemetry/core']).toBe('1.30.1')
     expect(packageManifest.resolutions['**/@opentelemetry/propagator-jaeger']).toBe('2.12.0')
     expect(packageManifest.overrides['@opentelemetry/propagator-jaeger']).toBe('2.12.0')
