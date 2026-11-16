@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { satisfies } from 'semver'
 import { describe, expect, it } from 'vitest'
 
 const root = process.cwd()
@@ -10,7 +11,16 @@ const dependencyReview = readFileSync(
 const pagesWorkflow = readFileSync(resolve(root, '.github/workflows/nextjs.yml'), 'utf8')
 const dependencyAuditWorkflowPath = resolve(root, '.github/workflows/dependency-audit.yml')
 const packageManifest = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'))
-const packageLockfile = JSON.parse(readFileSync(resolve(root, 'package-lock.json'), 'utf8'))
+const packageLockfile = JSON.parse(readFileSync(resolve(root, 'package-lock.json'), 'utf8')) as {
+  packages: Record<
+    string,
+    {
+      version?: string
+      dependencies?: Record<string, string>
+      peerDependencies?: Record<string, string>
+    }
+  >
+}
 const yarnLockfile = readFileSync(resolve(root, 'yarn.lock'), 'utf8')
 
 describe('dependency security gate contract', () => {
@@ -79,6 +89,31 @@ describe('dependency security gate contract', () => {
       /"@opentelemetry\/propagator-jaeger@2\.12\.0":\n {2}version "2\.12\.0"/
     )
     expect(yarnLockfile).toMatch(/"@opentelemetry\/core@2\.12\.0":\n {2}version "2\.12\.0"/)
+  })
+
+  it('satisfies the actual API peer range of every locked OpenTelemetry consumer', () => {
+    const apiVersion = packageManifest.dependencies['@opentelemetry/api']
+    const consumers = Object.entries(packageLockfile.packages).flatMap(
+      ([packagePath, dependency]) => {
+        const peerRange = dependency.peerDependencies?.['@opentelemetry/api']
+        return packagePath.includes('node_modules/@opentelemetry/') && peerRange
+          ? [{ packagePath, peerRange }]
+          : []
+      }
+    )
+
+    expect(consumers.length).toBeGreaterThan(0)
+    for (const { packagePath, peerRange } of consumers) {
+      expect(satisfies(apiVersion, peerRange), `${packagePath}: ${peerRange}`).toBe(true)
+    }
+  })
+
+  it('resolves the compatible API version consistently in both lockfiles', () => {
+    const apiVersion = packageManifest.dependencies['@opentelemetry/api']
+
+    expect(packageLockfile.packages[''].dependencies?.['@opentelemetry/api']).toBe(apiVersion)
+    expect(packageLockfile.packages['node_modules/@opentelemetry/api'].version).toBe(apiVersion)
+    expect(/"@opentelemetry\/api@[^\n]+:\n {2}version "1\.9\.0"/.test(yarnLockfile)).toBe(true)
   })
 
   it('declares the OpenTelemetry SDK peer imported by the legacy telemetry package', () => {
