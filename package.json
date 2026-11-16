@@ -25,7 +25,7 @@
     "@effect-ts/otel": "^0.15.1",
     "@headlessui/react": "2.2.10",
     "@next/bundle-analyzer": "16.4.6",
-    "@opentelemetry/api": "1.10.0",
+    "@opentelemetry/api": "1.9.0",
     "@opentelemetry/core": "1.30.1",
     "@opentelemetry/sdk-trace-base": "1.30.1",
     "@tailwindcss/forms": "^0.5.11",
@@ -90,6 +90,7 @@
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "remark-mdx": "^3.1.1",
+    "semver": "7.8.6",
     "typescript": "^6.0.3",
     "vite": "8.3.8",
     "vitest": "5.1.0"
@@ -119,7 +120,7 @@
     "**/probe-image-size": "7.4.0",
     "**/source-map-js": "1.2.2",
     "**/form-data": "2.5.6",
-    "**/@opentelemetry/api": "1.10.0",
+    "**/@opentelemetry/api": "1.9.0",
     "**/@opentelemetry/propagator-jaeger": "2.12.0",
     "**/toml": "5.0.1",
     "**/zod": "4.6.6"
@@ -169,7 +170,7 @@
     "browserslist": "4.29.5",
     "source-map-js": "1.2.2",
     "form-data": "2.5.6",
-    "@opentelemetry/api": "1.10.0",
+    "@opentelemetry/api": "1.9.0",
     "@opentelemetry/propagator-jaeger": "2.12.0",
     "toml": "5.0.1",
     "zod": "4.6.6"
