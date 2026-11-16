@@ -1,7 +1,16 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'fs'
 import path from 'path'
 
 const sourceDir =
+  process.env.STRUCTURED_INTERVIEW_SOURCE_DIR ||
   '/Users/lijunfeng/Library/Mobile Documents/iCloud~md~obsidian/Documents/咖喱gaygay/32 - 结构化面试'
 const targetDir = path.join(process.cwd(), 'data', 'gongkao', 'structured-interview')
 const sourceSlidesDir = path.join(sourceDir, 'slides')

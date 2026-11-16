@@ -20,7 +20,7 @@ function unquoteGitPath(filePath) {
   const bytes = []
   const escapedCharacters = { a: '\x07', b: '\b', f: '\f', n: '\n', r: '\r', t: '\t', v: '\x0b' }
 
-  for (let index = 0; index < quotedPath.length; ) {
+  for (let index = 0; index < quotedPath.length;) {
     const character = quotedPath[index]
     if (character !== '\\') {
       const codePoint = String.fromCodePoint(quotedPath.codePointAt(index))
