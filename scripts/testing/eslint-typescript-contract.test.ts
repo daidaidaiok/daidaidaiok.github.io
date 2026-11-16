@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
+import { ESLint } from 'eslint'
 import { describe, expect, it } from 'vitest'
 
 const root = process.cwd()
@@ -23,6 +24,17 @@ function readInstalledPackage(name: string) {
 }
 
 describe('ESLint and TypeScript compatibility contract', () => {
+  it('loads TypeScript lint rules without conflicting plugin instances', async () => {
+    const eslint = new ESLint({ cwd: root })
+    const config = await eslint.calculateConfigForFile('components/Header.tsx')
+
+    expect(config.plugins['@typescript-eslint']).toBe(
+      rootRequire('@typescript-eslint/eslint-plugin')
+    )
+    expect(config.rules['@typescript-eslint/no-explicit-any']).toEqual([2])
+    expect(config.rules['@next/next/no-img-element']).toEqual([1])
+  })
+
   it('keeps ESLint 10 paired with the supported TypeScript 6 compiler', () => {
     const eslint = readInstalledPackage('eslint')
     const eslintJs = readInstalledPackage('@eslint/js')

@@ -31,7 +31,18 @@ const config = [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended'
   ),
-  ...nextVitals,
+  ...nextVitals.map((nextConfig) => {
+    if (!nextConfig.plugins?.['@typescript-eslint']) return nextConfig
+
+    // Next may resolve a different TypeScript ESLint version than our direct dependency.
+    return {
+      ...nextConfig,
+      plugins: {
+        ...nextConfig.plugins,
+        '@typescript-eslint': typescriptEslint,
+      },
+    }
+  }),
   {
     files: ['components/MobileNav.tsx', 'components/ThemeSwitch.tsx'],
     rules: {
