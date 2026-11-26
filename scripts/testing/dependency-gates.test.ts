@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 import { satisfies } from 'semver'
 import { describe, expect, it } from 'vitest'
@@ -24,6 +25,47 @@ const packageLockfile = JSON.parse(readFileSync(resolve(root, 'package-lock.json
 const yarnLockfile = readFileSync(resolve(root, 'yarn.lock'), 'utf8')
 
 describe('dependency security gate contract', () => {
+  it('locks a compatible brace-expansion for each npm minimatch instance', () => {
+    const { packages } = packageLockfile
+    const instances = Object.entries(packages).filter(([name]) => name.endsWith('/minimatch'))
+
+    expect(instances.length).toBeGreaterThan(0)
+    for (const [name, instance] of instances) {
+      const segments = name.split('/node_modules/')
+      const candidates = segments
+        .map(
+          (_, index) =>
+            `${segments.slice(0, index + 1).join('/node_modules/')}/node_modules/brace-expansion`
+        )
+        .reverse()
+      const actual = [...candidates, 'node_modules/brace-expansion']
+        .map((path) => packages[path])
+        .find(Boolean)?.version
+      const range = instance.dependencies?.['brace-expansion']
+
+      expect(
+        Boolean(actual && range && satisfies(actual, range)),
+        `${name}: ${actual} vs ${range}`
+      ).toBe(true)
+    }
+  })
+
+  it('expands brace globs in both installed ESLint dependency paths', () => {
+    const fromRoot = createRequire(resolve(root, 'package.json'))
+    const fromNext = createRequire(fromRoot.resolve('eslint-config-next'))
+    const fromTypescriptEslint = createRequire(fromNext.resolve('typescript-eslint'))
+    const fromParser = createRequire(fromTypescriptEslint.resolve('@typescript-eslint/parser'))
+    const consumers = [
+      createRequire(fromRoot.resolve('eslint')),
+      createRequire(fromParser.resolve('@typescript-eslint/typescript-estree')),
+    ]
+
+    for (const fromConsumer of consumers) {
+      const { minimatch } = fromConsumer('minimatch')
+      expect(minimatch('app/page.tsx', '**/*.{js,ts,tsx}')).toBe(true)
+    }
+  })
+
   it('reviews manifest changes on both integration branches and blocks High or Critical', () => {
     expect(dependencyReview).toContain('pull_request:')
     expect(dependencyReview).toContain('branches: [staging, main]')
